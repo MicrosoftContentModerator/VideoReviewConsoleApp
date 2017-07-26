@@ -36,11 +36,9 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 
 		public string ProcessReviewAPI(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
 		{
-			bool isFirst = true;
 			bool isSuccess = false;
 			bool isTranscript = false;
 			string reviewVideoRequestJson = string.Empty;
-			bool isPublish = false;
 			try
 			{
 				while (frameEntityList.Count > 0)
@@ -86,8 +84,7 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
-				Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+				Console.WriteLine("An exception had occured at {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
 				throw;
 			}
 
@@ -158,10 +155,9 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 	        catch (Exception e)
 	        {
 	            //TODO Logging
-	            Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}",
+	            Console.WriteLine("An exception had occured at {0} API, for the Review ID : {1}",
 	                MethodBase.GetCurrentMethod().Name, reviewId);
-	            Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
-	            Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+	            Console.WriteLine("The response from the Api is : \n {0}", resultJson);
 	            throw;
 	        }
 	    }
@@ -196,9 +192,8 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
             catch (Exception e)
             {
                 //TODO Logging
-                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the ReviewObject is : {1} ", MethodBase.GetCurrentMethod().Name, reviewVideoObj);
-                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
-                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                Console.WriteLine("An exception had occured at {0} API, for the ReviewObject is : {1} ", MethodBase.GetCurrentMethod().Name, reviewVideoObj);
+                Console.WriteLine("The response from the Api is : \n {0}", resultJson);
                 throw;
             }
 
@@ -251,16 +246,14 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 				reviewVideoObj.CallbackEndpoint = this._amsConfig.ReviewCallBackUrl;
 				reviewVideoObj.TimeScale = frameEvents.Count != 0 ? frameEvents.Select(a => a?.TimeScale).FirstOrDefault().ToString() : "0";
 				reviewVideoObj.Metadata = frameEvents.Count != 0? GenerateMetadata(frameEvents):null;
-				//reviewVideoObj.Status = isPublish ? null : Constants.PublishedStatus;
 				reviewVideoObj.Status = Constants.PublishedStatus;
-				reviewVideoObj.VideoFrames = null; //GenerateVideoFrames(frameEvents);
+				reviewVideoObj.VideoFrames = null; 
 				reviewList.Add(reviewVideoObj);
 				return JsonConvert.SerializeObject(reviewList);
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("EXCEPTION HAPPENED AT {0} ", MethodBase.GetCurrentMethod().Name);
-				Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+				Console.WriteLine("An exception had occured at {0} ", MethodBase.GetCurrentMethod().Name);
 				throw;
 			}
 		}
@@ -466,9 +459,8 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
             catch (Exception e)
             {
                 //TODO Logging
-                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1} and the FilePath is : {2}", MethodBase.GetCurrentMethod().Name, reviewId, filepath);
-                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
-                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                Console.WriteLine("An exception had occured at {0} Api, for the Review ID : {1} and the FilePath is : {2}", MethodBase.GetCurrentMethod().Name, reviewId, filepath);
+                Console.WriteLine("The response from the Api : \n {0}", resultJson);
                 throw;
             }
 
@@ -484,13 +476,13 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 			List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
 			string responseContent = string.Empty;
 			var client = new HttpClient();
-			client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
+			client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
 
-			var uri = string.Format(this._amsConfig.TranscriptModerationUrl);// + queryString;
+			var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
 			HttpResponseMessage response;
 
-			byte[] byteArray = System.IO.File.ReadAllBytes(filepath);
-			string vttData = System.Text.Encoding.UTF8.GetString(byteArray);
+			byte[] byteArray = File.ReadAllBytes(filepath);
+			string vttData = Encoding.UTF8.GetString(byteArray);
 
 
 			string[] vttList = splitVtt(vttData, 1023).ToArray();
@@ -587,9 +579,8 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
             catch (Exception e)
             {
                 //TODO Logging
-                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
-                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
-                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                Console.WriteLine("An exception had occured at {0} Api, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
+                Console.WriteLine("THE response from the Api is : \n {0}", resultJson);
                 throw;
             }
         }

@@ -24,14 +24,15 @@ namespace Microsoft.ContentModerator.MediaStorage
 
 		AmsConfigurations _amsConfigurations = null;
 		private string _processedAssetName = null;
+        IAsset asset;
 
-		/// <summary>
-		/// Instantiates a Video Moderator instance.
-		/// </summary>
-		public VideoModerator(AmsConfigurations configObj)
+        /// <summary>
+        /// Instantiates a Video Moderator instance.
+        /// </summary>
+        public VideoModerator(AmsConfigurations configObj)
 		{
 
-			this._amsConfigurations = configObj;
+			_amsConfigurations = configObj;
 			InitializeMediaContext(configObj);
 		}
 
@@ -44,7 +45,7 @@ namespace Microsoft.ContentModerator.MediaStorage
 		private void InitializeMediaContext(AmsConfigurations configObj)
 		{
 			_cachedCredentials = new MediaServicesCredentials(configObj.MediaServiceAccountName, configObj.MediaServiceAccountKey);
-			this._mediaContext = new CloudMediaContext(_cachedCredentials);
+            _mediaContext = new CloudMediaContext(_cachedCredentials);
 		}
 
 		/// <summary>
@@ -103,8 +104,10 @@ namespace Microsoft.ContentModerator.MediaStorage
 		{
 			var processor = this._mediaContext.MediaProcessors.Where(p => p.Name == mediaProcessorName).
 			ToList().OrderBy(p => new Version(p.Version)).LastOrDefault();
-			if (processor == null)
-				throw new ArgumentException(string.Format("Unknown media processor", mediaProcessorName));
+            if (processor == null)
+            {
+                throw new ArgumentException(string.Format("Unknown media processor", mediaProcessorName));
+            }
 			return processor;
 		}
 
@@ -131,10 +134,11 @@ namespace Microsoft.ContentModerator.MediaStorage
 			publishedUrls.Hlsv3Uri = hlsv3Uri != null ? hlsv3Uri.ToString().Replace("http://", "https://") : " ";
 			publishedUrls.MpegDashUri = mpegDashUri != null ? mpegDashUri.ToString().Replace("http://", "https://") : " ";
 
-			if (assetFile != null)
-				publishedUrls.UrlWithOriginLocator = originLocator.Path.Replace("http://", "https://") + assetFile.Name +
-													 "/manifest";
-
+            if (assetFile != null)
+            {
+                publishedUrls.UrlWithOriginLocator = originLocator.Path.Replace("http://", "https://") + assetFile.Name +
+                                                     "/manifest";
+            }
 			return publishedUrls;
 		}
 
@@ -148,8 +152,8 @@ namespace Microsoft.ContentModerator.MediaStorage
 			List<Uri> progressiveDownloadUris = new List<Uri>();
 			var ext = Path.GetExtension(videoname);
 
-			_mediaContext.Locators.Create(LocatorType.OnDemandOrigin, asset, AccessPermissions.Read, TimeSpan.FromDays(this._amsConfigurations.StreamingUrlActiveDays));
-			_mediaContext.Locators.Create(LocatorType.Sas, asset, AccessPermissions.Read, TimeSpan.FromDays(this._amsConfigurations.StreamingUrlActiveDays));
+			_mediaContext.Locators.Create(LocatorType.OnDemandOrigin, asset, AccessPermissions.Read, TimeSpan.FromDays(_amsConfigurations.StreamingUrlActiveDays));
+			_mediaContext.Locators.Create(LocatorType.Sas, asset, AccessPermissions.Read, TimeSpan.FromDays(_amsConfigurations.StreamingUrlActiveDays));
 			IEnumerable<IAssetFile> assetFilesList = asset.AssetFiles.ToList().Where(af => af.Name.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
 
 			var assetFiles = assetFilesList as IAssetFile[] ?? assetFilesList.ToArray();
@@ -157,8 +161,7 @@ namespace Microsoft.ContentModerator.MediaStorage
 			{
 				progressiveDownloadUris = assetFiles.Select(assetfile => assetfile.GetSasUri()).ToList();
 			}
-
-			
+            			
 			return  progressiveDownloadUris.Count>0? progressiveDownloadUris[0].AbsoluteUri.ToString():"";
 		}
 
@@ -190,7 +193,6 @@ namespace Microsoft.ContentModerator.MediaStorage
 
             return moderatedJson;
         }
-        IAsset asset;
         /// <summary>
         /// 
         /// </summary>
@@ -234,7 +236,7 @@ namespace Microsoft.ContentModerator.MediaStorage
 
             if (job.State == JobState.Error)
             {
-                throw new ArgumentException("VideoModerationFailed");
+                throw new Exception("Video Moderation Failed.");
             }
 
             UploadAssetResult result = uploadResult;
@@ -280,11 +282,10 @@ namespace Microsoft.ContentModerator.MediaStorage
                  return true;
             }
             catch
-            {
-                //TODO:  Logging
-                Console.WriteLine("Exception occured while generating index for video");
+            {   //TODO:  Logging
+                Console.WriteLine("Exception occured while generating index for video.");
+                throw;
             }
-            return false;
         }
 		#region Media Indexeer
 		/// <summary>
@@ -295,15 +296,13 @@ namespace Microsoft.ContentModerator.MediaStorage
 		/// <returns></returns>
 		private void ConfigureTranscriptTask(string file, IJob job)
 		{
-				string mediaProcessorName = this._amsConfigurations.MediaIndexer2MediaProcessor;
+				string mediaProcessorName = _amsConfigurations.MediaIndexer2MediaProcessor;
 				IMediaProcessor processor = _mediaContext.MediaProcessors.GetLatestMediaProcessorByName(mediaProcessorName);
 
-				string configuration = File.ReadAllText(this._amsConfigurations.MediaIndexerConfigurationJson);
+				string configuration = File.ReadAllText(_amsConfigurations.MediaIndexerConfigurationJson);
 				ITask task = job.Tasks.AddNew("AudioIndexing Task", processor, configuration, TaskOptions.None);
-				task.InputAssets.Add(this.asset);
+				task.InputAssets.Add(asset);
 				task.OutputAssets.AddNew("AudioIndexing Output Asset", AssetCreationOptions.None);
-
-
 		}
 		/// <summary>
 		/// 

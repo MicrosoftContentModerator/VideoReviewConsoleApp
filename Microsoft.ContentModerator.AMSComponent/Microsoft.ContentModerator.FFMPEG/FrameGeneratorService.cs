@@ -31,10 +31,8 @@ namespace Microsoft.ContentModerator.FFMPEG
 		CloudBlobClient _blobClient = null;
 		string _blobContainerName = string.Empty;
 		CloudBlobContainer _container = null;
-
 		List<FrameEventDetails> _frameEventsSource = null;
 		private VideoReviewApi _reviewApIobj = null;
-
 		public CloudStorageAccount StorageAccount { get; set; } = null;
 
 		/// <summary>
@@ -44,10 +42,10 @@ namespace Microsoft.ContentModerator.FFMPEG
 		/// <param name="confidenceVal"></param>
 		public FrameGenerator(AmsConfigurations config, string confidenceVal)
 		{
-			this._amsConfig = config;
+			_amsConfig = config;
 			_reviewApIobj = new VideoReviewApi(config);
 			_frameEventsSource = new List<FrameEventDetails>();
-			StorageAccount = CloudStorageAccount.Parse(this._amsConfig.BlobConnectionString);
+			StorageAccount = CloudStorageAccount.Parse(_amsConfig.BlobConnectionString);
 			_blobClient = StorageAccount.CreateCloudBlobClient();
 			_confidence = Convert.ToDouble(confidenceVal);
 		}
@@ -238,9 +236,9 @@ namespace Microsoft.ContentModerator.FFMPEG
 
 			string ffmpegBlobUrl=string.Empty;
 
-            if (File.Exists(this._amsConfig.FfmpegExecutablePath))
+            if (File.Exists(_amsConfig.FfmpegExecutablePath))
             {
-                ffmpegBlobUrl = this._amsConfig.FfmpegExecutablePath;
+                ffmpegBlobUrl = _amsConfig.FfmpegExecutablePath;
             }           
 
 		    #endregion
@@ -308,7 +306,6 @@ namespace Microsoft.ContentModerator.FFMPEG
             {
                 FileInfo fileInfo = new FileInfo(imagePath);
 
-
                 if (fileInfo != null && fileInfo.Length > 0)
                 {
                     byte[] imageData = null;
@@ -358,41 +355,7 @@ namespace Microsoft.ContentModerator.FFMPEG
 			process.WaitForExit();
 		}
 
-		/// <summary>
-		/// Download ffmpeg exe to local
-		/// </summary>
-		/// <param name="fileName"></param>
-		/// <param name="path"></param>
-		private void DownloadFileFromBlob(string fileName, string path)
-		{
-			CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this._amsConfig.BlobConnectionString);
-			CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-			CloudBlobContainer container = blobClient.GetContainerReference(this._amsConfig.BlobContainerForFfmpeg);
-			container.CreateIfNotExists();
-			container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
-			CloudBlockBlob blockBlob = container.GetBlockBlobReference(fileName);
-			Stream stream = new MemoryStream();
-			blockBlob.DownloadToStream(stream);
-			stream.Position = 0;
-			if (stream != null)
-			{
-				FileStream fileStream = File.Create(path);
-				stream.Position = 0;
-				stream.CopyTo(fileStream);
-				fileStream.Close();
-			}
-		}
-
-		private string AppendTimeStamp(string fileName)
-		{
-			return string.Concat(
-				Path.GetFileNameWithoutExtension(fileName),
-				DateTime.Now.ToString("yyMMddHHMMssfff"),
-				Path.GetExtension(fileName)
-				);
-		}
-
-		#endregion
+	    #endregion
 
 
 	}
