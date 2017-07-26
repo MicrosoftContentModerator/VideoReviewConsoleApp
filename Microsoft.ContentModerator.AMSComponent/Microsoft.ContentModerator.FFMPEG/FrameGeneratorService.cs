@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
+using System.Text;
 using System.Diagnostics;
+using System.Reflection;
+using Newtonsoft.Json;
 using Microsoft.ContentModerator.BusinessEntities;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using Microsoft.ContentModerator.BusinessEntities.Entities;
 using Microsoft.ContentModerator.BusinessEntities.CustomExceptions;
-using Microsoft.ContentModerator.Services;
 using Microsoft.ContentModerator.RESTUtilityServices;
-using System.Text;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Microsoft.ContentModerator.FFMPEG
 {
@@ -26,6 +25,7 @@ namespace Microsoft.ContentModerator.FFMPEG
 		private AmsConfigurations _amsConfig;
 		private string _videoPublishUri = string.Empty;
 		private string _videoName = string.Empty;
+		private string _reviewId = string.Empty;
 		private string _videoContainerName = string.Empty;
 		private double _confidence;
 		CloudBlobClient _blobClient = null;
@@ -53,43 +53,45 @@ namespace Microsoft.ContentModerator.FFMPEG
 		}
 
 		#region Generate Frames
+
 		/// <summary>
 		/// Generates And Submit Frames
 		/// </summary>
 		/// <param name="assetInfo">assetInfo</param>
 		/// <returns>Retruns Review Id</returns>
-		public List<FrameEventDetails> GenerateAndSubmitFrames(UploadAssetResult assetInfo)
+		public List<FrameEventDetails> GenerateAndSubmitFrames(UploadAssetResult assetInfo, ref string reviewId)
 		{
 			List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
-
+			string reviewVideoRequestJson = string.Empty;
 			try
 			{
-				_videoPublishUri = assetInfo.VideoFilePath?? assetInfo.StreamingUrlDetails.DownloadUri;
 
-				_videoName = AppendTimeStamp(assetInfo.VideoName);
+				PopulateFrameEvents(assetInfo.ModeratedJson, frameEventsList);
+				reviewVideoRequestJson = _reviewApIobj.CreateReviewRequestObject(assetInfo, frameEventsList);
 
-				if (!string.IsNullOrEmpty(assetInfo.VideoName))
-				{
-					_videoContainerName = assetInfo.VideoName;
-					string[] containerName = _videoContainerName.Split('.');
-					_videoContainerName = containerName[0].ToString();
-				}
-				else
-					_videoContainerName = this._amsConfig.BlobContainerName;
-
-				_blobContainerName = Regex.Replace(_videoContainerName, @"[^0-9a-zA-Z]+", "a");
-				_blobContainerName = AppendTimeStamp(_blobContainerName.ToLower());
+				_reviewId =
+					JsonConvert.DeserializeObject<List<string>>(_reviewApIobj.ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
+						.FirstOrDefault();
+				reviewId = _reviewId;
+				_blobContainerName = _reviewId;
 
 				_container = _blobClient.GetContainerReference(_blobContainerName);
 				_container.CreateIfNotExists();
-				_container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+				_container.SetPermissions(new BlobContainerPermissions {PublicAccess = BlobContainerPublicAccessType.Blob});
 
-				PopulateFrameEvents(assetInfo.ModeratedJson, frameEventsList);
-
-				return GenerateAndUploadFrameImages(frameEventsList);
+				foreach (var item in frameEventsList)
+				{
+					item.FrameName = reviewId + item.FrameName;
+				}
+                
+				return GenerateAndUploadFrameImages(frameEventsList,assetInfo);
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine("EXCEPTION HAPPENED AT METHOD : {0} , for Review Id : {1} ", MethodBase.GetCurrentMethod().Name,
+					reviewId);
+				Console.WriteLine("EXCEPTION DETAILS : {0}", ex);
+				Console.WriteLine(ex);
 				throw new FrameGenerationException()
 				{
 					ReviewId = string.Empty,
@@ -99,176 +101,158 @@ namespace Microsoft.ContentModerator.FFMPEG
 					ErrorReason = ex.Message
 				};
 			}
+			
+
 		}
 
-		#endregion
+        #endregion
 
-		#region FrameImage Generation
+        #region FrameImage Generation
 
-		/// <summary>
-		/// Generates frames based on moderated json source.
-		/// </summary>
-		/// <param name="moderatedJsonstring">moderatedJsonstring</param>
-		/// <param name="resultEventDetailsList">resultEventDetailsList</param>
+        /// <summary>
+        /// Generates frames based on moderated json source.
+        /// </summary>
+        /// <param name="moderatedJsonstring">moderatedJsonstring</param>
+        /// <param name="resultEventDetailsList">resultEventDetailsList</param>
 
-		private void PopulateFrameEvents(string moderatedJsonstring, List<FrameEventDetails> resultEventDetailsList)
-		{
-			if (UploadAssetResult.V2JSONPath != null)
-			{
+        private void PopulateFrameEvents(string moderatedJsonstring, List<FrameEventDetails> resultEventDetailsList)
+        {
+            if (UploadAssetResult.V2JSONPath != null)
+            {
                 try
                 {
-				using (var streamReader = new StreamReader(UploadAssetResult.V2JSONPath))
-				{
-					string jsonv2 = streamReader.ReadToEnd();
-					moderatedJsonstring = jsonv2;
-				}
+                    using (var streamReader = new StreamReader(UploadAssetResult.V2JSONPath))
+                    {
+                        string jsonv2 = streamReader.ReadToEnd();
+                        moderatedJsonstring = jsonv2;
+                    }
 
                 }
                 catch
                 {
                     Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
                 }
-				var moderatedJsonV2 = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
+                var moderatedJsonV2 = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
 
-				if (moderatedJsonV2.Shots != null)
-				{
-					double ticks = Convert.ToDouble(moderatedJsonV2.TimeScale);
-					int timescale = Convert.ToInt32(moderatedJsonV2.TimeScale);
-					int frameCount = 0;
-					foreach (var shot in moderatedJsonV2.Shots)
-					{
-						if (shot.Clips != null)
-						{
-							foreach (var clip in shot.Clips)
-							{
-								if (clip.Frames != null)
-								{
+                if (moderatedJsonV2.Shots != null)
+                {
+                    double ticks = Convert.ToDouble(moderatedJsonV2.TimeScale);
+                    int timescale = Convert.ToInt32(moderatedJsonV2.TimeScale);
+                    int frameCount = 0;
+                    foreach (var shot in moderatedJsonV2.Shots)
+                    {
+                        if (shot.Clips != null)
+                        {
+                            foreach (var clip in shot.Clips)
+                            {
+                                if (clip.Frames != null)
+                                {
 
-									foreach (var frameObj in clip.Frames)
-									{
-										if (Convert.ToDouble(frameObj.AdultConfidence) > _confidence)
-										{
-											var eventDetailsObj = new FrameEventDetails
-											{
-												TimeStamp = frameObj.TimeStamp,
-												IsAdultContent = frameObj.IsAdultContent,
-												AdultConfidence = frameObj.AdultConfidence,
-												Index = frameObj.Index,
-												TimeScale = timescale,
-												IsRacyContent = frameObj.IsRacyContent,
-												RacyConfidence = frameObj.RacyConfidence,
+                                    foreach (var frameObj in clip.Frames)
+                                    {
+                                        if (Convert.ToDouble(frameObj.AdultConfidence) > _confidence)
+                                        {
+                                            var eventDetailsObj = new FrameEventDetails
+                                            {
+                                                TimeStamp = frameObj.TimeStamp,
+                                                IsAdultContent = frameObj.IsAdultContent,
+                                                AdultConfidence = frameObj.AdultConfidence,
+                                                Index = frameObj.Index,
+                                                TimeScale = timescale,
+                                                IsRacyContent = frameObj.IsRacyContent,
+                                                RacyConfidence = frameObj.RacyConfidence,
 
-											};
-											frameCount++;
-											eventDetailsObj.FrameName = _videoName.Split('.')[0] + "_" + frameCount + ".png";
-											resultEventDetailsList.Add(eventDetailsObj);
+                                            };
+                                            frameCount++;
+                                            eventDetailsObj.FrameName = "_" + frameCount + ".png";
+                                            resultEventDetailsList.Add(eventDetailsObj);
 
-										}
-
-										//for (int i = 0; i < clip.Frames.Count(); i++, index++)
-										//{
-										//	FrameEventDetails frameEventDetails = new FrameEventDetails();
-										//	frameEventDetails.TimeStamp = clip.Frames[i].TimeStamp;
-										//	frameEventDetails.IsAdultContent = clip.Frames[i].IsAdultContent;
-										//	frameEventDetails.AdultConfidence = clip.Frames[i].AdultConfidence.ToString();
-										//	frameEventDetails.Index = clip.Frames[i].Index;
-										//	frameEventDetails.TimeScale = timescale;
-										//	frameEventDetails.FrameOrderId = index.ToString();
-										//	frameEventDetails.FrameName = _videoName + "_" + index + ".png";
-										//	frameEventDetails.IsRacyContent = clip.Frames[i].IsRacyContent;
-										//	frameEventDetails.RacyConfidence = clip.Frames[i].RacyConfidence;
-										//	resultEventDetailsList.Add(frameEventDetails);
-
-										//}
-										// }
-									}
-								}
-							}
-						}
-					}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
 
-				}
-			}
-			else
-			{
-				var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
+                }
+            }
+            else
+            {
+                var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
 
-				if (jsonModerateObject != null)
-				{
-					var timeScale = Convert.ToString(jsonModerateObject.TimeScale);
-					var timescale = Convert.ToInt32(timeScale);
+                if (jsonModerateObject != null)
+                {
+                    var timeScale = Convert.ToString(jsonModerateObject.TimeScale);
+                    var timescale = Convert.ToInt32(timeScale);
 
-					int frameCount = 0;
-					foreach (var item in jsonModerateObject.Fragments)
-					{
-						if (item.Events != null)
-						{
-							foreach (var events in item.Events)
-							{
-								foreach (FrameEventDetails eventObj in events)
-								{
-									if (Convert.ToDouble(eventObj.AdultConfidence) > _confidence)
-									{
-										var eventDetailsObj = new FrameEventDetails
-										{
-											TimeStamp = eventObj.TimeStamp,
-											IsAdultContent = eventObj.IsAdultContent,
-											AdultConfidence = eventObj.AdultConfidence,
-											Index = eventObj.Index,
-											TimeScale = timescale
-										};
-										frameCount++;
-										eventDetailsObj.FrameName = _videoName + "_" + frameCount + ".png";
-										resultEventDetailsList.Add(eventDetailsObj);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-       
-        
-        /// <summary>
-        ///  GetGeneratedFrameList method used for Generating Frames using Moderated Json 
-        /// </summary>
-        /// <param name="eventsList">resultDownloaddetailsList</param>
-        private List<FrameEventDetails> GenerateAndUploadFrameImages(List<FrameEventDetails> eventsList)
+                    int frameCount = 0;
+                    foreach (var item in jsonModerateObject.Fragments)
+                    {
+                        if (item.Events != null)
+                        {
+                            foreach (var events in item.Events)
+                            {
+                                foreach (FrameEventDetails eventObj in events)
+                                {
+                                    if (Convert.ToDouble(eventObj.AdultConfidence) > _confidence)
+                                    {
+                                        var eventDetailsObj = new FrameEventDetails
+                                        {
+                                            TimeStamp = eventObj.TimeStamp,
+                                            IsAdultContent = eventObj.IsAdultContent,
+                                            AdultConfidence = eventObj.AdultConfidence,
+                                            Index = eventObj.Index,
+                                            TimeScale = timescale
+                                        };
+                                        frameCount++;
+                                        eventDetailsObj.FrameName = "_" + frameCount + ".png";
+                                        resultEventDetailsList.Add(eventDetailsObj);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+	    /// <summary>
+	    ///  GetGeneratedFrameList method used for Generating Frames using Moderated Json 
+	    /// </summary>
+	    /// <param name="eventsList">resultDownloaddetailsList</param>
+	    /// <param name="assetInfo"></param>
+	    private List<FrameEventDetails> GenerateAndUploadFrameImages(List<FrameEventDetails> eventsList,UploadAssetResult assetInfo)
 		{
 			#region frameCreation
 
-			string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + _videoName.Split('.')[0];
+			string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + _reviewId;
 			Directory.CreateDirectory(frameStorageLocalPath);
 
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Frames Creation inprogress");
+			Console.WriteLine("\n Video Frames Creation inprogress...");
             Stopwatch sw = new Stopwatch();
             sw.Start();
 			#region Check FFMPEG.Exe
 
-			string ffmpegBlobUrl;
+			string ffmpegBlobUrl=string.Empty;
 
-			if (File.Exists(this._amsConfig.FfmpegExecutablePath))
-			{
-				ffmpegBlobUrl = this._amsConfig.FfmpegExecutablePath;
-			}
-			else
-			{
-				DownloadFileFromBlob(this._amsConfig.BlobFile, this._amsConfig.FfmpegExecutablePath);
-				ffmpegBlobUrl = this._amsConfig.FfmpegExecutablePath;
-			}
+            if (File.Exists(this._amsConfig.FfmpegExecutablePath))
+            {
+                ffmpegBlobUrl = this._amsConfig.FfmpegExecutablePath;
+            }           
 
-            #endregion
+		    #endregion
+            
+
             List<string> args = new List<string>();
-            var timeScale = eventsList.First().TimeScale;
             StringBuilder sb = new StringBuilder();
             int frameCounter = 0;
             foreach (var frame in eventsList)
             {
-                TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / timeScale));
-                var line = "-ss " + ts + " -i " + _videoPublishUri + " -map " + frameCounter + ":v -frames:v 1 "  + frameStorageLocalPath + "\\" + frame.FrameName + " ";
+                TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
+                var line = "-ss " + ts + " -i " + assetInfo.VideoFilePath + " -map " + frameCounter + ":v -frames:v 1 "  + frameStorageLocalPath + "\\" + frame.FrameName + " ";
                 frameCounter++;
                 sb.Append(line);
                 if(sb.Length > 30000)
@@ -284,61 +268,23 @@ namespace Microsoft.ContentModerator.FFMPEG
             }
 
             Parallel.ForEach(args, new ParallelOptions { MaxDegreeOfParallelism = 4 }, 
-                arg => CreateTaskProcess(arg, ffmpegBlobUrl));
-
-
-
-   //         int seqCount = eventsList.Count() % 5;
-			//for (int i = 0; i < (eventsList.Count() - seqCount) && (eventsList.Count() - seqCount) >= 0; i = i + 5)
-			//{
-   //             Parallel.Invoke(
-			//				() => CreateTaskProcess(eventsList[i].TimeStamp, frameStorageLocalPath, eventsList[i].TimeScale, eventsList[i].FrameName, ffmpegBlobUrl),
-			//				() => CreateTaskProcess(eventsList[i + 1].TimeStamp, frameStorageLocalPath, eventsList[i + 1].TimeScale, eventsList[i + 1].FrameName, ffmpegBlobUrl),
-			//				() => CreateTaskProcess(eventsList[i + 2].TimeStamp, frameStorageLocalPath, eventsList[i + 2].TimeScale, eventsList[i + 2].FrameName, ffmpegBlobUrl),
-			//				() => CreateTaskProcess(eventsList[i + 3].TimeStamp, frameStorageLocalPath, eventsList[i + 3].TimeScale, eventsList[i + 3].FrameName, ffmpegBlobUrl),
-			//				() => CreateTaskProcess(eventsList[i + 4].TimeStamp, frameStorageLocalPath, eventsList[i + 4].TimeScale, eventsList[i + 4].FrameName, ffmpegBlobUrl)
-			//			  );
-			//}
-
-			//if (eventsList.Count() - seqCount > 0)
-			//{
-			//	Task[] tasks = new Task[seqCount];
-			////	int counter;
-			//	for (int i = (eventsList.Count() - seqCount), j = 0; i < eventsList.Count(); i++, j++)
-			//	{
-			//		int counter = i;
-			//		tasks[j] = new Task(() => CreateTaskProcess(eventsList[counter].TimeStamp, frameStorageLocalPath, eventsList[counter].TimeScale, eventsList[counter].FrameName, ffmpegBlobUrl));
-			//	}
-
-			//	foreach (Task task in tasks)
-			//	{
-			//		task.Start();
-			//	}
-
-			//	Task.WaitAll(tasks);
-			//}
+                arg => CreateTaskProcess(arg, ffmpegBlobUrl));			
+			
             sw.Stop();
-            Console.WriteLine("\n Elapsed time: {0}", sw.Elapsed);
             using (var stw = new StreamWriter("AmsPerf.txt", true))
             {
                 stw.WriteLine("Frame Creation Elapsed time: {0}", sw.Elapsed);
             }
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine(" Frames(" + eventsList.Count() + ") created successfully");
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Uploading Frames to BLOB inprogress");
-
-            //Parallel.For(0, eventsList.Count(), i =>
-            //{
-            //	AddFrameToBlobGenerationProcess(eventsList[i], frameStorageLocalPath + "\\" + eventsList[i].FrameName);
-            //});
+			Console.WriteLine(" Frames(" + eventsList.Count() + ") created successfully.");
+	
 
             Parallel.ForEach(eventsList, 
                 new ParallelOptions { MaxDegreeOfParallelism = 4 }, 
                 evnt => AddFrameToBlobGenerationProcess(evnt, frameStorageLocalPath + "\\" + evnt.FrameName));
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine(" Frames(" + eventsList.Count() + ") uploaded to BLOB successfully ");
+			Console.WriteLine(" Frames(" + eventsList.Count() + ") uploaded successfully ");
 
 			if (Directory.Exists(frameStorageLocalPath))
 			{
@@ -350,38 +296,49 @@ namespace Microsoft.ContentModerator.FFMPEG
 			return eventsList;
 		}
 
-		/// <summary>
-		/// Upload frames to blob
-		/// </summary>
-		/// <param name="frame"></param>
-		/// <param name="imagePath"></param>
-		/// <returns></returns>
-		private string AddFrameToBlobGenerationProcess(FrameEventDetails frame, string imagePath)
-		{
+        /// <summary>
+        /// Upload frames to blob
+        /// </summary>
+        /// <param name="frame"></param>
+        /// <param name="imagePath"></param>
+        /// <returns></returns>
+        private string AddFrameToBlobGenerationProcess(FrameEventDetails frame, string imagePath)
+        {
+            try
+            {
+                FileInfo fileInfo = new FileInfo(imagePath);
 
-			FileInfo fileInfo = new FileInfo(imagePath);
 
-			
-			if (fileInfo != null && fileInfo.Length > 0)
-			{
-				byte[] imageData = null;
-				long imageFileLength = fileInfo.Length;
-				using (FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
-				{
-					BinaryReader br = new BinaryReader(fs);
-					imageData = br.ReadBytes((int)imageFileLength);
-				}
+                if (fileInfo != null && fileInfo.Length > 0)
+                {
+                    byte[] imageData = null;
+                    long imageFileLength = fileInfo.Length;
+                    using (FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+                    {
+                        BinaryReader br = new BinaryReader(fs);
+                        imageData = br.ReadBytes((int)imageFileLength);
+                    }
 
-				using (Stream stream = new MemoryStream(imageData))
-				{
-					CloudBlockBlob blockBlob = _container.GetBlockBlobReference(Path.GetFileName(imagePath));
-					blockBlob.UploadFromStream(stream);
-					frame.PrimaryUri = blockBlob.StorageUri.PrimaryUri.ToString();
-				}
-			}
+                    using (Stream stream = new MemoryStream(imageData))
+                    {
+                        CloudBlockBlob blockBlob = _container.GetBlockBlobReference(Path.GetFileName(imagePath));
+                        blockBlob.UploadFromStream(stream);
+                        frame.PrimaryUri = blockBlob.StorageUri.PrimaryUri.ToString();
+                    }
+                }
 
-			return frame.PrimaryUri;
-		}
+                return frame.PrimaryUri;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0}-{1}", "Failed to Upload Frames to Blob Storage", e.Message);
+                throw;
+
+            }
+
+        }
+		
 
 		/// <summary>
 		/// Frame generation using ffmpeg

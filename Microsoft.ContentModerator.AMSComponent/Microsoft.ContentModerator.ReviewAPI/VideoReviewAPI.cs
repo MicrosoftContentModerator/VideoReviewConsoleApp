@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ContentModerator.BusinessEntities;
-using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Microsoft.ContentModerator.BusinessEntities.Entities;
-
-using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
 using Microsoft.ContentModerator.ReviewAPI;
 using Microsoft.ContentModerator.Services;
+using Microsoft.ContentModerator.BusinessEntities;
+using Microsoft.ContentModerator.BusinessEntities.Entities;
 
 namespace Microsoft.ContentModerator.RESTUtilityServices
 {
@@ -33,112 +33,78 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 
 		#region Create and Submit Frames
 
-		/// <summary>
-		/// Creates and submits a Video Review object.
-		/// </summary>
-		/// <param name="assetinfo">UploadAssetResult</param>
-		/// <param name="frameEntityList">FrameEventBlobEntity</param>
-		/// <param name="isPublish">publishing status</param>
-		/// <returns>ReviewId</returns>
-		public string SubmitCreateReview(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList)
+
+		public string ProcessReviewAPI(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
 		{
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Review API call in progress ");
 			bool isFirst = true;
 			bool isSuccess = false;
 			bool isTranscript = false;
 			string reviewVideoRequestJson = string.Empty;
 			bool isPublish = false;
-			string reviewId = string.Empty;
-			while (frameEntityList.Count > 0)
+			try
 			{
-				List<FrameEventDetails> tempList = new List<FrameEventDetails>();
-				tempList = FetchFrameEvents(frameEntityList, this._amsConfig.FrameBatchSize);
-				if (isFirst)
+				while (frameEntityList.Count > 0)
 				{
-					isPublish = frameEntityList.Count <= 0;
-					reviewVideoRequestJson = CreateReviewRequestObject(assetinfo, tempList);
-					reviewId = JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
-						.FirstOrDefault();
-					isFirst = false;
+					List<FrameEventDetails> tempList = new List<FrameEventDetails>();
+					tempList = FetchFrameEvents(frameEntityList, this._amsConfig.FrameBatchSize);
+					isSuccess = SubmitAddFramesReview(tempList, reviewId);
+				}
+
+				string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
+				if (File.Exists(path))
+				{
+					if (ValidateVtt(path))
+					{
+						isTranscript = SubmitTranscript(reviewId, path);
+					}
+					if (isTranscript)
+					{
+						var sts = GenerateTextScreenProfanity(reviewId, path);
+
+					}
+					try
+					{
+						System.IO.File.Delete(path);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine(e.Message);
+					}
+				}
+				isSuccess = PublishReview(reviewId);
+				if (!isSuccess)
+				{
+					Console.WriteLine("PUBLISH REVIEW FAILED!!");
 				}
 				else
 				{
-					isPublish = frameEntityList.Count <= 0;
-					if (reviewId != null)
-					{
-						isSuccess = SubmitAddFramesReview(tempList, reviewId);
-					}
-
-				}
-				if (isPublish)
-				{
-					string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
-					if (File.Exists(path))
-					{
-						if (ValidateVttResponse(path))
-						{
-							isTranscript = SubmitTranscript(reviewId, path);
-						}
-						if (isTranscript)
-						{
-							var sts = GenerateTextScreenProfanity(reviewId, path);
-
-
-						}
-						try
-						{
-							System.IO.File.Delete(path);
-						}
-						catch (Exception e)
-						{
-							Console.WriteLine(e.Message);
-						}
-					}
-					isSuccess = PublishReview(reviewId);
-
 					Console.ForegroundColor = ConsoleColor.DarkGreen;
-					Console.WriteLine("\n Review Created Successfully ");
-					break;
+					Console.WriteLine("\n Review Created Successfully and the review Id {0}", reviewId);
 				}
+
+				return reviewId;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
+				Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+				throw;
 			}
 
-			return reviewId;
 		}
 
-		/// <summary>
-		/// Check Vtt Response
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		private bool ValidateVttResponse(string path)
-		{
-			var response = ValidateVtt(path).Result;
-			return response.IsSuccessStatusCode;
-
-		}
-
+        
 		/// <summary>
 		/// Validate vtt file
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		private async Task<HttpResponseMessage> ValidateVtt(string path)
+		private bool  ValidateVtt(string path)
 		{
-			string resultJson = string.Empty;
-			var client = new HttpClient();
-
-			var uri = this._amsConfig.ValidateVttUrl;
-
-			HttpResponseMessage response;
-			byte[] bytesData = System.IO.File.ReadAllBytes(path);
-			using (var content = new ByteArrayContent(bytesData))
-			{
-				response = await client.PostAsync(uri, content);
-				resultJson = await response.Content.ReadAsStringAsync();
-			}
-			return response;
-		}
+		    string filepath = File.ReadAllText(path);
+		    double errorCount = VttValidator.ValidateVTT(filepath);
+		    return !(errorCount > 0);
+        }
 
 		/// <summary>
 		/// 
@@ -158,87 +124,85 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 		}
 
 
-		private string GenerateProfanityObject(string profanity)
-		{
-			List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
-			var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(profanity);
-			if (jsonTextScreen != null)
-			{
+	    /// <summary>
+	    /// Post transcript support file to the review API
+	    /// </summary>
+	    /// <param name="reviewId"></param>
+	    /// <param name="profanity"></param>
+	    /// <returns></returns>
+	    private async Task<HttpResponseMessage> ExecuteAddTranscriptSupportFile(string reviewId, string profanity)
+        {
+            string resultJson = string.Empty;
+            try
+	        {
 
-				TranscriptProfanity transcriptProfanity = new TranscriptProfanity();
-				transcriptProfanity.TimeStamp = "";
-				List<Terms> transcriptTerm = new List<Terms>();
-				foreach (var term in jsonTextScreen.Terms)
-				{
+	           
+	            var client = new HttpClient();
+	            client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
 
-					var profanityobject = new Terms
-					{
-						Term = term.Term,
-						Index = term.Index
+	            var uri = string.Format(this._amsConfig.TextModerationResultUrl, this._amsConfig.TeamName,
+	                reviewId); // + queryString;
 
-					};
+	            HttpResponseMessage response;
+	            byte[] byteData = Encoding.UTF8.GetBytes(profanity);
 
-					transcriptTerm.Add(profanityobject);
+	            using (var content = new ByteArrayContent(byteData))
+	            {
+	                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+	                response = await client.PutAsync(uri, content);
+	                resultJson = await response.Content.ReadAsStringAsync();
+	            }
+	            return response;
 
-				}
-				transcriptProfanity.Terms = transcriptTerm;
-				profanityList.Add(transcriptProfanity);
+	        }
+	        catch (Exception e)
+	        {
+	            //TODO Logging
+	            Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}",
+	                MethodBase.GetCurrentMethod().Name, reviewId);
+	            Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
+	            Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+	            throw;
+	        }
+	    }
 
-			}
-			return JsonConvert.SerializeObject(profanityList);
-		}
-		/// <summary>
-		/// Post transcript support file to the review API
-		/// </summary>
-		/// <param name="reviewId"></param>
-		/// <param name="profanity"></param>
-		/// <returns></returns>
-		private async Task<HttpResponseMessage> ExecuteAddTranscriptSupportFile(string reviewId, string profanity)
-		{
-			string resultJson = string.Empty;
-			var client = new HttpClient();
-			client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
-
-			var uri = string.Format(this._amsConfig.TextModerationResultUrl, this._amsConfig.TeamName, reviewId);// + queryString;
-
-			HttpResponseMessage response;
-			byte[] byteData = Encoding.UTF8.GetBytes(profanity);
-
-			using (var content = new ByteArrayContent(byteData))
-			{
-				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-				response = await client.PutAsync(uri, content);
-				resultJson = await response.Content.ReadAsStringAsync();
-			}
-			return response;
-
-		}
-
-		/// <summary>
-		/// Posts the Review Video object and returns a result.
-		/// </summary>
-		/// <param name="reviewVideoObj">Reviewvideo requestJson</param>
-		/// <returns>Review Id</returns>
-		private async Task<string> ExecuteCreateReviewApi(string reviewVideoObj)
+	    /// <summary>
+    /// Posts the Review Video object and returns a result.
+    /// </summary>
+    /// <param name="reviewVideoObj">Reviewvideo requestJson</param>
+    /// <returns>Review Id</returns>
+    public async Task<string> ExecuteCreateReviewApi(string reviewVideoObj)
 		{
 			string resultJson = string.Empty;
 			var client = new HttpClient();
-			client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
 
-			var uri = string.Format(this._amsConfig.ReviewCreationUrl, this._amsConfig.TeamName);// + queryString;
+            try
+            {
+                client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
 
-			HttpResponseMessage response;
-			byte[] byteData = Encoding.UTF8.GetBytes(reviewVideoObj);
+                var uri = string.Format(this._amsConfig.ReviewCreationUrl, this._amsConfig.TeamName);// + queryString;
 
-			using (var content = new ByteArrayContent(byteData))
-			{
-				content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-				response = await client.PostAsync(uri, content);
-				resultJson = await response.Content.ReadAsStringAsync();
-			}
-			return resultJson;
+                HttpResponseMessage response;
+                byte[] byteData = Encoding.UTF8.GetBytes(reviewVideoObj);
 
-		}
+                using (var content = new ByteArrayContent(byteData))
+                {
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    response = await client.PostAsync(uri, content);
+                    resultJson = await response.Content.ReadAsStringAsync();
+                }
+                return resultJson;
+            }
+            catch (Exception e)
+            {
+                //TODO Logging
+                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the ReviewObject is : {1} ", MethodBase.GetCurrentMethod().Name, reviewVideoObj);
+                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
+                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                throw;
+            }
+
+        }
 
 		/// <summary>
 		/// Fetch frames from the source frames list.
@@ -274,21 +238,31 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 		/// <param name="assetInfo">UploadAssetResult</param>
 		/// <param name="frameEvents">List of FrameEventBlobEntity</param>
 		/// <returns>Reviewvideo</returns>
-		private string CreateReviewRequestObject(UploadAssetResult assetInfo, List<FrameEventDetails> frameEvents)
+		public string CreateReviewRequestObject(UploadAssetResult assetInfo, List<FrameEventDetails> frameEvents)
 		{
+
 			List<ReviewVideo> reviewList = new List<ReviewVideo>();
 			ReviewVideo reviewVideoObj = new ReviewVideo();
-			reviewVideoObj.Type = Constants.VideoEntityType;
-			reviewVideoObj.Content = assetInfo.StreamingUrlDetails.SmoothUrl;
-			reviewVideoObj.ContentId = assetInfo.VideoName;
-			reviewVideoObj.CallbackEndpoint = this._amsConfig.ReviewCallBackUrl;
-			reviewVideoObj.TimeScale = frameEvents.Select(a => a.TimeScale).First().ToString();
-			reviewVideoObj.Metadata = GenerateMetadata(frameEvents);
-			//reviewVideoObj.Status = isPublish ? null : Constants.PublishedStatus;
-			reviewVideoObj.Status =  Constants.PublishedStatus;
-			reviewVideoObj.VideoFrames = GenerateVideoFrames(frameEvents);
-			reviewList.Add(reviewVideoObj);
-			return JsonConvert.SerializeObject(reviewList);
+			try
+			{
+				reviewVideoObj.Type = Constants.VideoEntityType;
+				reviewVideoObj.Content = assetInfo.StreamingUrlDetails.SmoothUrl;
+				reviewVideoObj.ContentId = assetInfo.VideoName;
+				reviewVideoObj.CallbackEndpoint = this._amsConfig.ReviewCallBackUrl;
+				reviewVideoObj.TimeScale = frameEvents.Count != 0 ? frameEvents.Select(a => a?.TimeScale).FirstOrDefault().ToString() : "0";
+				reviewVideoObj.Metadata = frameEvents.Count != 0? GenerateMetadata(frameEvents):null;
+				//reviewVideoObj.Status = isPublish ? null : Constants.PublishedStatus;
+				reviewVideoObj.Status = Constants.PublishedStatus;
+				reviewVideoObj.VideoFrames = null; //GenerateVideoFrames(frameEvents);
+				reviewList.Add(reviewVideoObj);
+				return JsonConvert.SerializeObject(reviewList);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("EXCEPTION HAPPENED AT {0} ", MethodBase.GetCurrentMethod().Name);
+				Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -315,10 +289,10 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 		private List<Metadata> GenerateMetadata(List<FrameEventDetails> frameEvents)
 		{
 			List<Metadata> metadata = new List<Metadata>();
-			FrameEventDetails adultScore = frameEvents.OrderByDescending(a => a.AdultConfidence).First();
+			FrameEventDetails adultScore = frameEvents.OrderByDescending(a => a?.AdultConfidence).FirstOrDefault();
 			if (UploadAssetResult.V2JSONPath != null)
 			{
-				FrameEventDetails racyScore = frameEvents.OrderByDescending(a => a.RacyConfidence).First();
+				FrameEventDetails racyScore = frameEvents.OrderByDescending(a => a?.RacyConfidence).FirstOrDefault();
 				metadata = new List<Metadata>()
 				{
 					new Metadata() {Key = "adultScore", Value = adultScore.AdultConfidence},
@@ -470,24 +444,35 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 
 			var client = new HttpClient();
 
-			client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
+            try
+            {
+                client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
 
-			var uri = string.Format(this._amsConfig.AddTranscriptUrl, this._amsConfig.TeamName, reviewId);
+                var uri = string.Format(this._amsConfig.AddTranscriptUrl, this._amsConfig.TeamName, reviewId);
 
-			HttpResponseMessage response;
-			byte[] byteData = File.ReadAllBytes(filepath);
+                HttpResponseMessage response;
+                byte[] byteData = File.ReadAllBytes(filepath);
 
 
-			using (var content = new ByteArrayContent(byteData))
-			{
-				//  content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-				response = await client.PutAsync(uri, content);
-				resultJson = await response.Content.ReadAsStringAsync();
-			}
+                using (var content = new ByteArrayContent(byteData))
+                {
+                    //  content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+                    response = await client.PutAsync(uri, content);
+                    resultJson = await response.Content.ReadAsStringAsync();
+                }
 
-			return response;
+                return response;
+            }
+            catch (Exception e)
+            {
+                //TODO Logging
+                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1} and the FilePath is : {2}", MethodBase.GetCurrentMethod().Name, reviewId, filepath);
+                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
+                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                throw;
+            }
 
-		}
+        }
 
 		/// <summary>
 		/// Identifying profanity words 
@@ -580,20 +565,34 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
 		/// <returns>Returns response of publish review.</returns>
 		private async Task<HttpResponseMessage> ExecutePublishReviewApi(string reviewId)
 		{
-			var client = new HttpClient();
-			client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
-			var uri = string.Format(this._amsConfig.PublishReviewUrl, this._amsConfig.TeamName, reviewId);
-			HttpResponseMessage response;
-			var method = new HttpMethod("PATCH");
-			var content = new StringContent("");
-			content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-			var request = new HttpRequestMessage(method, uri)
-			{
-				Content = content
-			};
-			response = await client.SendAsync(request);
-			return response;
-		}
+
+		    var client = new HttpClient();
+		    var resultJson = string.Empty;
+		    HttpResponseMessage response = new HttpResponseMessage();
+            try
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
+                var uri = string.Format(this._amsConfig.PublishReviewUrl, this._amsConfig.TeamName, reviewId);
+              
+                var method = new HttpMethod("PATCH");
+                var content = new StringContent("");
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var request = new HttpRequestMessage(method, uri)
+                {
+                    Content = content
+                };
+                response = await client.SendAsync(request);
+                return response;
+            }
+            catch (Exception e)
+            {
+                //TODO Logging
+                Console.WriteLine("EXCEPTION HAPPENED AT {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
+                Console.WriteLine("THE RESPONSE FFROM THE API IS : \n {0}", resultJson);
+                Console.WriteLine("EXCEPTION DETAILS : \n {0}", e);
+                throw;
+            }
+        }
 
 		#endregion
 

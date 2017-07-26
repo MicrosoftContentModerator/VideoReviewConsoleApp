@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.ContentModerator.BusinessEntities;
-using Microsoft.ContentModerator.AMSComponent;
 using System.IO;
-using Microsoft.ContentModerator.BusinessEntities.CustomExceptions;
-using Microsoft.ContentModerator.BusinessEntities.Entities;
-using Microsoft.ContentModerator.BusinessEntities.Enum;
 using System.Diagnostics;
+using Microsoft.ContentModerator.BusinessEntities.Entities;
+using Microsoft.ContentModerator.AMSComponent;
 
-namespace AMSComponentClient
+namespace Microsoft.ContentModerator.AMSComponentClient
 {
     class Program
     {
@@ -19,30 +12,80 @@ namespace AMSComponentClient
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            Console.WriteLine("\nEnter the fully qualified local path for Uploading the video \n ");
+            Console.Write("\nEnter the fully qualified local path for Uploading the video : ");
 
+            ConsoleKey response;
+            string confidence = string.Empty;
+            string videoPath = Console.ReadLine().Replace("\"", ",");
 
-            string videoPath = Console.ReadLine().Replace("\"", "");
             while (!File.Exists(videoPath))
             {
-                Console.WriteLine("\nPlease Enter Valid File path");
+                Console.Write("\nPlease Enter Valid File path : ");
                 videoPath = Console.ReadLine();
-
             }
 
-            string confidence = "0";
-            string filepath = videoPath.Replace(".mp4", ".json");
-            UploadAssetResult.V2JSONPath = filepath;
+            do
+            {
+                Console.Write("\nUse V2 JSON? [y/n] : ");
+                response = Console.ReadKey(false).Key;
+                if (response != ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                }
+
+            } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+            bool v2 = response == ConsoleKey.Y;
+            if (v2)
+            {
+                string filepath = videoPath.Replace(".mp4", ".json");
+                UploadAssetResult.V2JSONPath = filepath;
+                confidence = "0";
+            }
+            else
+            {
+                Console.Write("\nEnter Confidence Value between 0 to 1 : ");
+                confidence = Console.ReadLine();
+                double outval;
+                while (!double.TryParse(confidence, out outval) || outval > 1 || outval < 0)
+                {
+                    Console.Write("\nPlease Enter value between 0 to 1 : ");
+                    confidence = Console.ReadLine();
+                }
+            }
+            do
+            {
+                Console.Write("Generate Video Transcript? [y/n] : ");
+                response = Console.ReadKey(false).Key;
+                if (response != ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                }
+
+            } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+            bool generateVtt = response == ConsoleKey.Y;
+
+            VideoReviewProcess(videoPath, confidence, generateVtt);
+            sw.Stop();
+            Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
+            using (var stw = new StreamWriter("AmsPerf.txt", true))
+            {
+                stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
+            }
+            Console.ReadLine();
+        }
+
+        private static void VideoReviewProcess(string videoPath, string confidence, bool generateVtt)
+        {
             try
             {
                 AmsComponent amsComponent = new AmsComponent();
                 string reviewId = string.Empty;
-                if (amsComponent.ProcessVideoModeration(videoPath, confidence, ref reviewId))
+                if (amsComponent.ProcessVideoModeration(videoPath, confidence, ref reviewId, generateVtt))
                 {
                     if (!string.IsNullOrEmpty(reviewId))
-                        Console.WriteLine(" Review Id:" + reviewId);
+                        Console.WriteLine("Review Id: " + reviewId);
                     else
-                        Console.WriteLine(" Failed to generate Review Id");
+                        Console.WriteLine("Failed to generate Review Id");
                 }
                 else
                 {
@@ -51,16 +94,9 @@ namespace AMSComponentClient
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to process the video .." + e.ToString());
+                Console.WriteLine("Video Review process failed" + e.Message.ToString());
                 //TODO :Logging
             }
-            sw.Stop();
-            Console.WriteLine("Total Elapsed Time: {0}",sw.Elapsed);
-            using (var stw = new StreamWriter("AmsPerf.txt", true))
-            {
-                stw.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
-            }
-            Console.ReadLine();
         }
     }
 }

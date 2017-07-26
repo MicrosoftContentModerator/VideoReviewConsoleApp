@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.IO;
+using System.Diagnostics;
+using System.Reflection;
+using Microsoft.ContentModerator.BusinessEntities.Entities;
+using Microsoft.ContentModerator.BusinessEntities.Enum;
+using Microsoft.ContentModerator.RESTUtilityServices;
 using Microsoft.ContentModerator.BusinessEntities;
 using Microsoft.ContentModerator.MediaStorage;
 using Microsoft.ContentModerator.FFMPEG;
-using System.Threading.Tasks;
-using System.Net;
-using System.IO;
-using Microsoft.ContentModerator.BusinessEntities.Entities;
-using Microsoft.ContentModerator.BusinessEntities.CustomExceptions;
-using Microsoft.ContentModerator.BusinessEntities.Enum;
-using Microsoft.ContentModerator.ReviewAPI;
-using Microsoft.ContentModerator.RESTUtilityServices;
-using Microsoft.ContentModerator.Services;
-using Microsoft.WindowsAzure.MediaServices.Client;
-using System.Diagnostics;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -46,21 +42,21 @@ namespace Microsoft.ContentModerator.AMSComponent
         private string CompressVideo(string videoPath)
         {
             string ffmpegBlobUrl;
-            if (File.Exists(this._configObj.FfmpegExecutablePath))
+            if (File.Exists(_configObj.FfmpegExecutablePath))
             {
                 ffmpegBlobUrl = this._configObj.FfmpegExecutablePath;
             }
             else
             {
-                DownloadFileFromBlob(this._configObj.BlobFile, this._configObj.FfmpegExecutablePath);
-                ffmpegBlobUrl = this._configObj.FfmpegExecutablePath;
+                DownloadFileFromBlob(_configObj.BlobFile, this._configObj.FfmpegExecutablePath);
+                ffmpegBlobUrl = _configObj.FfmpegExecutablePath;
             }
             string videoFilePathCom = videoPath.Split('.')[0] + "_c.mp4";
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             processStartInfo.FileName = ffmpegBlobUrl;
-            processStartInfo.Arguments = "-i " + videoPath + " -vcodec libx264 -y -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 " + videoFilePathCom;
-            var process = System.Diagnostics.Process.Start(processStartInfo);
+            processStartInfo.Arguments = "-i " + videoPath + " -vcodec libx264 -n -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 " + videoFilePathCom;
+            var process = Process.Start(processStartInfo);
             process.WaitForExit();
             process.Close();
             return videoFilePathCom;
@@ -84,16 +80,15 @@ namespace Microsoft.ContentModerator.AMSComponent
                 fileStream.Close();
             }
         }
-        public bool ProcessVideoModeration(string videoFilePath, string confidenceVal, ref string reviewId, int type = 1)
+        public bool ProcessVideoModeration(string videoFilePath, string confidenceVal, ref string reviewId, bool generateVtt)
         {
             if (ValidatePreRequisites())
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                Console.WriteLine("\n Compressing Video.");
+                Console.WriteLine("\nVideo review process started...");
                 videoFilePath = CompressVideo(videoFilePath);
                 sw.Stop();
-                Console.WriteLine("\n Compression Elapsed Time: {0}", sw.Elapsed);
                 using (var stw = new StreamWriter("AmsPerf.txt", true))
                 {
                     stw.WriteLine("\n Compression Elapsed Time: {0}", sw.Elapsed);
@@ -110,7 +105,7 @@ namespace Microsoft.ContentModerator.AMSComponent
                         },
                         VideoFilePath = videoFilePath
                     };
-                reviewId = UploadAndModerateVideoByStream(streamRequest, confidenceVal);
+                reviewId = UploadAndModerateVideoByStream(streamRequest, confidenceVal, generateVtt);
             }
             else
             {
@@ -131,7 +126,7 @@ namespace Microsoft.ContentModerator.AMSComponent
         /// <param name="request">UploadVideoStreamRequest</param>
         /// <param name="confidenceVal">Confidence Value for filter</param>
         /// <returns>>Returns review id</returns>
-        public string UploadAndModerateVideoByStream(UploadVideoStreamRequest request, string confidenceVal)
+        public string UploadAndModerateVideoByStream(UploadVideoStreamRequest request, string confidenceVal, bool generateVtt)
         {
             VideoReviewApi reviewApIobj = new VideoReviewApi(this._configObj);
             VideoModerator videoModerator = new VideoModerator(this._configObj);
@@ -142,37 +137,26 @@ namespace Microsoft.ContentModerator.AMSComponent
             {
                 sw.WriteLine("File Size:{0} MB", ((double)request.VideoStream.Length / 1024 / 1024).ToString());
             }
-            if (videoModerator.UploadAndModerate(request, ref assetResultObj))
+            try
             {
 
-                FrameGenerator framegenerator = new FrameGenerator(this._configObj, confidenceVal);
-                List<FrameEventDetails> frameEntityList = framegenerator.GenerateAndSubmitFrames(assetResultObj);
-                reviewId = reviewApIobj.SubmitCreateReview(assetResultObj, frameEntityList);
+                if (videoModerator.UploadAndModerate(request, ref assetResultObj, generateVtt))
+                {
+                    FrameGenerator framegenerator = new FrameGenerator(_configObj, confidenceVal);
+                    List<FrameEventDetails> frameEntityList = framegenerator.GenerateAndSubmitFrames(assetResultObj, ref reviewId);
+                    reviewApIobj.ProcessReviewAPI(assetResultObj, frameEntityList, reviewId);
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO : Logging
+                Console.WriteLine("EXCEPTION HAPPENED AT METHOD : {0} for the video name : {1}",
+                    MethodBase.GetCurrentMethod().Name, request.VideoName);
+                Console.WriteLine("EXCEPTION DETAILS : ");
+                Console.WriteLine(e);
             }
 
             return reviewId;
-        }
-
-        /// <summary>
-        /// Uploads a Moderated video by video URL.
-        /// </summary>
-        /// <param name="request">UploadVideoURLRequest</param>
-        /// <returns>Retruns review id.</returns>
-        private string UploadAndModerateVideoByUrl(UploadVideoUrlRequest request, string confidenceVal)
-        {
-
-            byte[] videoData = DownloadVideoStreamFromUrl(request);
-
-            UploadVideoStreamRequest uploadvideoStreamRequest = new UploadVideoStreamRequest();
-
-            uploadvideoStreamRequest.VideoStream = videoData;
-
-            uploadvideoStreamRequest.VideoName = request.VideoName;//(this._configObj.DefaulVideopName + ".mp4");
-
-            uploadvideoStreamRequest.EncodingRequest = new EncodingRequest() { EncodingBitrate = request.EncodingRequest.EncodingBitrate };
-
-
-            return UploadAndModerateVideoByStream(uploadvideoStreamRequest, confidenceVal);
         }
         private byte[] DownloadVideoStreamFromUrl(UploadVideoUrlRequest uploadRequest)
         {

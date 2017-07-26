@@ -4,21 +4,16 @@ using System.Linq;
 using Microsoft.WindowsAzure.MediaServices.Client;
 using System.IO;
 using System.Threading;
-using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
-using System.Security.Cryptography;
-using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using System.ComponentModel;
 using Microsoft.ContentModerator.BusinessEntities;
 using Microsoft.ContentModerator.BusinessEntities.Enum;
 using Microsoft.ContentModerator.BusinessEntities.Entities;
-using Microsoft.ContentModerator.BusinessEntities.CustomExceptions;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Microsoft.ContentModerator.MediaStorage
 {
-
 	/// <summary>
 	/// Encapsulates all media releated operations such as upload a video into AMS,encoding, encrypting,moderation of a Video asset.
 	/// </summary>
@@ -90,14 +85,12 @@ namespace Microsoft.ContentModerator.MediaStorage
 		/// <returns>encoded asset</returns>
 		private void ConfigureEncodeAssetTask(EncodingRequest encoding, IJob job)
 		{
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Asset Encoding Task Added");
 			AmsEncoding amsEncoding = encoding.EncodingBitrate;
 			string encodingType = GetDescription(amsEncoding);
 			IMediaProcessor processor = GetLatestMediaProcessorByName(_amsConfigurations.MediaProcessor);
 			ITask task = job.Tasks.AddNew(_processedAssetName + " encoding task", processor, encodingType, TaskOptions.None);
 			// Specify the input asset to be encoded.
-			task.InputAssets.Add(this.asset);
+			task.InputAssets.Add(asset);
 			task.OutputAssets.AddNew(asset.Name + " media streaming", AssetCreationOptions.None);
 		}
 
@@ -194,8 +187,6 @@ namespace Microsoft.ContentModerator.MediaStorage
             {
                 File.Delete(outfolderPath[0]);
             }
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("\n Content Moderation Completed succesfully");
 
             return moderatedJson;
         }
@@ -206,42 +197,36 @@ namespace Microsoft.ContentModerator.MediaStorage
         /// <param name="uploadVideoRequest"></param>
         /// <param name="uploadResult"></param>
         /// <returns></returns>
-        public bool UploadAndModerate(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult)
-		{
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Asset Creation inprogress");
-
-			uploadResult.VideoName = uploadVideoRequest.VideoName;
-			this.asset = CreateAsset(uploadVideoRequest);
-			uploadResult.Asset = asset;
-			uploadResult.AssetId = asset.Id;
-
-			Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine("\n Asset Creation completed Successfully");
-
+        public bool UploadAndModerate(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult, bool generateVtt)
+        {
+            uploadResult.VideoName = uploadVideoRequest.VideoName;
+            this.asset = CreateAsset(uploadVideoRequest);
+            uploadResult.Asset = asset;
+            uploadResult.AssetId = asset.Id;
             // Encoding the asset , Moderating the asset, Generating transcript in parallel
             IAsset encodedAsset = null;
             //Creates the job for the tasks.
             IJob job = this._mediaContext.Jobs.Create("AMS Review Job");
 
             //Adding encoding task to job.
-            ConfigureEncodeAssetTask(uploadVideoRequest.EncodingRequest, job);			
-			if (UploadAssetResult.V2JSONPath == null)
+            ConfigureEncodeAssetTask(uploadVideoRequest.EncodingRequest, job);
+            if (UploadAssetResult.V2JSONPath == null)
             {
                 //adding CM task to job.
                 ConfigureContentModerationTask(job);
-			}
+            }
             //adding transcript task to job.
-            //ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
-            
-            Console.WriteLine("\n Executing AMS Job.");
+            if (generateVtt)
+            {
+                ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
+            }
+
             Stopwatch timer = new Stopwatch();
             timer.Start();
             //submit and execute job.
             job.Submit();
             job.GetExecutionProgressTask(new CancellationTokenSource().Token).Wait();
             timer.Stop();
-            Console.WriteLine("\n AMS Job Executed. Elapsed Time: {0}", timer.Elapsed);
             using (var sw = new StreamWriter("AmsPerf.txt", true))
             {
                 sw.WriteLine("AMS Job Elapsed Time: {0}", timer.Elapsed);
@@ -254,35 +239,31 @@ namespace Microsoft.ContentModerator.MediaStorage
 
             UploadAssetResult result = uploadResult;
             encodedAsset = job.OutputMediaAssets[0];
-            //GenerateTranscript(job.OutputMediaAssets.Last());
 
             if (UploadAssetResult.V2JSONPath == null)
-			{
+            {
                 result.ModeratedJson = GetCmDetail(job.OutputMediaAssets[1]);
                 // Check for valid Moderated JSON
                 var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(result.ModeratedJson);
 
-				if (jsonModerateObject == null)
-				{
-					return false;
-				}
+                if (jsonModerateObject == null)
+                {
+                    return false;
+                }
+            }
+            if (generateVtt)
+            {
+                GenerateTranscript(job.OutputMediaAssets.Last());
             }
 
-            Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Creating Streaming Url in progress");
-
-			uploadResult.StreamingUrlDetails = PublishAsset(encodedAsset);
-
-			Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine("\n Streaming Url generated successfully");
-
-			string downloadUrl = GenerateDownloadUrl(asset,uploadVideoRequest.VideoName);
-			uploadResult.StreamingUrlDetails.DownloadUri = downloadUrl;
-			uploadResult.VideoName = uploadVideoRequest.VideoName;
+            uploadResult.StreamingUrlDetails = PublishAsset(encodedAsset);
+            string downloadUrl = GenerateDownloadUrl(asset, uploadVideoRequest.VideoName);
+            uploadResult.StreamingUrlDetails.DownloadUri = downloadUrl;
+            uploadResult.VideoName = uploadVideoRequest.VideoName;
             uploadResult.VideoFilePath = uploadVideoRequest.VideoFilePath;
-			return true;
-		}
-		#endregion
+            return true;
+        }
+        #endregion
 
         public bool GenerateTranscript(IAsset asset)
         {
@@ -294,13 +275,9 @@ namespace Microsoft.ContentModerator.MediaStorage
                     ILocator locator = null;
                     policy = _mediaContext.AccessPolicies.Create("My 30 days readonly policy", TimeSpan.FromDays(360), AccessPermissions.Read);
                     locator = _mediaContext.Locators.CreateLocator(LocatorType.Sas, outputAsset, policy, DateTime.UtcNow.AddMinutes(-5));
-
                     DownloadAssetToLocal(outputAsset, outputFolder);
                     locator.Delete();
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine("\n Video Indexing Completed ");
-
-                return true;
+                 return true;
             }
             catch
             {
@@ -316,11 +293,8 @@ namespace Microsoft.ContentModerator.MediaStorage
 		/// <param name="assetUri"></param>
 		/// <param name="file"></param>
 		/// <returns></returns>
-		public void ConfigureTranscriptTask(string file, IJob job)
+		private void ConfigureTranscriptTask(string file, IJob job)
 		{
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.WriteLine("\n Video Indexing Task Added.");
-
 				string mediaProcessorName = this._amsConfigurations.MediaIndexer2MediaProcessor;
 				IMediaProcessor processor = _mediaContext.MediaProcessors.GetLatestMediaProcessorByName(mediaProcessorName);
 
@@ -328,6 +302,8 @@ namespace Microsoft.ContentModerator.MediaStorage
 				ITask task = job.Tasks.AddNew("AudioIndexing Task", processor, configuration, TaskOptions.None);
 				task.InputAssets.Add(this.asset);
 				task.OutputAssets.AddNew("AudioIndexing Output Asset", AssetCreationOptions.None);
+
+
 		}
 		/// <summary>
 		/// 
@@ -367,9 +343,6 @@ namespace Microsoft.ContentModerator.MediaStorage
 		/// <returns></returns>
 		private void ConfigureContentModerationTask(IJob job)
 		{
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Content Moderation Task Added.");
-
 			IMediaProcessor mp = _mediaContext.MediaProcessors.GetLatestMediaProcessorByName(this._amsConfigurations.ModerationProcessor);
 
 			string moderationConfiguration = System.IO.File.ReadAllText(this._amsConfigurations.ModerationConfigurationJson);
@@ -378,7 +351,6 @@ namespace Microsoft.ContentModerator.MediaStorage
 
 			contentModeratorTask.InputAssets.Add(asset);
 			contentModeratorTask.OutputAssets.AddNew(asset.Name + "_" + "Adult classifier output", AssetCreationOptions.None);
-
 			
 		}
 

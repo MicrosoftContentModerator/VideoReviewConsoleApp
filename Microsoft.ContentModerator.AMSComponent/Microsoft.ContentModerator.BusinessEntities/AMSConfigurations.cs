@@ -70,9 +70,7 @@ namespace Microsoft.ContentModerator.BusinessEntities
         public string TranscriptModerationUrl = String.Concat(ContentModeraotrApiEndpoint, "/moderate/v1.0/ProcessText/Screen/?language=eng");
 
         public string TextModerationResultUrl = String.Concat(ContentModeraotrApiEndpoint, "/review/v1.0/teams/{0}/reviews/{1}/transcriptsupport");
-
-        public string ValidateVttUrl = ConfigurationManager.AppSettings["ValidateVttUrl"];
-
+        
 		public string ReviewCallBackUrl = "";
         #endregion
 
@@ -97,7 +95,7 @@ namespace Microsoft.ContentModerator.BusinessEntities
 		        && !string.IsNullOrEmpty(BlobConnectionString) && !string.IsNullOrEmpty(BlobContainerName) &&
 		        !string.IsNullOrEmpty(TeamName) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
 			    && !string.IsNullOrEmpty(AddFramesUrl) && !string.IsNullOrEmpty(PublishReviewUrl) &&
-			    !string.IsNullOrEmpty(AddTranscriptUrl) && !string.IsNullOrEmpty(ValidateVttUrl))
+			    !string.IsNullOrEmpty(AddTranscriptUrl) )
 		    {
 			    return true;
 		    }

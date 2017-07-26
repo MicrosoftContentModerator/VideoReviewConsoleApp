@@ -39,5 +39,8 @@ namespace Microsoft.ContentModerator.BusinessEntities.Entities
 
         public string VideoFilePath { get; set; }
 
+
+        public static string VideoPath { get; set; }
+
     }
 }
