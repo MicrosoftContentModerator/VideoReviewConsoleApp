@@ -158,20 +158,6 @@ namespace Microsoft.ContentModerator.AMSComponent
 
             return reviewId;
         }
-        private byte[] DownloadVideoStreamFromUrl(UploadVideoUrlRequest uploadRequest)
-        {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uploadRequest.UploadVideoUrl);
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-            byte[] videoData;
-            using (StreamReader imageStream = new StreamReader(resp.GetResponseStream()))
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    imageStream.BaseStream.CopyTo(ms);
-                    videoData = ms.ToArray();
-                }
-            }
-            return videoData;
-        }
+        
     }
 }

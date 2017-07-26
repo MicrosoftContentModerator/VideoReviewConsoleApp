@@ -354,7 +354,7 @@ namespace Microsoft.ContentModerator.FFMPEG
 			processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			processStartInfo.FileName = ffmpegBlobUrl;
             processStartInfo.Arguments = arg;
-			var process = System.Diagnostics.Process.Start(processStartInfo);
+			var process = Process.Start(processStartInfo);
 			process.WaitForExit();
 		}
 
