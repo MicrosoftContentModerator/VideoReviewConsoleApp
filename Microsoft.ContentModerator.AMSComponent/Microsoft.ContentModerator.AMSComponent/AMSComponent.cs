@@ -150,10 +150,9 @@ namespace Microsoft.ContentModerator.AMSComponent
             catch (Exception e)
             {
                 //TODO : Logging
-                Console.WriteLine("EXCEPTION HAPPENED AT METHOD : {0} for the video name : {1}",
+                Console.WriteLine("An exception had occured in method : {0} for the video name : {1}",
                     MethodBase.GetCurrentMethod().Name, request.VideoName);
-                Console.WriteLine("EXCEPTION DETAILS : ");
-                Console.WriteLine(e);
+                throw;
             }
 
             return reviewId;

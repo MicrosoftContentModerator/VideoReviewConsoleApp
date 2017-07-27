@@ -86,10 +86,8 @@ namespace Microsoft.ContentModerator.FFMPEG
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("EXCEPTION HAPPENED AT METHOD : {0} , for Review Id : {1} ", MethodBase.GetCurrentMethod().Name,
+				Console.WriteLine("An exception had occured in method : {0} , for Review Id : {1} ", MethodBase.GetCurrentMethod().Name,
 					reviewId);
-				Console.WriteLine("EXCEPTION DETAILS : {0}", ex);
-				Console.WriteLine(ex);
 				throw new FrameGenerationException()
 				{
 					ReviewId = string.Empty,
