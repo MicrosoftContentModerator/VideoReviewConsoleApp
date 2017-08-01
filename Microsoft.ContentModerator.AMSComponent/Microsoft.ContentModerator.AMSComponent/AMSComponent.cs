@@ -55,7 +55,7 @@ namespace Microsoft.ContentModerator.AMSComponent
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             processStartInfo.FileName = ffmpegBlobUrl;
-            processStartInfo.Arguments = "-i " + videoPath + " -vcodec libx264 -n -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 " + videoFilePathCom;
+            processStartInfo.Arguments = "-i " + videoPath + " -vcodec libx265 -n -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 " + videoFilePathCom;
             var process = Process.Start(processStartInfo);
             process.WaitForExit();
             process.Close();
@@ -137,22 +137,13 @@ namespace Microsoft.ContentModerator.AMSComponent
             {
                 sw.WriteLine("File Size:{0} MB", ((double)request.VideoStream.Length / 1024 / 1024).ToString());
             }
-            try
-            {
 
-                if (videoModerator.UploadAndModerate(request, ref assetResultObj, generateVtt))
-                {
-                    FrameGenerator framegenerator = new FrameGenerator(_configObj, confidenceVal);
-                    List<FrameEventDetails> frameEntityList = framegenerator.GenerateAndSubmitFrames(assetResultObj, ref reviewId);
-                    reviewApIobj.ProcessReviewAPI(assetResultObj, frameEntityList, reviewId);
-                }
-            }
-            catch (Exception e)
+
+            if (videoModerator.UploadAndModerate(request, ref assetResultObj, generateVtt))
             {
-                //TODO : Logging
-                Console.WriteLine("An exception had occured in method : {0} for the video name : {1}",
-                    MethodBase.GetCurrentMethod().Name, request.VideoName);
-                throw;
+                FrameGenerator framegenerator = new FrameGenerator(_configObj, confidenceVal);
+                List<FrameEventDetails> frameEntityList = framegenerator.GenerateAndSubmitFrames(assetResultObj, ref reviewId);
+                reviewApIobj.ProcessReviewAPI(assetResultObj, frameEntityList, reviewId);
             }
 
             return reviewId;

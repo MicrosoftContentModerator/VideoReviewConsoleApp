@@ -89,6 +89,10 @@ namespace Microsoft.ContentModerator.MediaStorage
 			AmsEncoding amsEncoding = encoding.EncodingBitrate;
 			string encodingType = GetDescription(amsEncoding);
 			IMediaProcessor processor = GetLatestMediaProcessorByName(_amsConfigurations.MediaProcessor);
+            if(processor==null)
+            {
+                throw new Exception("Please check the configuration values, some configuration values are not matching.");
+            }
 			ITask task = job.Tasks.AddNew(_processedAssetName + " encoding task", processor, encodingType, TaskOptions.None);
 			// Specify the input asset to be encoded.
 			task.InputAssets.Add(asset);
@@ -236,7 +240,7 @@ namespace Microsoft.ContentModerator.MediaStorage
 
             if (job.State == JobState.Error)
             {
-                throw new Exception("Video Moderation Failed.");
+                throw new Exception("Video moderation has failed due to AMS Job error.");
             }
 
             UploadAssetResult result = uploadResult;
@@ -343,8 +347,12 @@ namespace Microsoft.ContentModerator.MediaStorage
 		private void ConfigureContentModerationTask(IJob job)
 		{
 			IMediaProcessor mp = _mediaContext.MediaProcessors.GetLatestMediaProcessorByName(this._amsConfigurations.ModerationProcessor);
+            if (mp == null)
+            {
+                throw new Exception("Please check the configuration values, some configuration values are not matching.");
+            }
 
-			string moderationConfiguration = System.IO.File.ReadAllText(this._amsConfigurations.ModerationConfigurationJson);
+            string moderationConfiguration = System.IO.File.ReadAllText(this._amsConfigurations.ModerationConfigurationJson);
 
 			ITask contentModeratorTask = job.Tasks.AddNew(asset.Name + "_" + "Adult classifier task", mp, moderationConfiguration, TaskOptions.None);
 

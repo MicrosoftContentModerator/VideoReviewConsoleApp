@@ -52,7 +52,7 @@ namespace Microsoft.ContentModerator.BusinessEntities
 		#region ReviewAPI Configurations
         private static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
 			
-	    public string TeamName = ConfigurationManager.AppSettings["TeamName"];
+	    public string TeamName = ConfigurationManager.AppSettings["TeamId"];
 		
 	    public string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ReviewApiSubscriptionKey"];
 

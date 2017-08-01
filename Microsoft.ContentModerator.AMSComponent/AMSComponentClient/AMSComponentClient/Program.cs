@@ -82,19 +82,32 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 string reviewId = string.Empty;
                 if (amsComponent.ProcessVideoModeration(videoPath, confidence, ref reviewId, generateVtt))
                 {
-                    if (!string.IsNullOrEmpty(reviewId))
-                        Console.WriteLine("Review Id: " + reviewId);
-                    else
-                        Console.WriteLine("Failed to generate Review Id");
+                    if (string.IsNullOrEmpty(reviewId))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Video Review process failed, there is no review id generated.");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Configurations check failed .. Please cross check the configurations");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Configurations check failed. Please cross check the configurations!");
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Video Review process failed" + e.Message.ToString());
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (e.InnerException != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Video Review process failed  " + e.InnerException.ToString());
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Video Review process failed  " + e.ToString());
+
+                }
                 //TODO :Logging
             }
         }

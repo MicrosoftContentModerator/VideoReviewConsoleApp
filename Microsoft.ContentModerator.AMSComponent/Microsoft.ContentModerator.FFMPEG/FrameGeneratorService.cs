@@ -4,12 +4,10 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
-using System.Reflection;
 using Newtonsoft.Json;
 using Microsoft.ContentModerator.BusinessEntities;
 using System.Threading.Tasks;
 using Microsoft.ContentModerator.BusinessEntities.Entities;
-using Microsoft.ContentModerator.BusinessEntities.CustomExceptions;
 using Microsoft.ContentModerator.RESTUtilityServices;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -50,56 +48,38 @@ namespace Microsoft.ContentModerator.FFMPEG
 			_confidence = Convert.ToDouble(confidenceVal);
 		}
 
-		#region Generate Frames
+        #region Generate Frames
 
-		/// <summary>
-		/// Generates And Submit Frames
-		/// </summary>
-		/// <param name="assetInfo">assetInfo</param>
-		/// <returns>Retruns Review Id</returns>
-		public List<FrameEventDetails> GenerateAndSubmitFrames(UploadAssetResult assetInfo, ref string reviewId)
-		{
-			List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
-			string reviewVideoRequestJson = string.Empty;
-			try
-			{
+        /// <summary>
+        /// Generates And Submit Frames
+        /// </summary>
+        /// <param name="assetInfo">assetInfo</param>
+        /// <returns>Retruns Review Id</returns>
+        public List<FrameEventDetails> GenerateAndSubmitFrames(UploadAssetResult assetInfo, ref string reviewId)
+        {
+            List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
+            string reviewVideoRequestJson = string.Empty;
+            PopulateFrameEvents(assetInfo.ModeratedJson, frameEventsList);
+            reviewVideoRequestJson = _reviewApIobj.CreateReviewRequestObject(assetInfo, frameEventsList);
 
-				PopulateFrameEvents(assetInfo.ModeratedJson, frameEventsList);
-				reviewVideoRequestJson = _reviewApIobj.CreateReviewRequestObject(assetInfo, frameEventsList);
+            _reviewId =
+                JsonConvert.DeserializeObject<List<string>>(_reviewApIobj.ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
+                    .FirstOrDefault();
+            reviewId = _reviewId;
+            _blobContainerName = _reviewId;
 
-				_reviewId =
-					JsonConvert.DeserializeObject<List<string>>(_reviewApIobj.ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
-						.FirstOrDefault();
-				reviewId = _reviewId;
-				_blobContainerName = _reviewId;
+            _container = _blobClient.GetContainerReference(_blobContainerName);
+            _container.CreateIfNotExists();
+            _container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
 
-				_container = _blobClient.GetContainerReference(_blobContainerName);
-				_container.CreateIfNotExists();
-				_container.SetPermissions(new BlobContainerPermissions {PublicAccess = BlobContainerPublicAccessType.Blob});
+            foreach (var item in frameEventsList)
+            {
+                item.FrameName = reviewId + item.FrameName;
+            }
 
-				foreach (var item in frameEventsList)
-				{
-					item.FrameName = reviewId + item.FrameName;
-				}
-                
-				return GenerateAndUploadFrameImages(frameEventsList,assetInfo);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("An exception had occured in method : {0} , for Review Id : {1} ", MethodBase.GetCurrentMethod().Name,
-					reviewId);
-				throw new FrameGenerationException()
-				{
-					ReviewId = string.Empty,
-					VideoName = assetInfo.VideoName,
-					AssetId = assetInfo.AssetId,
-					ErrorTitle = Constants.ErrorTitle,
-					ErrorReason = ex.Message
-				};
-			}
-			
+            return GenerateAndUploadFrameImages(frameEventsList, assetInfo);
 
-		}
+        }
 
         #endregion
 
@@ -124,9 +104,10 @@ namespace Microsoft.ContentModerator.FFMPEG
                     }
 
                 }
-                catch
+                catch(Exception ex)
                 {
-                    Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
+                    //Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
+                    throw;
                 }
                 var moderatedJsonV2 = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
 
@@ -227,7 +208,7 @@ namespace Microsoft.ContentModerator.FFMPEG
 			Directory.CreateDirectory(frameStorageLocalPath);
 
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("\n Video Frames Creation inprogress...");
+			Console.WriteLine("\nVideo Frames Creation inprogress...");
             Stopwatch sw = new Stopwatch();
             sw.Start();
 			#region Check FFMPEG.Exe
@@ -272,7 +253,7 @@ namespace Microsoft.ContentModerator.FFMPEG
                 stw.WriteLine("Frame Creation Elapsed time: {0}", sw.Elapsed);
             }
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine(" Frames(" + eventsList.Count() + ") created successfully.");
+			Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
 	
 
             Parallel.ForEach(eventsList, 
@@ -280,7 +261,7 @@ namespace Microsoft.ContentModerator.FFMPEG
                 evnt => AddFrameToBlobGenerationProcess(evnt, frameStorageLocalPath + "\\" + evnt.FrameName));
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine(" Frames(" + eventsList.Count() + ") uploaded successfully ");
+			Console.WriteLine("Frames(" + eventsList.Count() + ") uploaded successfully ");
 
 			if (Directory.Exists(frameStorageLocalPath))
 			{

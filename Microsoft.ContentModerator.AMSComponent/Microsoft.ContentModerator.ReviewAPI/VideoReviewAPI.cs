@@ -15,80 +15,73 @@ using Microsoft.ContentModerator.BusinessEntities.Entities;
 
 namespace Microsoft.ContentModerator.RESTUtilityServices
 {
-	/// <summary>
-	/// Represents a Video Review object.
-	/// </summary>
-	public class VideoReviewApi
-	{
-		private AmsConfigurations _amsConfig;
+    /// <summary>
+    /// Represents a Video Review object.
+    /// </summary>
+    public class VideoReviewApi
+    {
+        private AmsConfigurations _amsConfig;
 
-		/// <summary>
-		/// Instantiates an instance of VideoReviewAPI
-		/// </summary>
-		/// <param name="config">AMSConfigurations</param>
-		public VideoReviewApi(AmsConfigurations config)
-		{
-			this._amsConfig = config;
-		}
+        /// <summary>
+        /// Instantiates an instance of VideoReviewAPI
+        /// </summary>
+        /// <param name="config">AMSConfigurations</param>
+        public VideoReviewApi(AmsConfigurations config)
+        {
+            this._amsConfig = config;
+        }
 
-		#region Create and Submit Frames
+        #region Create and Submit Frames
 
 
-		public string ProcessReviewAPI(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
-		{
-			bool isSuccess = false;
-			bool isTranscript = false;
-			string reviewVideoRequestJson = string.Empty;
-			try
-			{
-				while (frameEntityList.Count > 0)
-				{
-					List<FrameEventDetails> tempList = new List<FrameEventDetails>();
-					tempList = FetchFrameEvents(frameEntityList, this._amsConfig.FrameBatchSize);
-					isSuccess = SubmitAddFramesReview(tempList, reviewId);
-				}
+        public string ProcessReviewAPI(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
+        {
+            bool isSuccess = false;
+            bool isTranscript = false;
+            string reviewVideoRequestJson = string.Empty;
 
-				string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
-				if (File.Exists(path))
-				{
-					if (ValidateVtt(path))
-					{
-						isTranscript = SubmitTranscript(reviewId, path);
-					}
-					if (isTranscript)
-					{
-						var sts = GenerateTextScreenProfanity(reviewId, path);
+            while (frameEntityList.Count > 0)
+            {
+                List<FrameEventDetails> tempList = new List<FrameEventDetails>();
+                tempList = FetchFrameEvents(frameEntityList, this._amsConfig.FrameBatchSize);
+                isSuccess = SubmitAddFramesReview(tempList, reviewId);
+            }
 
-					}
-					try
-					{
-						System.IO.File.Delete(path);
-					}
-					catch (Exception e)
-					{
-						Console.WriteLine(e.Message);
-					}
-				}
-				isSuccess = PublishReview(reviewId);
-				if (!isSuccess)
-				{
-					Console.WriteLine("PUBLISH REVIEW FAILED!!");
-				}
-				else
-				{
-					Console.ForegroundColor = ConsoleColor.DarkGreen;
-					Console.WriteLine("\n Review Created Successfully and the review Id {0}", reviewId);
-				}
+            string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
+            if (File.Exists(path))
+            {
+                if (ValidateVtt(path))
+                {
+                    isTranscript = SubmitTranscript(reviewId, path);
+                }
+                if (isTranscript)
+                {
+                    var sts = GenerateTextScreenProfanity(reviewId, path);
 
-				return reviewId;
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("An exception had occured at {0} API, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
-				throw;
-			}
+                }
+                try
+                {
+                    File.Delete(path);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            isSuccess = PublishReview(reviewId);
+            if (!isSuccess)
+            {
+                throw new Exception("Publish review failed.");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("\nReview Created Successfully and the review Id {0}", reviewId);
+            }
 
-		}
+            return reviewId;
+
+        }    
 
         
 		/// <summary>
@@ -185,15 +178,16 @@ namespace Microsoft.ContentModerator.RESTUtilityServices
                 {
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     response = await client.PostAsync(uri, content);
+                    if(response.StatusCode!=System.Net.HttpStatusCode.OK)
+                    {
+                        throw new Exception("ExecuteCreateReviewApi is failed to get a review");
+                    }
                     resultJson = await response.Content.ReadAsStringAsync();
                 }
                 return resultJson;
             }
             catch (Exception e)
             {
-                //TODO Logging
-                Console.WriteLine("An exception had occured at {0} API, for the ReviewObject is : {1} ", MethodBase.GetCurrentMethod().Name, reviewVideoObj);
-                Console.WriteLine("The response from the Api is : \n {0}", resultJson);
                 throw;
             }
 
