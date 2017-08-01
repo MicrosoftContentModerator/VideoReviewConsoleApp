@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.IO;
 using System.Diagnostics;
-using System.Reflection;
 using Microsoft.ContentModerator.BusinessEntities.Entities;
 using Microsoft.ContentModerator.BusinessEntities.Enum;
 using Microsoft.ContentModerator.RESTUtilityServices;
