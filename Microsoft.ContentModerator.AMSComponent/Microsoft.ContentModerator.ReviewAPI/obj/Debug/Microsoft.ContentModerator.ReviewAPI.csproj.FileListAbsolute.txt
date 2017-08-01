@@ -1,0 +1,87 @@
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Newtonsoft.Json.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.WindowsAzure.MediaServices.Client.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Practices.TransientFaultHandling.Core.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.Services.Client.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.WindowsAzure.MediaServices.Client.Common.FileEncryption.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.WindowsAzure.MediaServices.Client.Common.BlobTransfer.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.WindowsAzure.Storage.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.OData.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.Edm.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\System.Spatial.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Newtonsoft.Json.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Practices.TransientFaultHandling.Core.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.Services.Client.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.WindowsAzure.Storage.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.OData.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\Microsoft.Data.Edm.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\System.Spatial.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\de\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\es\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\fr\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\it\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ja\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ko\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ru\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hans\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hant\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\de\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\es\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\fr\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\it\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ja\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ko\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ru\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hans\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hant\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\de\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\es\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\fr\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\it\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ja\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ko\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ru\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hans\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hant\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\de\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\es\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\fr\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\it\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ja\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ko\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\ru\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hans\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\bin\Debug\zh-Hant\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\Latest_Code\FinalCode\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 transcript\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 transcript\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb

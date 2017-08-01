@@ -1,0 +1,59 @@
+E:\Umesh\Latest_Code\FinalCode\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\Latest_Code\FinalCode\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS Component V1\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1 transcript\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS Component V1 transcript\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1 transcript\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll.config
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.csprojResolveAssemblyReference.cache
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.BusinessEntities\obj\Debug\Microsoft.ContentModerator.BusinessEntities.pdb

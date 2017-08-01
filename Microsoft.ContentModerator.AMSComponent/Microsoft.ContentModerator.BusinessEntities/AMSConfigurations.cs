@@ -45,14 +45,14 @@ namespace Microsoft.ContentModerator.BusinessEntities
 
 		#region FFMPEG Configurations
 
-		public int FrameBatchSize = 20;
+		public int FrameBatchSize = 100;
 	
 		#endregion
 
 		#region ReviewAPI Configurations
         private static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
 			
-	    public string TeamName = ConfigurationManager.AppSettings["TeamName"];
+	    public string TeamId = ConfigurationManager.AppSettings["TeamId"];
 		
 	    public string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ReviewApiSubscriptionKey"];
 
@@ -95,7 +95,7 @@ namespace Microsoft.ContentModerator.BusinessEntities
 	    {
 		    if (!string.IsNullOrEmpty(MediaServiceAccountKey) && !string.IsNullOrEmpty(MediaServiceAccountName)
 		        && !string.IsNullOrEmpty(BlobConnectionString) && !string.IsNullOrEmpty(BlobContainerName) &&
-		        !string.IsNullOrEmpty(TeamName) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
+		        !string.IsNullOrEmpty(TeamId) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
 			    && !string.IsNullOrEmpty(AddFramesUrl) && !string.IsNullOrEmpty(PublishReviewUrl) &&
 			    !string.IsNullOrEmpty(AddTranscriptUrl) && !string.IsNullOrEmpty(ValidateVttUrl))
 		    {

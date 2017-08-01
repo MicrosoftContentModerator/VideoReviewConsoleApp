@@ -59,7 +59,7 @@ namespace Microsoft.ContentModerator.AMSComponent
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             processStartInfo.FileName = ffmpegBlobUrl;
-            processStartInfo.Arguments = "-i " + videoPath + " -vcodec libx264 -y -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 " + videoFilePathCom;
+            processStartInfo.Arguments = "-i \"" + videoPath + "\" -vcodec libx264 -n -crf 32 -preset veryfast -vf scale=640:-1 -c:a aac -aq 1 -ac 2 -threads 0 \"" + videoFilePathCom + "\"";
             var process = System.Diagnostics.Process.Start(processStartInfo);
             process.WaitForExit();
             process.Close();
@@ -84,7 +84,7 @@ namespace Microsoft.ContentModerator.AMSComponent
                 fileStream.Close();
             }
         }
-        public bool ProcessVideoModeration(string videoFilePath, string confidenceVal, ref string reviewId, int type = 1)
+        public bool ProcessVideoModeration(string videoFilePath, string confidenceVal, ref string reviewId, bool generateVtt)
         {
             if (ValidatePreRequisites())
             {
@@ -110,7 +110,7 @@ namespace Microsoft.ContentModerator.AMSComponent
                         },
                         VideoFilePath = videoFilePath
                     };
-                reviewId = UploadAndModerateVideoByStream(streamRequest, confidenceVal);
+                reviewId = UploadAndModerateVideoByStream(streamRequest, confidenceVal, generateVtt);
             }
             else
             {
@@ -131,7 +131,7 @@ namespace Microsoft.ContentModerator.AMSComponent
         /// <param name="request">UploadVideoStreamRequest</param>
         /// <param name="confidenceVal">Confidence Value for filter</param>
         /// <returns>>Returns review id</returns>
-        public string UploadAndModerateVideoByStream(UploadVideoStreamRequest request, string confidenceVal)
+        public string UploadAndModerateVideoByStream(UploadVideoStreamRequest request, string confidenceVal, bool generateVtt)
         {
             VideoReviewApi reviewApIobj = new VideoReviewApi(this._configObj);
             VideoModerator videoModerator = new VideoModerator(this._configObj);
@@ -142,7 +142,7 @@ namespace Microsoft.ContentModerator.AMSComponent
             {
                 sw.WriteLine("File Size:{0} MB", ((double)request.VideoStream.Length / 1024 / 1024).ToString());
             }
-            if (videoModerator.UploadAndModerate(request, ref assetResultObj))
+            if (videoModerator.UploadAndModerate(request, ref assetResultObj,generateVtt))
             {
 
                 FrameGenerator framegenerator = new FrameGenerator(this._configObj, confidenceVal);
@@ -153,27 +153,27 @@ namespace Microsoft.ContentModerator.AMSComponent
             return reviewId;
         }
 
-        /// <summary>
-        /// Uploads a Moderated video by video URL.
-        /// </summary>
-        /// <param name="request">UploadVideoURLRequest</param>
-        /// <returns>Retruns review id.</returns>
-        private string UploadAndModerateVideoByUrl(UploadVideoUrlRequest request, string confidenceVal)
-        {
+        ///// <summary>
+        ///// Uploads a Moderated video by video URL.
+        ///// </summary>
+        ///// <param name="request">UploadVideoURLRequest</param>
+        ///// <returns>Retruns review id.</returns>
+        //private string UploadAndModerateVideoByUrl(UploadVideoUrlRequest request, string confidenceVal)
+        //{
 
-            byte[] videoData = DownloadVideoStreamFromUrl(request);
+        //    byte[] videoData = DownloadVideoStreamFromUrl(request);
 
-            UploadVideoStreamRequest uploadvideoStreamRequest = new UploadVideoStreamRequest();
+        //    UploadVideoStreamRequest uploadvideoStreamRequest = new UploadVideoStreamRequest();
 
-            uploadvideoStreamRequest.VideoStream = videoData;
+        //    uploadvideoStreamRequest.VideoStream = videoData;
 
-            uploadvideoStreamRequest.VideoName = request.VideoName;//(this._configObj.DefaulVideopName + ".mp4");
+        //    uploadvideoStreamRequest.VideoName = request.VideoName;//(this._configObj.DefaulVideopName + ".mp4");
 
-            uploadvideoStreamRequest.EncodingRequest = new EncodingRequest() { EncodingBitrate = request.EncodingRequest.EncodingBitrate };
+        //    uploadvideoStreamRequest.EncodingRequest = new EncodingRequest() { EncodingBitrate = request.EncodingRequest.EncodingBitrate };
 
 
-            return UploadAndModerateVideoByStream(uploadvideoStreamRequest, confidenceVal);
-        }
+        //    return UploadAndModerateVideoByStream(uploadvideoStreamRequest, confidenceVal);
+        //}
         private byte[] DownloadVideoStreamFromUrl(UploadVideoUrlRequest uploadRequest)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uploadRequest.UploadVideoUrl);

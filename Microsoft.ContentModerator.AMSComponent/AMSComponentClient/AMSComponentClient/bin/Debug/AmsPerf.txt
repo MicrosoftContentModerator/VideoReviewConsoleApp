@@ -1,0 +1,126 @@
+File Size:14.5177021026611 MB
+AMS Job Elapsed Time: 00:03:26.2155158
+File Size:3.81942176818848 MB
+
+ Compression Elapsed Time: 00:00:02.8115196
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:04:41.8285212
+Frame Creation Elapsed time: 00:00:01.4581489
+
+Total Elapsed Time: 00:09:22.7833789
+
+ Compression Elapsed Time: 00:00:03.5484916
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:02:07.9693312
+Frame Creation Elapsed time: 00:00:01.4883893
+
+ Compression Elapsed Time: 00:00:02.6872069
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:02:15.7932811
+Frame Creation Elapsed time: 00:00:01.5235294
+
+Total Elapsed Time: 00:09:59.9610904
+
+ Compression Elapsed Time: 00:00:00.3017198
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:14.5236963
+Frame Creation Elapsed time: 00:00:03.0915095
+Total Elapsed Time: 00:03:09.3284960
+
+ Compression Elapsed Time: 00:00:00.2049829
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:24.5455651
+Frame Creation Elapsed time: 00:00:02.9330911
+Total Elapsed Time: 00:01:58.4888123
+
+ Compression Elapsed Time: 00:00:00.2164390
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:24.3454391
+Frame Creation Elapsed time: 00:00:03.2577395
+
+ Compression Elapsed Time: 00:00:00.1801377
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:19.3668460
+Frame Creation Elapsed time: 00:00:02.8669149
+
+ Compression Elapsed Time: 00:00:00.1852535
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:22.3907304
+Frame Creation Elapsed time: 00:00:02.8796155
+
+ Compression Elapsed Time: 00:00:00.1743490
+File Size:3.99673557281494 MB
+AMS Job Elapsed Time: 00:01:18.0197990
+Frame Creation Elapsed time: 00:00:03.1012382
+Total Elapsed Time: 00:02:21.4523616
+
+ Compression Elapsed Time: 00:00:00.1551443
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:01.8194945
+Frame Creation Elapsed time: 00:00:01.0960746
+Total Elapsed Time: 00:01:18.5387951
+
+ Compression Elapsed Time: 00:00:00.1531862
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:00:59.2488615
+Frame Creation Elapsed time: 00:00:01.0025520
+
+ Compression Elapsed Time: 00:00:00.2082785
+File Size:1.47714710235596 MB
+
+ Compression Elapsed Time: 00:00:00.3534559
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:07.7660462
+Frame Creation Elapsed time: 00:00:01.4790935
+Total Elapsed Time: 00:01:35.5545574
+
+ Compression Elapsed Time: 00:00:00.2485710
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:08.3286883
+Frame Creation Elapsed time: 00:00:00.7672096
+Total Elapsed Time: 00:02:28.8354893
+
+ Compression Elapsed Time: 00:00:02.9236677
+File Size:1.21662521362305 MB
+AMS Job Elapsed Time: 00:00:44.2541169
+Frame Creation Elapsed time: 00:00:01.5320117
+Total Elapsed Time: 00:01:17.1608125
+
+ Compression Elapsed Time: 00:00:34.1592038
+
+ Compression Elapsed Time: 00:00:02.9617959
+Total Elapsed Time: 00:00:04.8394939
+
+ Compression Elapsed Time: 00:00:20.1205459
+Total Elapsed Time: 00:00:22.5048714
+
+ Compression Elapsed Time: 00:00:04.9953407
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:14.1800065
+Frame Creation Elapsed time: 00:00:42.0597805
+Total Elapsed Time: 00:03:35.5406024
+
+ Compression Elapsed Time: 00:00:07.6733666
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:12.4346536
+Frame Creation Elapsed time: 00:00:41.4711320
+
+ Compression Elapsed Time: 00:00:03.2236673
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:01:06.9922393
+Frame Creation Elapsed time: 00:00:47.7005376
+
+ Compression Elapsed Time: 00:00:03.2874328
+File Size:1.47714710235596 MB
+AMS Job Elapsed Time: 00:00:59.1342274
+
+ Compression Elapsed Time: 00:06:25.2336636
+File Size:61.5392036437988 MB
+AMS Job Elapsed Time: 00:18:08.9765278
+Total Elapsed Time: 00:24:53.4395387
+
+ Compression Elapsed Time: 00:00:00.7188993
+File Size:61.5392036437988 MB
+AMS Job Elapsed Time: 00:19:24.3250246
+Frame Creation Elapsed time: 00:01:19.7693578
+Total Elapsed Time: 00:27:05.3060163

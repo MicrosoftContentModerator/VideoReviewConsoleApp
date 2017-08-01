@@ -206,7 +206,7 @@ namespace Microsoft.ContentModerator.MediaStorage
         /// <param name="uploadVideoRequest"></param>
         /// <param name="uploadResult"></param>
         /// <returns></returns>
-        public bool UploadAndModerate(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult)
+        public bool UploadAndModerate(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult, bool generateVtt)
 		{
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine("\n Asset Creation inprogress");
@@ -232,7 +232,10 @@ namespace Microsoft.ContentModerator.MediaStorage
                 ConfigureContentModerationTask(job);
 			}
             //adding transcript task to job.
-            //ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
+            if (generateVtt)
+            {
+                ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
+            }
             
             Console.WriteLine("\n Executing AMS Job.");
             Stopwatch timer = new Stopwatch();
@@ -254,7 +257,6 @@ namespace Microsoft.ContentModerator.MediaStorage
 
             UploadAssetResult result = uploadResult;
             encodedAsset = job.OutputMediaAssets[0];
-            //GenerateTranscript(job.OutputMediaAssets.Last());
 
             if (UploadAssetResult.V2JSONPath == null)
 			{
@@ -266,6 +268,10 @@ namespace Microsoft.ContentModerator.MediaStorage
 				{
 					return false;
 				}
+            }
+            if (generateVtt)
+            {
+                GenerateTranscript(job.OutputMediaAssets.Last());
             }
 
             Console.ForegroundColor = ConsoleColor.White;

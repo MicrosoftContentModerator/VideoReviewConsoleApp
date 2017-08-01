@@ -1,0 +1,24 @@
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.RESTUtilityServices.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1 transcript\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 transcript\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.RESTUtilityServices.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.RESTUtilityServices.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\Review\Microsoft.ContentModerator.ReviewAPI.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.RESTUtilityServices.csprojResolveAssemblyReference.cache
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.ReviewAPI\obj\Debug\Microsoft.ContentModerator.ReviewAPI.pdb

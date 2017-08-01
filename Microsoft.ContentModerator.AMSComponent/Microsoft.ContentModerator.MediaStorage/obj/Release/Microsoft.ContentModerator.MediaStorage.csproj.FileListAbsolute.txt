@@ -1,0 +1,129 @@
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.dll.config
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.BusinessEntities.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Edm.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.OData.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Services.Client.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Practices.TransientFaultHandling.Core.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Configuration.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Common.BlobTransfer.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Common.FileEncryption.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Extensions.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Storage.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Newtonsoft.Json.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.IdentityModel.Tokens.Jwt.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.Spatial.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.BusinessEntities.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Edm.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.OData.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Services.Client.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Practices.TransientFaultHandling.Core.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Storage.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Newtonsoft.Json.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.IdentityModel.Tokens.Jwt.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.Spatial.xml
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.Edm.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.OData.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.Services.Client.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\System.Spatial.resources.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\obj\Release\Microsoft.ContentModerator.MediaStorage.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\obj\Release\Microsoft.ContentModerator.MediaStorage.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\obj\Release\Microsoft.ContentModerator.MediaStorage.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.dll.config
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.MediaStorage.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.BusinessEntities.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Edm.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.OData.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Services.Client.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Practices.TransientFaultHandling.Core.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Configuration.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Common.BlobTransfer.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Common.FileEncryption.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.MediaServices.Client.Extensions.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Storage.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Newtonsoft.Json.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.Spatial.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.ContentModerator.BusinessEntities.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Edm.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.OData.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Data.Services.Client.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.Practices.TransientFaultHandling.Core.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Microsoft.WindowsAzure.Storage.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\Newtonsoft.Json.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.IdentityModel.Tokens.Jwt.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\System.Spatial.xml
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.Edm.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.OData.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\Microsoft.Data.Services.Client.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\de\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\es\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\fr\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\it\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ja\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ko\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\ru\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hans\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\bin\Release\zh-Hant\System.Spatial.resources.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\obj\Release\Microsoft.ContentModerator.MediaStorage.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.MediaStorage\obj\Release\Microsoft.ContentModerator.MediaStorage.pdb

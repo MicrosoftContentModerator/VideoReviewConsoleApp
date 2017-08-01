@@ -1,0 +1,60 @@
+E:\Umesh\Latest_Code\FinalCode\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\Latest_Code\FinalCode\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\Latest_Code\FinalCode\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\Latest_Code\FinalCode\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\Latest_Code\FinalCode\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component Code Drop-10May2017\AMSComponent\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V2\Code Checkin\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V2\Code Checkin\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS Component V1\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 transcript\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS Component V1 transcript\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1 transcript\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1 transcript\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+E:\Umesh\AMS V1 and V2 code drop\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+C:\Users\v-aljeng\Downloads\AMS Component\AMS Component V1 and V2\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll.config
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Dlls\Frame\Microsoft.ContentModerator.FFMPEG.pdb
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.csprojResolveAssemblyReference.cache
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.dll
+C:\Users\v-aljeng\Desktop\ams\AMS Component V1 and V2\Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.FFMPEG\obj\Debug\Microsoft.ContentModerator.FFMPEG.pdb
