@@ -12,15 +12,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            Console.Write("\nEnter the fully qualified local path for Uploading the video : ");
-
+            Console.WriteLine("\nEnter the fully qualified local path for Uploading the video : \n ");
             ConsoleKey response;
             string confidence = string.Empty;
-            string videoPath = Console.ReadLine().Replace("\"", ",");
-
+            string videoPath = Console.ReadLine().Replace("\"", "");
             while (!File.Exists(videoPath))
             {
-                Console.Write("\nPlease Enter Valid File path : ");
+                Console.WriteLine("\nPlease Enter Valid File path");
                 videoPath = Console.ReadLine();
             }
 
