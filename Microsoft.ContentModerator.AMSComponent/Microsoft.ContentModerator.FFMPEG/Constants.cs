@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.ContentModerator.FFMPEG
 {
-    class Constants
+    public class Constants
     {
-        internal static readonly string ErrorTitle="Frame Generation Exception";
+        internal static readonly string ErrorTitle = "Frame Generation Exception";
     }
 }

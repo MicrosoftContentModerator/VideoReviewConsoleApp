@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="jint, Version=2.10.4.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\packages\jint.2.10.4\lib\net45\jint.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.ContentModerator.BusinessEntities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dlls\BusinessEntityDlls\Microsoft.ContentModerator.BusinessEntities.dll</HintPath>
@@ -40,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.Contracts" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,6 +58,7 @@
     <Compile Include="Entities\VideoFramesReview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VideoReviewAPI.cs" />
+    <Compile Include="VttValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

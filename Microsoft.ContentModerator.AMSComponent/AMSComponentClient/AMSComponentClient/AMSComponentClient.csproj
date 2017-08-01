@@ -7,8 +7,8 @@
     <ProjectGuid>{8A520997-867D-49AB-AFE2-482EC8A3A0A3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AMSComponentClient</RootNamespace>
-    <AssemblyName>AMSComponentClient</AssemblyName>
+    <RootNamespace>Microsoft.ContentModerator.AMSComponentClient</RootNamespace>
+    <AssemblyName>Microsoft.ContentModerator.AMSComponentClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
