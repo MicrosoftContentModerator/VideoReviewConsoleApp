@@ -1,24 +1,81 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.ContentModerator.BusinessEntities.Entities;
-using Microsoft.ContentModerator.AMSComponent;
+using System.Collections.Generic;
+
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
     class Program
     {
+        static string videoPath = string.Empty;
+        static string confidence = string.Empty;
+        static bool generateVtt = false;
+
+
         static void Main(string[] args)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            GetUserInputs();
+
+            AmsComponent amsComponent = new AmsComponent();
+            AmsConfigurations amsConfigurations = new AmsConfigurations();
+
+            VideoModerator videoModerator = new VideoModerator(amsConfigurations);
+            UploadAssetResult uploadResult = new UploadAssetResult();
+            FrameGenerator frameGenerator = new FrameGenerator(amsConfigurations, confidence);
+            VideoReviewApi videoReviewApi = new VideoReviewApi(amsConfigurations);
+
+            var compressedVideoPath = amsComponent.CompressVideo(videoPath);
+            UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
+            string reviewId = string.Empty;
+
+            Console.WriteLine("\nVideo review process started...");
+
+            if (videoModerator.UploadAndModerate(uploadVideoStreamRequest, ref uploadResult, generateVtt))
+            {
+                List<FrameEventDetails> frameEntityList = frameGenerator.GenerateAndSubmitFrames(uploadResult, ref reviewId);
+                videoReviewApi.ProcessReviewAPI(uploadResult, frameEntityList, reviewId);
+
+            }
+
+            Console.WriteLine("\nVideo review successfully completed...");
+
+            sw.Stop();
+            Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
+            using (var stw = new StreamWriter("AmsPerf.txt", true))
+            {
+                stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
+            }
+            Console.ReadLine();
+        }
+
+    
+        private static UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
+        {
+            return
+                               new UploadVideoStreamRequest
+                               {
+                                   VideoStream = File.ReadAllBytes(compressedVideoFilePath),
+                                   VideoName = Path.GetFileName(compressedVideoFilePath),
+                                   EncodingRequest = new EncodingRequest()
+                                   {
+                                       EncodingBitrate = AmsEncoding.AdaptiveStreaming
+                                   },
+                                   VideoFilePath = compressedVideoFilePath
+                               };
+        }
+
+        private static  void  GetUserInputs()
+        {
             Console.WriteLine("\nEnter the fully qualified local path for Uploading the video : \n ");
             ConsoleKey response;
-            string confidence = string.Empty;
-            string videoPath = Console.ReadLine().Replace("\"", "");
+            videoPath = Console.ReadLine().Replace("\"", "");
             while (!File.Exists(videoPath))
             {
-                Console.WriteLine("\nPlease Enter Valid File path");
+                Console.WriteLine("\nPlease Enter Valid File path : ");
                 videoPath = Console.ReadLine();
             }
 
@@ -43,10 +100,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 Console.Write("\nEnter Confidence Value between 0 to 1 : ");
                 confidence = Console.ReadLine();
+                Console.WriteLine();
                 double outval;
                 while (!double.TryParse(confidence, out outval) || outval > 1 || outval < 0)
                 {
-                    Console.Write("\nPlease Enter value between 0 to 1 : ");
+                    Console.WriteLine("\nPlease Enter value between 0 to 1 : ");
                     confidence = Console.ReadLine();
                 }
             }
@@ -60,54 +118,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
 
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-            bool generateVtt = response == ConsoleKey.Y;
-
-            VideoReviewProcess(videoPath, confidence, generateVtt);
-            sw.Stop();
-            Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
-            using (var stw = new StreamWriter("AmsPerf.txt", true))
-            {
-                stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
-            }
-            Console.ReadLine();
+            generateVtt = response == ConsoleKey.Y;
+                
         }
 
-        private static void VideoReviewProcess(string videoPath, string confidence, bool generateVtt)
-        {
-            try
-            {
-                AmsComponent amsComponent = new AmsComponent();
-                string reviewId = string.Empty;
-                if (amsComponent.ProcessVideoModeration(videoPath, confidence, ref reviewId, generateVtt))
-                {
-                    if (string.IsNullOrEmpty(reviewId))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Video Review process failed, there is no review id generated.");
-                    }
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Configurations check failed. Please cross check the configurations!");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                if (e.InnerException != null)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Video Review process failed  " + e.InnerException.ToString());
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Video Review process failed  " + e.ToString());
-
-                }
-                //TODO :Logging
-            }
-        }
+     
     }
 }

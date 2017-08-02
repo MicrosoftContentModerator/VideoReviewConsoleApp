@@ -1,18 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.ContentModerator.MediaStorage", "Microsoft.ContentModerator.MediaStorage\Microsoft.ContentModerator.MediaStorage.csproj", "{B4FB98BB-CE70-41DA-9A6D-233FBD91C0B0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.ContentModerator.FFMPEG", "Microsoft.ContentModerator.FFMPEG\Microsoft.ContentModerator.FFMPEG.csproj", "{36D00F4D-7AB4-43BE-BA36-0ED8CA07A77A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.ContentModerator.BusinessEntities", "Microsoft.ContentModerator.BusinessEntities\Microsoft.ContentModerator.BusinessEntities.csproj", "{4AA8D15F-EBD9-4E11-8BEE-210DAA97121C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.ContentModerator.RESTUtilityServices", "Microsoft.ContentModerator.ReviewAPI\Microsoft.ContentModerator.RESTUtilityServices.csproj", "{33F4F951-26A3-4B09-839F-7470D5FB3841}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.ContentModerator.AMSComponent", "Microsoft.ContentModerator.AMSComponent\Microsoft.ContentModerator.AMSComponent.csproj", "{954EEE60-6C55-403D-AE01-708BFF7B79C3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMSComponentClient", "AMSComponentClient\AMSComponentClient\AMSComponentClient.csproj", "{8A520997-867D-49AB-AFE2-482EC8A3A0A3}"
 EndProject
 Global
@@ -21,26 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B4FB98BB-CE70-41DA-9A6D-233FBD91C0B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4FB98BB-CE70-41DA-9A6D-233FBD91C0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4FB98BB-CE70-41DA-9A6D-233FBD91C0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4FB98BB-CE70-41DA-9A6D-233FBD91C0B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36D00F4D-7AB4-43BE-BA36-0ED8CA07A77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36D00F4D-7AB4-43BE-BA36-0ED8CA07A77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36D00F4D-7AB4-43BE-BA36-0ED8CA07A77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36D00F4D-7AB4-43BE-BA36-0ED8CA07A77A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4AA8D15F-EBD9-4E11-8BEE-210DAA97121C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AA8D15F-EBD9-4E11-8BEE-210DAA97121C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AA8D15F-EBD9-4E11-8BEE-210DAA97121C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AA8D15F-EBD9-4E11-8BEE-210DAA97121C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33F4F951-26A3-4B09-839F-7470D5FB3841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33F4F951-26A3-4B09-839F-7470D5FB3841}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33F4F951-26A3-4B09-839F-7470D5FB3841}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33F4F951-26A3-4B09-839F-7470D5FB3841}.Release|Any CPU.Build.0 = Release|Any CPU
-		{954EEE60-6C55-403D-AE01-708BFF7B79C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{954EEE60-6C55-403D-AE01-708BFF7B79C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{954EEE60-6C55-403D-AE01-708BFF7B79C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{954EEE60-6C55-403D-AE01-708BFF7B79C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A520997-867D-49AB-AFE2-482EC8A3A0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A520997-867D-49AB-AFE2-482EC8A3A0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A520997-867D-49AB-AFE2-482EC8A3A0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU

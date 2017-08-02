@@ -37,7 +37,7 @@ namespace Microsoft.ContentModerator.AMSComponent
         {
             return new AmsConfigurations();
         }
-        private string CompressVideo(string videoPath)
+        public string CompressVideo(string videoPath)
         {
             string ffmpegBlobUrl;
             if (File.Exists(_configObj.FfmpegExecutablePath))
@@ -46,8 +46,7 @@ namespace Microsoft.ContentModerator.AMSComponent
             }
             else
             {
-                DownloadFileFromBlob(_configObj.BlobFile, this._configObj.FfmpegExecutablePath);
-                ffmpegBlobUrl = _configObj.FfmpegExecutablePath;
+                throw new Exception("ffmpeg.exe is missing. Please check the Lib folder");
             }
             string videoFilePathCom = videoPath.Split('.')[0] + "_c.mp4";
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
