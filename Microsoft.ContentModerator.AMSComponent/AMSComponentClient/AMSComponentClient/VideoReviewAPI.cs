@@ -19,20 +19,38 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     public class VideoReviewApi
     {
         private AmsConfigurations _amsConfig;
+        private FrameGenerator framegenerator;
 
         /// <summary>
         /// Instantiates an instance of VideoReviewAPI
         /// </summary>
         /// <param name="config">AMSConfigurations</param>
-        public VideoReviewApi(AmsConfigurations config)
+        public VideoReviewApi(AmsConfigurations config, string confidence)
         {
-            this._amsConfig = config;
+            _amsConfig = config;
+            framegenerator = new FrameGenerator(_amsConfig, confidence);
         }
 
         #region Create and Submit Frames
 
+        public string CreateVideoReviewInContentModerator(UploadAssetResult uploadAssetResult)
+        {
+            string reviewId = string.Empty;
+            List<FrameEventDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
+            var reviewVideoRequestJson = CreateReviewRequestObject(uploadAssetResult, frameEntityList);
+            if(string.IsNullOrWhiteSpace(reviewVideoRequestJson))
+            {
+                throw new Exception("Video review process failed in CreateVideoReviewInContentModerator");
+            }
+            reviewId =
+               JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
+                   .FirstOrDefault();
+            frameEntityList = framegenerator.GenerateAndUploadFrameImages(frameEntityList ,uploadAssetResult, reviewId);
+            CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId);
+            return reviewId;
+        }
 
-        public string ProcessReviewAPI(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
+        public string CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
         {
             bool isSuccess = false;
             bool isTranscript = false;

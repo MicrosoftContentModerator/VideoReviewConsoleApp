@@ -55,8 +55,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             process.WaitForExit();
             process.Close();
             return videoFilePathCom;
-
-
         }
       
         private bool ValidatePreRequisites()

@@ -200,6 +200,73 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="uploadVideoRequest"></param>
         /// <param name="uploadResult"></param>
         /// <returns></returns>
+        /// 
+        public bool CreateAzureMediaServicesJobToModerateVideo(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult, bool generateVtt)
+        {
+            asset = CreateAsset(uploadVideoRequest);
+            uploadResult.VideoName = uploadVideoRequest.VideoName;
+            uploadResult.Asset = asset;
+            uploadResult.AssetId = asset.Id;
+            // Encoding the asset , Moderating the asset, Generating transcript in parallel
+            IAsset encodedAsset = null;
+            //Creates the job for the tasks.
+            IJob job = this._mediaContext.Jobs.Create("AMS Review Job");
+
+            //Adding encoding task to job.
+            ConfigureEncodeAssetTask(uploadVideoRequest.EncodingRequest, job);
+            if (UploadAssetResult.V2JSONPath == null)
+            {
+                //adding CM task to job.
+                ConfigureContentModerationTask(job);
+            }
+            //adding transcript task to job.
+            if (generateVtt)
+            {
+                ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
+            }
+
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            //submit and execute job.
+            job.Submit();
+            job.GetExecutionProgressTask(new CancellationTokenSource().Token).Wait();
+            timer.Stop();
+            using (var sw = new StreamWriter("AmsPerf.txt", true))
+            {
+                sw.WriteLine("AMS Job Elapsed Time: {0}", timer.Elapsed);
+            }
+
+            if (job.State == JobState.Error)
+            {
+                throw new Exception("Video moderation has failed due to AMS Job error.");
+            }
+
+            UploadAssetResult result = uploadResult;
+            encodedAsset = job.OutputMediaAssets[0];
+
+            if (UploadAssetResult.V2JSONPath == null)
+            {
+                result.ModeratedJson = GetCmDetail(job.OutputMediaAssets[1]);
+                // Check for valid Moderated JSON
+                var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(result.ModeratedJson);
+
+                if (jsonModerateObject == null)
+                {
+                    return false;
+                }
+            }
+            if (generateVtt)
+            {
+                GenerateTranscript(job.OutputMediaAssets.Last());
+            }
+
+            uploadResult.StreamingUrlDetails = PublishAsset(encodedAsset);
+            string downloadUrl = GenerateDownloadUrl(asset, uploadVideoRequest.VideoName);
+            uploadResult.StreamingUrlDetails.DownloadUri = downloadUrl;
+            uploadResult.VideoName = uploadVideoRequest.VideoName;
+            uploadResult.VideoFilePath = uploadVideoRequest.VideoFilePath;
+            return true;
+        }
         public bool UploadAndModerate(UploadVideoStreamRequest uploadVideoRequest, ref UploadAssetResult uploadResult, bool generateVtt)
         {
             asset = CreateAsset(uploadVideoRequest);
