@@ -6,7 +6,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 {
     class Program
     {
-        static string confidence = string.Empty;
+        static string confidence = "0";
         static bool generateVtt = false;
         static bool v2Json = false;
         static AmsComponent amsComponent;
@@ -28,10 +28,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 else
                 {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(args[1]);
-                    generateVtt = bool.Parse(args[2]);
+                    DirectoryInfo directoryInfo = new DirectoryInfo(args[0]);
+                    if (args.Length == 2) bool.TryParse(args[1], out generateVtt);
                     v2Json = true;
-                    confidence = "0";
                     Initialize();
 
                     var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
@@ -51,7 +50,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nVideo compression process started...");
 
             var compressedVideoPath = amsComponent.CompressVideo(videoPath);
@@ -93,7 +92,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
             }
-            Console.ReadLine();
         }
 
         private static UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
