@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.ContentModerator.ReviewAPI;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
-using Newtonsoft.Json;
-using Microsoft.ContentModerator.ReviewAPI;
+using System.Text;
+using System.Threading.Tasks;
 
 
 namespace Microsoft.ContentModerator.AMSComponentClient
@@ -54,7 +54,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             bool isSuccess = false;
             bool isTranscript = false;
-            string reviewVideoRequestJson = string.Empty;
 
             while (frameEntityList.Count > 0)
             {
@@ -72,7 +71,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 if (isTranscript)
                 {
-                    var sts = GenerateTextScreenProfanity(reviewId, path);
+                    GenerateTextScreenProfanity(reviewId, path);
 
                 }
                 try
@@ -165,6 +164,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Console.WriteLine("An exception had occured at {0} API, for the Review ID : {1}",
                     MethodBase.GetCurrentMethod().Name, reviewId);
                 Console.WriteLine("The response from the Api is : \n {0}", resultJson);
+                Console.WriteLine(e.Message);
                 throw;
             }
         }
@@ -202,6 +202,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 throw;
             }
 
@@ -461,6 +462,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 //TODO Logging
                 Console.WriteLine("An exception had occured at {0} Api, for the Review ID : {1} and the FilePath is : {2}", MethodBase.GetCurrentMethod().Name, reviewId, filepath);
                 Console.WriteLine("The response from the Api : \n {0}", resultJson);
+                Console.WriteLine(e.Message);
                 throw;
             }
 
@@ -581,11 +583,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 //TODO Logging
                 Console.WriteLine("An exception had occured at {0} Api, for the Review ID : {1}", MethodBase.GetCurrentMethod().Name, reviewId);
                 Console.WriteLine("THE response from the Api is : \n {0}", resultJson);
+                Console.WriteLine(e.Message);
                 throw;
             }
         }
-
         #endregion
-
     }
 }

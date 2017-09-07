@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.ContentModerator.ReviewAPI
 {
-    class Constants
+    public class Constants
     {
         internal static readonly string PublishedStatus = "UnPublished";
         internal static readonly string VideoEntityType = "Video";

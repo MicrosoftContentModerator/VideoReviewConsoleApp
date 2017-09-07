@@ -64,7 +64,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
             UploadAssetResult uploadResult = new UploadAssetResult();
-            string reviewId = string.Empty;
             if (v2Json)
             {
                 string filepath = videoPath.Replace(".mp4", ".json");
@@ -97,16 +96,16 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private static UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
         {
             return
-                               new UploadVideoStreamRequest
-                               {
-                                   VideoStream = File.ReadAllBytes(compressedVideoFilePath),
-                                   VideoName = Path.GetFileName(compressedVideoFilePath),
-                                   EncodingRequest = new EncodingRequest()
-                                   {
-                                       EncodingBitrate = AmsEncoding.AdaptiveStreaming
-                                   },
-                                   VideoFilePath = compressedVideoFilePath
-                               };
+                new UploadVideoStreamRequest
+                {
+                    VideoStream = File.ReadAllBytes(compressedVideoFilePath),
+                    VideoName = Path.GetFileName(compressedVideoFilePath),
+                    EncodingRequest = new EncodingRequest()
+                    {
+                        EncodingBitrate = AmsEncoding.AdaptiveStreaming
+                    },
+                    VideoFilePath = compressedVideoFilePath
+                };
         }
 
         private static void GetUserInputs(out string videoPath)
@@ -119,7 +118,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Console.WriteLine("\nPlease Enter Valid File path : ");
                 videoPath = Console.ReadLine();
             }
-
             do
             {
                 Console.Write("\nUse V2 JSON? [y/n] : ");
@@ -128,7 +126,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 {
                     Console.WriteLine();
                 }
-
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
             v2Json = response == ConsoleKey.Y;
             if (!v2Json)
@@ -155,10 +152,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 {
                     Console.WriteLine();
                 }
-
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
             generateVtt = response == ConsoleKey.Y;
-
         }
 
         private static void Initialize()

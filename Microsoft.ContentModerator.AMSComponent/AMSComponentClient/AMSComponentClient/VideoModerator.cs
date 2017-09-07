@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.MediaServices.Client;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.WindowsAzure.MediaServices.Client;
-using System.IO;
-using System.Threading;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -222,7 +222,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             //adding transcript task to job.
             if (generateVtt)
             {
-                ConfigureTranscriptTask(uploadVideoRequest.VideoName, job);
+                ConfigureTranscriptTask(job);
             }
 
             Stopwatch timer = new Stopwatch();
@@ -297,7 +297,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="assetUri"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private void ConfigureTranscriptTask(string file, IJob job)
+        private void ConfigureTranscriptTask(IJob job)
         {
             string mediaProcessorName = _amsConfigurations.MediaIndexer2MediaProcessor;
             IMediaProcessor processor = _mediaContext.MediaProcessors.GetLatestMediaProcessorByName(mediaProcessorName);

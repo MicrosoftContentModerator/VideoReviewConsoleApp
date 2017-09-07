@@ -1,34 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
+﻿using Microsoft.WindowsAzure.Storage;
 using Newtonsoft.Json;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
-using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
-
     /// <summary>
     /// Represents a FrameGeneratorService.
     /// </summary>
     public class FrameGenerator
     {
         private AmsConfigurations _amsConfig;
-        private string _videoPublishUri = string.Empty;
-        private string _videoName = string.Empty;
-        private string _reviewId = string.Empty;
-        private string _videoContainerName = string.Empty;
         private double _confidence;
-        CloudBlobClient _blobClient = null;
-        string _blobContainerName = string.Empty;
-        CloudBlobContainer _container = null;
-        List<FrameEventDetails> _frameEventsSource = null;
-        private VideoReviewApi _reviewApIobj = null;
         public CloudStorageAccount StorageAccount { get; set; } = null;
 
         /// <summary>
@@ -39,9 +27,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public FrameGenerator(AmsConfigurations config, string confidenceVal)
         {
             _amsConfig = config;
-            _frameEventsSource = new List<FrameEventDetails>();
             StorageAccount = CloudStorageAccount.Parse(_amsConfig.BlobConnectionString);
-            _blobClient = StorageAccount.CreateCloudBlobClient();
             _confidence = Convert.ToDouble(confidenceVal);
         }
 
@@ -53,7 +39,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public List<FrameEventDetails> CreateVideoFrames(UploadAssetResult uploadAssetResult)
         {
             List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
-            string reviewVideoRequestJson = string.Empty;
             PopulateFrameEvents(uploadAssetResult.ModeratedJson, frameEventsList, uploadAssetResult);
             return frameEventsList;
         }
@@ -143,7 +128,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     }
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
                     throw;
@@ -152,7 +137,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
                 if (moderatedJsonV2.Shots != null)
                 {
-                    double ticks = Convert.ToDouble(moderatedJsonV2.TimeScale);
                     int timescale = Convert.ToInt32(moderatedJsonV2.TimeScale);
                     int frameCount = 0;
                     foreach (var shot in moderatedJsonV2.Shots)
