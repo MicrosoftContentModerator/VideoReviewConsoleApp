@@ -31,9 +31,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
 		public string MediaIndexer2MediaProcessor = "Azure Media Indexer 2 Preview";
 
-		public string ModerationConfigurationJson = @"..\..\Lib\Config.json";
+		public string ModerationConfigurationJson = @"..\Lib\Config.json";
 
-	    public string MediaIndexerConfigurationJson = @"..\..\Lib\MediaIndexerConfig.json";
+	    public string MediaIndexerConfigurationJson = @"..\Lib\MediaIndexerConfig.json";
 
 		public double StreamingUrlActiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["StreamingUrlActiveDays"]);
 		
@@ -77,11 +77,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         #region
 
-        public string ModeratedJsonOutputPath = @"..\..\Lib\";
+        public string ModeratedJsonOutputPath = @"..\Lib\";
 
-        public string FfmpegFramesOutputPath = @"..\..\Lib\";
+        public string FfmpegFramesOutputPath = @"..\Lib\";
 
-        public string FfmpegExecutablePath = @"..\..\Lib\ffmpeg.exe";
+        public string FfmpegExecutablePath = @"..\Lib\ffmpeg.exe";
 
         public string BlobContainerForFfmpeg = "framegenerater";
 

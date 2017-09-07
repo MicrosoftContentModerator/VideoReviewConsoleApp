@@ -16,7 +16,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         static void Main(string[] args)
         {
-
             try
             {
                 if (args.Length == 0)
@@ -44,7 +43,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 Console.WriteLine(ex.Message);
             }
-
+            Console.ReadLine();
         }
         private static void ProcessVideo(string videoPath)
         {
