@@ -9,7 +9,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private readonly static Engine _engine = new Engine();
         private readonly static JsValue _vttValidator;
         private readonly static string _option = @"subtitles / captions / descriptions";
-        private readonly static string VttValidatorPath = @"..\Lib\WebVTTValidator.js";
+        private readonly static string VttValidatorPath = @"..\..\Lib\WebVTTValidator.js";
 
         static VttValidator()
         {
