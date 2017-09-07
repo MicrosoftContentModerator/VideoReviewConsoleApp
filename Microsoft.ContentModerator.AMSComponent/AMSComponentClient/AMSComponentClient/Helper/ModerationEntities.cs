@@ -115,7 +115,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <summary>
         /// Gets or Sets the Timestamp of Event
         /// </summary>
-        public int TimeStamp { get; set; }
+        public long TimeStamp { get; set; }
 
         /// <summary>
         /// Gets or Sets the FrameName
