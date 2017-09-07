@@ -56,12 +56,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             process.Close();
             return videoFilePathCom;
         }
-      
+
         private bool ValidatePreRequisites()
         {
             return _configObj.CheckValidations();
         }
-
-        
     }
 }

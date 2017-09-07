@@ -2,7 +2,7 @@
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
-  
+
     /// <summary>
     /// Represents a Json object after Video Moderation
     /// </summary>
@@ -48,9 +48,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public string ModeratedJson { get; set; }
 
 
-	    //v2
-	    public List<Shot> Shots { get; set; }
-	}
+        //v2
+        public List<Shot> Shots { get; set; }
+    }
 
     /// <summary>
     /// Represents a Video fragment.
@@ -99,18 +99,18 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// Gets or Sets the AdultConfidence of Event
         /// </summary>
         public string AdultConfidence { get; set; }
-		/// <summary>
-		/// 
-		/// </summary>
-	    public bool IsRacyContent { get; set; }
-		/// <summary>
-		/// 
-		/// </summary>
-	    public string RacyConfidence { get; set; }
-		/// <summary>
-		///  Gets or Sets the Index of Event
-		/// </summary>
-		public int Index { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRacyContent { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string RacyConfidence { get; set; }
+        /// <summary>
+        ///  Gets or Sets the Index of Event
+        /// </summary>
+        public int Index { get; set; }
 
         /// <summary>
         /// Gets or Sets the Timestamp of Event
@@ -131,20 +131,20 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     }
 
 
-	public class Clip
-	{
-		public int Start { get; set; }
-		public int Duration { get; set; }
-		public int Interval { get; set; }
-		public List<FrameEventDetails> Frames { get; set; }
-	}
+    public class Clip
+    {
+        public int Start { get; set; }
+        public int Duration { get; set; }
+        public int Interval { get; set; }
+        public List<FrameEventDetails> Frames { get; set; }
+    }
 
-	public class Shot
-	{
-		public int Start { get; set; }
-		public int Duration { get; set; }
-		public int Interval { get; set; }
-		public int Clipscount { get; set; }
-		public List<Clip> Clips { get; set; }
-	}
+    public class Shot
+    {
+        public int Start { get; set; }
+        public int Duration { get; set; }
+        public int Interval { get; set; }
+        public int Clipscount { get; set; }
+        public List<Clip> Clips { get; set; }
+    }
 }

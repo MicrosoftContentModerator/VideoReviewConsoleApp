@@ -45,8 +45,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             _confidence = Convert.ToDouble(confidenceVal);
         }
 
-        #region Generate Frames
-
         /// <summary>
         /// Generates And Submit Frames
         /// </summary>
@@ -56,27 +54,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
             string reviewVideoRequestJson = string.Empty;
-            PopulateFrameEvents(uploadAssetResult.ModeratedJson, frameEventsList);
-            //reviewVideoRequestJson = _reviewApIobj.CreateReviewRequestObject(uploadAssetResult, frameEventsList);
-
-            //_reviewId =
-            //    JsonConvert.DeserializeObject<List<string>>(_reviewApIobj.ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
-            //        .FirstOrDefault();
-            //reviewId = _reviewId;
-            //_blobContainerName = _reviewId;
-
-            //_container = _blobClient.GetContainerReference(_blobContainerName);
-            //_container.CreateIfNotExists();
-            //_container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
-
-            //foreach (var item in frameEventsList)
-            //{
-            //    item.FrameName =  item.FrameName;
-            //}
+            PopulateFrameEvents(uploadAssetResult.ModeratedJson, frameEventsList, uploadAssetResult);
             return frameEventsList;
-
-            //return GenerateAndUploadFrameImages(frameEventsList, assetInfo);
-
         }
 
         /// <summary>
@@ -86,8 +65,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="assetInfo"></param>
         public List<FrameEventDetails> GenerateAndUploadFrameImages(List<FrameEventDetails> eventsList, UploadAssetResult assetInfo, string reviewId)
         {
-            #region frameCreation
-
             string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + reviewId;
             Directory.CreateDirectory(frameStorageLocalPath);
 
@@ -95,17 +72,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             Console.WriteLine("\nVideo Frames Creation inprogress...");
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            #region Check FFMPEG.Exe
-
             string ffmpegBlobUrl = string.Empty;
-
             if (File.Exists(_amsConfig.FfmpegExecutablePath))
             {
                 ffmpegBlobUrl = _amsConfig.FfmpegExecutablePath;
             }
-
-            #endregion
-
 
             List<string> args = new List<string>();
             StringBuilder sb = new StringBuilder();
@@ -151,55 +122,21 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 Directory.Delete(frameStorageLocalPath, true);
             }
-
-            #endregion
-
             return eventsList;
         }
-
-        /// <summary>
-        /// Generates And Submit Frames
-        /// </summary>
-        /// <param name="assetInfo">assetInfo</param>
-        /// <returns>Retruns Review Id</returns>
-        public List<FrameEventDetails> GenerateAndSubmitFrames(UploadAssetResult assetInfo, string reviewId)
-        {
-
-
-            List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
-
-            //_blobContainerName = _reviewId;
-
-            //_container = _blobClient.GetContainerReference(_blobContainerName);
-            //_container.CreateIfNotExists();
-            //_container.SetPermissions(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
-
-            //foreach (var item in frameEventsList)
-            //{
-            //    item.FrameName = reviewId + item.FrameName;
-            //}
-
-            //return GenerateAndUploadFrameImages(frameEventsList, assetInfo);
-            return frameEventsList;
-        }
-
-        #endregion
-
-        #region FrameImage Generation
-
         /// <summary>
         /// Generates frames based on moderated json source.
         /// </summary>
         /// <param name="moderatedJsonstring">moderatedJsonstring</param>
         /// <param name="resultEventDetailsList">resultEventDetailsList</param>
 
-        private void PopulateFrameEvents(string moderatedJsonstring, List<FrameEventDetails> resultEventDetailsList)
+        private void PopulateFrameEvents(string moderatedJsonstring, List<FrameEventDetails> resultEventDetailsList, UploadAssetResult uploadResult)
         {
-            if (UploadAssetResult.V2JSONPath != null)
+            if (uploadResult.V2JSONPath != null)
             {
                 try
                 {
-                    using (var streamReader = new StreamReader(UploadAssetResult.V2JSONPath))
+                    using (var streamReader = new StreamReader(uploadResult.V2JSONPath))
                     {
                         string jsonv2 = streamReader.ReadToEnd();
                         moderatedJsonstring = jsonv2;
@@ -208,7 +145,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
+                    Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
                     throw;
                 }
                 var moderatedJsonV2 = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
@@ -252,8 +189,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             }
                         }
                     }
-
-
                 }
             }
             else
@@ -295,81 +230,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
             }
         }
-
-
-        /// <summary>
-        ///  GetGeneratedFrameList method used for Generating Frames using Moderated Json 
-        /// </summary>
-        /// <param name="eventsList">resultDownloaddetailsList</param>
-        /// <param name="assetInfo"></param>
-        private List<FrameEventDetails> PublishFrameImages(List<FrameEventDetails> eventsList, UploadAssetResult assetInfo)
-        {
-            #region frameCreation
-
-            string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + _reviewId;
-            Directory.CreateDirectory(frameStorageLocalPath);
-
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\nVideo Frames Creation inprogress...");
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            #region Check FFMPEG.Exe
-
-            string ffmpegBlobUrl = string.Empty;
-
-            if (File.Exists(_amsConfig.FfmpegExecutablePath))
-            {
-                ffmpegBlobUrl = _amsConfig.FfmpegExecutablePath;
-            }
-
-            #endregion
-
-
-            List<string> args = new List<string>();
-            StringBuilder sb = new StringBuilder();
-            int frameCounter = 0;
-            foreach (var frame in eventsList)
-            {
-                TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
-                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 \"" + frameStorageLocalPath + "\\" + frame.FrameName + "\" ";
-                frameCounter++;
-                sb.Append(line);
-                if (sb.Length > 30000)
-                {
-                    args.Add(sb.ToString());
-                    sb.Clear();
-                    frameCounter = 0;
-                }
-            }
-            if (sb.Length != 0)
-            {
-                args.Add(sb.ToString());
-            }
-
-            Parallel.ForEach(args, new ParallelOptions { MaxDegreeOfParallelism = 4 },
-                arg => CreateTaskProcess(arg, ffmpegBlobUrl));
-
-            sw.Stop();
-            using (var stw = new StreamWriter("AmsPerf.txt", true))
-            {
-                stw.WriteLine("Frame Creation Elapsed time: {0}", sw.Elapsed);
-            }
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
-
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("Frames(" + eventsList.Count() + ") uploaded successfully ");
-
-            if (Directory.Exists(frameStorageLocalPath))
-            {
-                Directory.Delete(frameStorageLocalPath, true);
-            }
-
-            #endregion
-
-            return eventsList;
-        }
-
         /// <summary>
         /// Upload frames to blob
         /// </summary>
@@ -417,9 +277,5 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             var process = Process.Start(processStartInfo);
             process.WaitForExit();
         }
-
-        #endregion
-
-
     }
 }

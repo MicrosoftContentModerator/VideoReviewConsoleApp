@@ -7,7 +7,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     /// </summary>
     public class UploadAssetResult
     {
-		public static string V2JSONPath { get; set; }
+		public string V2JSONPath { get; set; }
 
 		/// <summary>
 		/// For Streaming Urls
@@ -40,7 +40,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public string VideoFilePath { get; set; }
 
 
-        public static string VideoPath { get; set; }
+        public string VideoPath { get; set; }
 
     }
 }

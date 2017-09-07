@@ -6,72 +6,97 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 {
     class Program
     {
-        static string videoPath = string.Empty;
         static string confidence = string.Empty;
         static bool generateVtt = false;
+        static bool v2Json = false;
         static AmsComponent amsComponent;
         static AmsConfigurations amsConfigurations;
         static VideoModerator videoModerator;
-        static UploadAssetResult uploadResult;
         static VideoReviewApi videoReviewApi;
 
         static void Main(string[] args)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+
             try
             {
-                GetUserInputs();
-
-                Initialize();
-
-                Console.WriteLine("\nVideo compression process started...");
-
-                var compressedVideoPath = amsComponent.CompressVideo(videoPath);
-                if (string.IsNullOrWhiteSpace(compressedVideoPath))
+                if (args.Length == 0)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Video Compression failed.");
+                    string videoPath = string.Empty;
+                    GetUserInputs(out videoPath);
+                    Initialize();
+                    ProcessVideo(videoPath);
                 }
-
-                Console.WriteLine("\nVideo compression process completed...");
-
-                UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
-                string reviewId = string.Empty;
-
-                Console.WriteLine("\nVideo moderation process started...");
-
-                if (!videoModerator.CreateAzureMediaServicesJobToModerateVideo(uploadVideoStreamRequest, ref uploadResult, generateVtt))
+                else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Video Review process failed.");
+                    DirectoryInfo directoryInfo = new DirectoryInfo(args[1]);
+                    generateVtt = bool.Parse(args[2]);
+                    v2Json = true;
+                    confidence = "0";
+                    Initialize();
+
+                    var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        ProcessVideo(file.FullName);
+                    }
                 }
-
-                Console.WriteLine("\nVideo moderation process completed...");
-
-                Console.WriteLine("\nVideo review process started...");
-
-                videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
-
-                Console.WriteLine("\nVideo review successfully completed...");
-
-                sw.Stop();
-                Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
-                using (var stw = new StreamWriter("AmsPerf.txt", true))
-                {
-                    stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
-                }
-                Console.ReadLine();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw ex;
+                Console.WriteLine(ex.Message);
             }
-            
+
+        }
+        private static void ProcessVideo(string videoPath)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            Console.WriteLine("\nVideo compression process started...");
+
+            var compressedVideoPath = amsComponent.CompressVideo(videoPath);
+            if (string.IsNullOrWhiteSpace(compressedVideoPath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Video Compression failed.");
+            }
+
+            Console.WriteLine("\nVideo compression process completed...");
+
+            UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
+            UploadAssetResult uploadResult = new UploadAssetResult();
+            string reviewId = string.Empty;
+            if (v2Json)
+            {
+                string filepath = videoPath.Replace(".mp4", ".json");
+                uploadResult.V2JSONPath = filepath;
+            }
+            Console.WriteLine("\nVideo moderation process started...");
+
+            if (!videoModerator.CreateAzureMediaServicesJobToModerateVideo(uploadVideoStreamRequest, uploadResult, generateVtt))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Video Review process failed.");
+            }
+
+            Console.WriteLine("\nVideo moderation process completed...");
+
+            Console.WriteLine("\nVideo review process started...");
+
+            videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
+
+            Console.WriteLine("\nVideo review successfully completed...");
+
+            sw.Stop();
+            Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
+            using (var stw = new StreamWriter("AmsPerf.txt", true))
+            {
+                stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
+            }
+            Console.ReadLine();
         }
 
-    
-        private static  UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
+        private static UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
         {
             return
                                new UploadVideoStreamRequest
@@ -86,7 +111,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                                };
         }
 
-        private static  void  GetUserInputs()
+        private static void GetUserInputs(out string videoPath)
         {
             Console.WriteLine("\nEnter the fully qualified local path for Uploading the video : \n ");
             ConsoleKey response;
@@ -107,14 +132,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
 
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-            bool v2 = response == ConsoleKey.Y;
-            if (v2)
-            {
-                string filepath = videoPath.Replace(".mp4", ".json");
-                UploadAssetResult.V2JSONPath = filepath;
-                confidence = "0";
-            }
-            else
+            v2Json = response == ConsoleKey.Y;
+            if (!v2Json)
             {
                 Console.Write("\nEnter Confidence Value between 0 to 1 : ");
                 confidence = Console.ReadLine();
@@ -125,6 +144,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     Console.WriteLine("\nPlease Enter value between 0 to 1 : ");
                     confidence = Console.ReadLine();
                 }
+            }
+            else
+            {
+                confidence = "0";
             }
             do
             {
@@ -137,7 +160,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             } while (response != ConsoleKey.Y && response != ConsoleKey.N);
             generateVtt = response == ConsoleKey.Y;
-                
+
         }
 
         private static void Initialize()
@@ -145,7 +168,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             amsComponent = new AmsComponent();
             amsConfigurations = new AmsConfigurations();
             videoModerator = new VideoModerator(amsConfigurations);
-            uploadResult = new UploadAssetResult();
             videoReviewApi = new VideoReviewApi(amsConfigurations, confidence);
         }
     }
