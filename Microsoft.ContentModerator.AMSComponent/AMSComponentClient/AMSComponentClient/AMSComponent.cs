@@ -33,7 +33,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             string ffmpegBlobUrl;
             if (!ValidatePreRequisites())
             {
-                throw new Exception("Configurations check failed. Please cross check the configurations!");
+                Console.WriteLine("Configurations check failed. Please cross check the configurations!");
+                throw new Exception();
             }
 
             if (File.Exists(_configObj.FfmpegExecutablePath))
@@ -42,7 +43,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             else
             {
-                throw new Exception("ffmpeg.exe is missing. Please check the Lib folder");
+                Console.WriteLine("ffmpeg.exe is missing. Please check the Lib folder");
+                throw new Exception();
             }
 
             string videoFilePathCom = videoPath.Split('.')[0] + "_c.mp4";
