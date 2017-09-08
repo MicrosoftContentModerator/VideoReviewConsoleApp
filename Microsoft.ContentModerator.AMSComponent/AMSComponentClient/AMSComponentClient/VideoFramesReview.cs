@@ -84,9 +84,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         [DataMember]
         public List<ReviewResultTag> ReviewerResultTags { get; set; }
-
-        [DataMember]
-        public byte[] FrameImageBytes { get; set; }
     }
 
     /// <summary>

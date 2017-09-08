@@ -126,7 +126,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// Gets or Sets the frame order id.
         /// </summary>
         public string FrameOrderId { get; set; }
-        public byte[] FrameImageBytes { get; set; }
         public int TimeScale { get; set; }
     }
 

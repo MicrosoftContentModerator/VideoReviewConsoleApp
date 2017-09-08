@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,16 +98,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
 
 
-            Parallel.ForEach(eventsList,
-                new ParallelOptions { MaxDegreeOfParallelism = 4 },
-                evnt => AddFrameToBlobGenerationProcess(evnt, frameStorageLocalPath + "\\" + evnt.FrameName));
+            //Parallel.ForEach(eventsList,
+            //    new ParallelOptions { MaxDegreeOfParallelism = 4 },
+            //    evnt => AddFrameToBlobGenerationProcess(evnt, frameStorageLocalPath + "\\" + evnt.FrameName));
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Frames(" + eventsList.Count() + ") uploaded successfully ");
-
-            if (Directory.Exists(frameStorageLocalPath))
-            {
-                Directory.Delete(frameStorageLocalPath, true);
-            }
+            Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
+            ZipFile.CreateFromDirectory(frameStorageLocalPath, frameStorageLocalPath + @"_zip\frameZip.zip");
             return eventsList;
         }
         /// <summary>
@@ -212,36 +210,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         }
                     }
                 }
-            }
-        }
-        /// <summary>
-        /// Upload frames to blob
-        /// </summary>
-        /// <param name="frame"></param>
-        /// <param name="imagePath"></param>
-        /// <returns></returns>
-        private void AddFrameToBlobGenerationProcess(FrameEventDetails frame, string imagePath)
-        {
-            try
-            {
-                FileInfo fileInfo = new FileInfo(imagePath);
-
-                if (fileInfo != null && fileInfo.Length > 0)
-                {
-                    byte[] imageData = null;
-                    long imageFileLength = fileInfo.Length;
-                    using (FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
-                    {
-                        BinaryReader br = new BinaryReader(fs);
-                        imageData = br.ReadBytes((int)imageFileLength);
-                        frame.FrameImageBytes = imageData;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("{0}-{1}", "Failed to Upload Frames to Blob Storage", e.Message);
-                throw;
             }
         }
         /// <summary>

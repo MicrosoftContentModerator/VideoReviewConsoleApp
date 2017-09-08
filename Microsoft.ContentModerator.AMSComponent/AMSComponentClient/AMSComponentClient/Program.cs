@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Web;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {

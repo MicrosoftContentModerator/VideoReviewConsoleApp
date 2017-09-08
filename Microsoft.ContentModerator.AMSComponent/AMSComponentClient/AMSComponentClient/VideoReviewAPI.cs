@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Web;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -54,13 +54,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             bool isSuccess = false;
             bool isTranscript = false;
-
-            while (frameEntityList.Count > 0)
-            {
-                List<FrameEventDetails> tempList = new List<FrameEventDetails>();
-                tempList = FetchFrameEvents(frameEntityList, this._amsConfig.FrameBatchSize);
-                isSuccess = SubmitAddFramesReview(tempList, reviewId, assetinfo);
-            }
+            isSuccess = SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
 
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
             if (File.Exists(path))
@@ -72,7 +66,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 if (isTranscript)
                 {
                     GenerateTextScreenProfanity(reviewId, path);
-
                 }
                 try
                 {
@@ -93,9 +86,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine("\nReview Created Successfully and the review Id {0}", reviewId);
             }
+            CleanUp(reviewId);
             return reviewId;
         }
-
+        private void CleanUp(string reviewId)
+        {
+            string path = this._amsConfig.FfmpegFramesOutputPath + reviewId;
+            Directory.Delete(path, true);
+            Directory.Delete($"{path}_zip", true);
+        }
 
         /// <summary>
         /// Validate vtt file
@@ -335,7 +334,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         new Metadata() {Key = "r", Value = frameEvent.IsRacyContent.ToString()},
                         new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName}
                     },
-                    FrameImageBytes = frameEvent.FrameImageBytes
                 };
                 return frameobj;
             }
@@ -352,7 +350,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         new Metadata() {Key = "A", Value = frameEvent.IsAdultContent.ToString()},
                         new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName}
                     },
-                    FrameImageBytes = frameEvent.FrameImageBytes
                 };
                 return frameobj;
             }
@@ -370,8 +367,14 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Indicates Add frames operation success result.</returns>
         public bool SubmitAddFramesReview(List<FrameEventDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
         {
+            int retry = 5;
             string inputRequestObj = CreateAddFramesReviewRequestObject(frameEvents, uploadResult);
             var response = ExecuteAddFramesReviewApi(reviewId, inputRequestObj).Result;
+            while (!response.IsSuccessStatusCode && retry > 0)
+            {
+                response = ExecuteAddFramesReviewApi(reviewId, inputRequestObj).Result;
+                retry--;
+            }
             return response.IsSuccessStatusCode;
         }
 
@@ -397,19 +400,19 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList)
         {
             var client = new HttpClient();
+            var uri = string.Format(this._amsConfig.AddFramesUrl, this._amsConfig.TeamName, reviewId);
             // string resultJson = string.Empty;
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
+            string frameZipPath = $"{this._amsConfig.FfmpegFramesOutputPath}{reviewId}_zip\\frameZip.zip";
 
-            var uri = string.Format(this._amsConfig.AddFramesUrl, this._amsConfig.TeamName, reviewId);
+            MultipartFormDataContent form = new MultipartFormDataContent();
+            form.Add(new StringContent(reviewFrameList), "FrameMetadata");
+            byte[] frameZip = File.ReadAllBytes(frameZipPath);
+            var zipContent = new ByteArrayContent(frameZip, 0, frameZip.Length);
+            zipContent.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping("frameZip.zip"));
+            form.Add(zipContent, "FrameImageZip", "frameZip.zip");
             HttpResponseMessage response;
-
-            byte[] byteData = Encoding.UTF8.GetBytes(reviewFrameList);
-
-            using (var content = new ByteArrayContent(byteData))
-            {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                response = await client.PostAsync(uri, content);
-            }
+            response = await client.PostAsync(uri, form);
             return response;
         }
 
