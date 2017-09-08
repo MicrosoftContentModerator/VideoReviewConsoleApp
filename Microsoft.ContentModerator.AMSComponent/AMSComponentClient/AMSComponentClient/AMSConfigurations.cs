@@ -21,10 +21,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
 		public string MediaServiceAccountName = ConfigurationManager.AppSettings["AzureMediaServiceAccountName"];
 
-		public string BlobConnectionString = ConfigurationManager.AppSettings["AzureMediaServiceAccountAttachedStorageConnectionString"];
-
-		public string BlobContainerName = ConfigurationManager.AppSettings["AzureMediaServiceBlobContainerName"];
-
 		public string MediaProcessor = "Media Encoder Standard";//"Azure Media Encoder";
 
         public string ModerationProcessor = "Azure Media Content Moderator";
@@ -92,8 +88,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 	    public bool CheckValidations()
 	    {
 		    if (!string.IsNullOrEmpty(MediaServiceAccountKey) && !string.IsNullOrEmpty(MediaServiceAccountName)
-		        && !string.IsNullOrEmpty(BlobConnectionString) && !string.IsNullOrEmpty(BlobContainerName) &&
-		        !string.IsNullOrEmpty(TeamName) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
+		        && !string.IsNullOrEmpty(TeamName) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
 			    && !string.IsNullOrEmpty(AddFramesUrl) && !string.IsNullOrEmpty(PublishReviewUrl) &&
 			    !string.IsNullOrEmpty(AddTranscriptUrl) )
 		    {

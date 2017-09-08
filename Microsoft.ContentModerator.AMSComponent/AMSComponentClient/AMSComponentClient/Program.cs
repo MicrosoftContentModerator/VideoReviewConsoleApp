@@ -52,7 +52,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     }
                 }
             }
-            Console.ReadLine();
         }
 
         private static void ProcessVideo(string videoPath)
@@ -95,7 +94,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             Console.WriteLine("\nVideo review process started...");
 
-            videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
+            var reviewId = videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
 
             Console.WriteLine("\nVideo review successfully completed...");
 
@@ -103,6 +102,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
             using (var stw = new StreamWriter("AmsPerf.txt", true))
             {
+                stw.WriteLine(Path.GetFileName(videoPath));
+                stw.WriteLine($"ReviewId: {reviewId}");
                 stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
             }
         }

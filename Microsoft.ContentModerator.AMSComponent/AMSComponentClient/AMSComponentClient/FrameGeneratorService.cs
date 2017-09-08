@@ -18,7 +18,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     {
         private AmsConfigurations _amsConfig;
         private double _confidence;
-        public CloudStorageAccount StorageAccount { get; set; } = null;
 
         /// <summary>
         /// Instaiates an instance of Frame generator.
@@ -28,7 +27,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public FrameGenerator(AmsConfigurations config, string confidenceVal)
         {
             _amsConfig = config;
-            StorageAccount = CloudStorageAccount.Parse(_amsConfig.BlobConnectionString);
             _confidence = Convert.ToDouble(confidenceVal);
         }
 
