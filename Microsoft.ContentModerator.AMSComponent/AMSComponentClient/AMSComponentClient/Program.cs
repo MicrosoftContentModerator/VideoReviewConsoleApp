@@ -16,35 +16,43 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         static void Main(string[] args)
         {
-            try
+            if (args.Length == 0)
             {
-                if (args.Length == 0)
+                string videoPath = string.Empty;
+                GetUserInputs(out videoPath);
+                Initialize();
+                try
                 {
-                    string videoPath = string.Empty;
-                    GetUserInputs(out videoPath);
-                    Initialize();
                     ProcessVideo(videoPath);
                 }
-                else
+                catch (Exception ex)
                 {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(args[0]);
-                    if (args.Length == 2) bool.TryParse(args[1], out generateVtt);
-                    v2Json = true;
-                    Initialize();
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(args[0]);
+                if (args.Length == 2) bool.TryParse(args[1], out generateVtt);
+                v2Json = true;
+                Initialize();
 
-                    var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
-                    foreach (var file in files)
+                var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    try
                     {
                         ProcessVideo(file.FullName);
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
             Console.ReadLine();
         }
+
         private static void ProcessVideo(string videoPath)
         {
             Stopwatch sw = new Stopwatch();
@@ -66,6 +74,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             if (v2Json)
             {
                 string filepath = videoPath.Replace(".mp4", ".json");
+                if (!File.Exists(filepath))
+                {
+                    Console.WriteLine("V2 Json does not exist for video.");
+                    throw new Exception();
+                }
                 uploadResult.V2JSONPath = filepath;
             }
             Console.WriteLine("\nVideo moderation process started...");
