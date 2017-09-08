@@ -102,7 +102,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Frames(" + eventsList.Count() + ") uploaded successfully ");
             Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
-            ZipFile.CreateFromDirectory(frameStorageLocalPath, frameStorageLocalPath + @"_zip\frameZip.zip");
+            ZipFile.CreateFromDirectory(frameStorageLocalPath, frameStorageLocalPath + @"_zip\frameZip.zip",CompressionLevel.Optimal,false);
             return eventsList;
         }
         /// <summary>
