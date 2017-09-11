@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Web;
+using System.Threading.Tasks;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -25,7 +26,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Initialize();
                 try
                 {
-                    ProcessVideo(videoPath);
+                    ProcessVideo(videoPath).Wait();
                 }
                 catch (Exception ex)
                 {
@@ -44,7 +45,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 {
                     try
                     {
-                        ProcessVideo(file.FullName);
+                        ProcessVideo(file.FullName).Wait();
                     }
                     catch (Exception ex)
                     {
@@ -54,7 +55,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
         }
 
-        private static void ProcessVideo(string videoPath)
+        private static async Task ProcessVideo(string videoPath)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -94,7 +95,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             Console.WriteLine("\nVideo review process started...");
 
-            var reviewId = videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
+            string reviewId = await videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
 
             Console.WriteLine("\nVideo review successfully completed...");
 

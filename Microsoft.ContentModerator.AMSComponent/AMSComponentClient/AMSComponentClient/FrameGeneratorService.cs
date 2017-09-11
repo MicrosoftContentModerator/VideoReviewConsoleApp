@@ -94,13 +94,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
-
-
-            //Parallel.ForEach(eventsList,
-            //    new ParallelOptions { MaxDegreeOfParallelism = 4 },
-            //    evnt => AddFrameToBlobGenerationProcess(evnt, frameStorageLocalPath + "\\" + evnt.FrameName));
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("Frames(" + eventsList.Count() + ") uploaded successfully ");
+            
             Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
             ZipFile.CreateFromDirectory(frameStorageLocalPath, frameStorageLocalPath + @"_zip\frameZip.zip",CompressionLevel.Optimal,false);
             return eventsList;

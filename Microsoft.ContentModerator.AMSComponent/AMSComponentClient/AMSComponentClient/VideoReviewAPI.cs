@@ -33,7 +33,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         #region Create and Submit Frames
 
-        public string CreateVideoReviewInContentModerator(UploadAssetResult uploadAssetResult)
+        public async Task<string> CreateVideoReviewInContentModerator(UploadAssetResult uploadAssetResult)
         {
             string reviewId = string.Empty;
             List<FrameEventDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
@@ -46,15 +46,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
                    .FirstOrDefault();
             frameEntityList = framegenerator.GenerateAndUploadFrameImages(frameEntityList, uploadAssetResult, reviewId);
-            CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId);
+            await CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId);
             return reviewId;
         }
 
-        public string CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
+        public async Task<string> CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
         {
             bool isSuccess = false;
             bool isTranscript = false;
-            isSuccess = SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
+            isSuccess = await SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
 
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
             if (File.Exists(path))
@@ -365,17 +365,19 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="frameEvents">List of Frame Events.</param>
         /// <param name="reviewId">Reviewid</param>
         /// <returns>Indicates Add frames operation success result.</returns>
-        public bool SubmitAddFramesReview(List<FrameEventDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
+        public async Task<bool> SubmitAddFramesReview(List<FrameEventDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
         {
             int retry = 5;
             string inputRequestObj = CreateAddFramesReviewRequestObject(frameEvents, uploadResult);
-            var response = ExecuteAddFramesReviewApi(reviewId, inputRequestObj).Result;
-            while (!response.IsSuccessStatusCode && retry > 0)
+            bool isComplete = false;
+            HttpResponseMessage response;
+            while (!isComplete && retry > 0)
             {
-                response = ExecuteAddFramesReviewApi(reviewId, inputRequestObj).Result;
+                response = await ExecuteAddFramesReviewApi(reviewId, inputRequestObj);
+                isComplete = response.IsSuccessStatusCode;
                 retry--;
             }
-            return response.IsSuccessStatusCode;
+            return isComplete;
         }
 
         /// <summary>
@@ -400,6 +402,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList)
         {
             var client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(10);
             var uri = string.Format(this._amsConfig.AddFramesUrl, this._amsConfig.TeamName, reviewId);
             // string resultJson = string.Empty;
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
@@ -411,8 +414,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             var zipContent = new ByteArrayContent(frameZip, 0, frameZip.Length);
             zipContent.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping("frameZip.zip"));
             form.Add(zipContent, "FrameImageZip", "frameZip.zip");
-            HttpResponseMessage response;
-            response = await client.PostAsync(uri, form);
+            HttpResponseMessage response = new HttpResponseMessage();
+            try
+            {
+                response = await client.PostAsync(uri, form);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             return response;
         }
 
@@ -551,8 +561,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>returns publish review api call response status</returns>
         public bool PublishReview(string reviewId)
         {
-            var response = ExecutePublishReviewApi(reviewId).Result;
-            return response.IsSuccessStatusCode;
+            bool isComplete = false;
+            int retry = 3;
+            HttpResponseMessage response = new HttpResponseMessage();
+            while (!isComplete && retry > 0)
+            {
+                isComplete= ExecutePublishReviewApi(reviewId).Result.IsSuccessStatusCode;
+                retry--;
+            }
+            return isComplete;
         }
 
         /// <summary>
