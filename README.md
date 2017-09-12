@@ -1,9 +1,13 @@
 # VideoReviewConsoleApp
 This repo contains the Windows Console application for Video reviews.
 # To Use the VideoReviewConsole Application:
+
 Download the code:
+
 Starting in the folder where you clone the repository (this folder).
+
 Change the app.config value “###” to the Content moderator account specific values:
+
 <appSettings>
   
   <add key="AzureMediaServiceAccountKey" value="###" />
@@ -14,8 +18,10 @@ Change the app.config value “###” to the Content moderator account specific 
   <add key="ContentModeratorTeamId" value="###" />
   
 </appSettings>
+
 Build the Application:
 	Start Microsoft Visual Studio 2015 and select File > Open > Project/Solution. Double-click the Visual Studio 2015 Solution (.sln) file. Press Ctrl+Shift+B, or select Build > Build Solution.
+
 Run the Application:	
 	Click F5 and run the application OR go to bin>debug and double click on the executable file. 
 # How to use this application:
