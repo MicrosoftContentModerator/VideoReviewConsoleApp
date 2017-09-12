@@ -36,5 +36,6 @@ Enter the video path here and the application will create the video review.
 
 Multiple Videos process:
 
+Download the application and build after changing the app.conig values as mentioned above. 
 Open command prompt and give the AMS exe path and Video Folder path. (C:\[AMSConsole.exe path][C:\VideofolderPath])
 Application will process each video sequentially.
