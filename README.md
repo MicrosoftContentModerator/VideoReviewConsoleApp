@@ -7,7 +7,7 @@ Download the code:
 Starting in the folder where you clone the repository (this folder).
 
 Change the app.config value “###” to the Content moderator account specific values:
-
+```
 <appSettings>  
   <add key="AzureMediaServiceAccountKey" value="###" />
   <add key="AzureMediaServiceAccountName" value="###" />
@@ -16,7 +16,7 @@ Change the app.config value “###” to the Content moderator account specific 
   <add key="ContentModeratorApiEndpoint" value="###" />
   <add key="ContentModeratorTeamId" value="###" />  
 </appSettings>
-
+```
 Build the Application:
 	
 Start Microsoft Visual Studio 2015 and select File > Open > Project/Solution. Double-click the Visual Studio 2015 Solution (.sln) file. Press Ctrl+Shift+B, or select Build > Build Solution.
