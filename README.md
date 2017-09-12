@@ -32,8 +32,8 @@ This application can be used to process a Single Video or multiple videos stored
 Single Video process:
 
 Download the application and run after changing the app.conig values as mentioned above. 
-A command window will appear and prompt to enter the video path as below.
-  
+A command window will appear and prompt to enter the video path.
+  
 Enter the video path here and the application will create the video review.
 
 Multiple Videos process:
