@@ -25,8 +25,6 @@ Run the Application:
 	
 Click F5 and run the application OR go to bin>debug and double click on the executable file. 
 
-# How to use this application:
-
 This application can be used to process a Single Video or multiple videos stored in a shared folder.
 
 Single Video process:
