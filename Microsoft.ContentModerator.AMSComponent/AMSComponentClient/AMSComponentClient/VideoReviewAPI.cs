@@ -54,8 +54,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             bool isSuccess = false;
             bool isTranscript = false;
+            
             isSuccess = await SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
-
+            if (!isSuccess)
+            {
+                Console.WriteLine("Add Frame API call failed.");
+                throw new Exception();
+            }
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
             if (File.Exists(path))
             {
@@ -212,27 +217,23 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="tempFrameEventsList">List of FrameEventBlobEntity</param>
         /// <param name="batchSize">Batch Size</param>
-        private List<FrameEventDetails> FetchFrameEvents(List<FrameEventDetails> tempFrameEventsList, int batchSize)
+        private List<List<FrameEventDetails>> FetchFrameEvents(List<FrameEventDetails> frameEventList, int batchSize)
         {
-            List<FrameEventDetails> sample = new List<FrameEventDetails>();
-            if (tempFrameEventsList.Count > 0)
+            List<List<FrameEventDetails>> batchFrames = new List<List<FrameEventDetails>>();
+            while (frameEventList.Count > 0)
             {
-                if (batchSize < tempFrameEventsList.Count)
+                if (batchSize < frameEventList.Count)
                 {
-                    sample.AddRange(tempFrameEventsList.Take(batchSize));
-                    tempFrameEventsList.RemoveRange(0, batchSize);
+                    batchFrames.Add(frameEventList.Take(batchSize).ToList());
+                    frameEventList.RemoveRange(0, batchSize);
                 }
                 else
                 {
-                    sample.AddRange(tempFrameEventsList.Take(tempFrameEventsList.Count));
-                    tempFrameEventsList.Clear();
+                    batchFrames.Add(frameEventList.Take(frameEventList.Count).ToList());
+                    frameEventList.Clear();
                 }
-                return sample;
             }
-            else
-            {
-                return null;
-            }
+            return batchFrames;
         }
 
         /// <summary>
@@ -367,17 +368,39 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Indicates Add frames operation success result.</returns>
         public async Task<bool> SubmitAddFramesReview(List<FrameEventDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
         {
-            int retry = 5;
-            string inputRequestObj = CreateAddFramesReviewRequestObject(frameEvents, uploadResult);
-            bool isComplete = false;
-            HttpResponseMessage response;
-            while (!isComplete && retry > 0)
+            bool isSuccess = true;
+            int batchSize = _amsConfig.FrameBatchSize;
+            var batchFrames = FetchFrameEvents(frameEvents, batchSize);
+            List<string> frameRequest = new List<string>();
+            foreach(var batchFrame in batchFrames)
             {
-                response = await ExecuteAddFramesReviewApi(reviewId, inputRequestObj);
-                isComplete = response.IsSuccessStatusCode;
-                retry--;
+                frameRequest.Add(CreateAddFramesReviewRequestObject(batchFrame, uploadResult));
             }
-            return isComplete;
+            //string inputRequestObj = CreateAddFramesReviewRequestObject(frameEvents, uploadResult);
+            string frameZipPath = $"{this._amsConfig.FfmpegFramesOutputPath}{reviewId}_zip";
+
+            DirectoryInfo di = new DirectoryInfo(frameZipPath);
+            FileInfo[] zipFiles = di.GetFiles();
+            if(frameRequest.Count != zipFiles.Length)
+            {
+                Console.WriteLine("Something went wrong.");
+                throw new Exception();
+            }
+            for (int i = 0; i < frameRequest.Count; i++)
+            {
+                int retry = 3;
+                bool isComplete = false;
+                HttpResponseMessage response;
+                while (!isComplete && retry > 0)
+                {
+                    response = await ExecuteAddFramesReviewApi(reviewId, frameRequest[i], zipFiles[i].FullName);
+                    isComplete = response.IsSuccessStatusCode;
+                    if (retry == 0 && !isComplete)
+                        isSuccess = false;
+                    retry--;
+                }
+            }
+            return isSuccess;
         }
 
         /// <summary>
@@ -399,14 +422,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="reviewId">reviewID</param>
         /// <param name="reviewFrameList">reviewFrameList</param>
         /// <returns>Response of AddFrames Api call</returns>
-        private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList)
+        private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList, string frameZipPath)
         {
             var client = new HttpClient();
             client.Timeout = TimeSpan.FromMinutes(10);
             var uri = string.Format(this._amsConfig.AddFramesUrl, this._amsConfig.TeamName, reviewId);
             // string resultJson = string.Empty;
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
-            string frameZipPath = $"{this._amsConfig.FfmpegFramesOutputPath}{reviewId}_zip\\frameZip.zip";
 
             MultipartFormDataContent form = new MultipartFormDataContent();
             form.Add(new StringContent(reviewFrameList), "FrameMetadata");

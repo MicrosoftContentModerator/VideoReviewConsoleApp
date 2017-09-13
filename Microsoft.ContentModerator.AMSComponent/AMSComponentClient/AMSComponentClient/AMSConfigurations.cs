@@ -41,7 +41,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
 		#region FFMPEG Configurations
 
-		public int FrameBatchSize = 50;
+		public int FrameBatchSize = 100;
 	
 		#endregion
 

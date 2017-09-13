@@ -51,7 +51,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + reviewId;
             Directory.CreateDirectory(frameStorageLocalPath);
-
+            int batchSize = _amsConfig.FrameBatchSize;
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nVideo Frames Creation inprogress...");
             Stopwatch sw = new Stopwatch();
@@ -65,11 +65,24 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<string> args = new List<string>();
             StringBuilder sb = new StringBuilder();
             int frameCounter = 0;
+            int frameProcessedCount = 0;
+            int segmentCount = 0;
+            string dirPath = string.Empty;
             foreach (var frame in eventsList)
             {
+                if(frameProcessedCount % batchSize == 0)
+                {
+                    segmentCount = frameProcessedCount / batchSize;
+                    dirPath = $"{frameStorageLocalPath}\\{segmentCount}";
+                    if (!Directory.Exists(dirPath))
+                    {
+                        Directory.CreateDirectory(dirPath);
+                    }
+                }
+                frameProcessedCount++;
                 frame.FrameName = reviewId + frame.FrameName;
                 TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
-                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 \"" + frameStorageLocalPath + "\\" + frame.FrameName + "\" ";
+                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 \"" + dirPath + "\\" + frame.FrameName + "\" ";
                 frameCounter++;
                 sb.Append(line);
                 if (sb.Length > 30000)
@@ -94,9 +107,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
-            
+            DirectoryInfo di = new DirectoryInfo(frameStorageLocalPath);
+            DirectoryInfo[] diArr = di.GetDirectories();
             Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
-            ZipFile.CreateFromDirectory(frameStorageLocalPath, frameStorageLocalPath + @"_zip\frameZip.zip",CompressionLevel.Optimal,false);
+            foreach(var dir in diArr)
+            {
+                ZipFile.CreateFromDirectory(dir.FullName, frameStorageLocalPath + $"_zip\\{dir.Name}.zip");
+            }
             return eventsList;
         }
         /// <summary>
