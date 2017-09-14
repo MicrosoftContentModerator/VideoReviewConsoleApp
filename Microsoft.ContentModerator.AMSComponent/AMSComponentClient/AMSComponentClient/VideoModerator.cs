@@ -231,7 +231,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             job.Submit();
             job.GetExecutionProgressTask(new CancellationTokenSource().Token).Wait();
             timer.Stop();
-            using (var sw = new StreamWriter("AmsPerf.txt", true))
+            using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
             {
                 sw.WriteLine("AMS Job Elapsed Time: {0}", timer.Elapsed);
             }

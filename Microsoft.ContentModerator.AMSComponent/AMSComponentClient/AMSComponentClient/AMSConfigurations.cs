@@ -41,7 +41,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
 		#region FFMPEG Configurations
 
-		public int FrameBatchSize = 100;
+		public int FrameBatchSize = 500;
 	
 		#endregion
 
@@ -78,6 +78,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public string FfmpegFramesOutputPath = @"..\..\Lib\";
 
         public string FfmpegExecutablePath = @"..\..\Lib\ffmpeg.exe";
+
+        public static string logFilePath = @"..\..\Lib\log.txt";
 
         public string BlobContainerForFfmpeg = "framegenerater";
 

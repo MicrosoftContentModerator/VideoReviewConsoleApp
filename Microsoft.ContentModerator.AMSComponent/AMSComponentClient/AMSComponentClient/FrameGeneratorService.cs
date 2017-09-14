@@ -101,7 +101,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 arg => CreateTaskProcess(arg, ffmpegBlobUrl));
 
             sw.Stop();
-            using (var stw = new StreamWriter("AmsPerf.txt", true))
+            using (var stw = new StreamWriter(AmsConfigurations.logFilePath, true))
             {
                 stw.WriteLine("Frame Creation Elapsed time: {0}", sw.Elapsed);
             }

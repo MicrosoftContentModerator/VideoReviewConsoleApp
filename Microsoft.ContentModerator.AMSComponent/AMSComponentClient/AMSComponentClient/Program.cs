@@ -101,9 +101,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             sw.Stop();
             Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
-            using (var stw = new StreamWriter("AmsPerf.txt", true))
+            using (var stw = new StreamWriter(AmsConfigurations.logFilePath, true))
             {
-                stw.WriteLine(Path.GetFileName(videoPath));
+                stw.WriteLine("Video File Name: " + Path.GetFileName(videoPath));
                 stw.WriteLine($"ReviewId: {reviewId}");
                 stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
             }
