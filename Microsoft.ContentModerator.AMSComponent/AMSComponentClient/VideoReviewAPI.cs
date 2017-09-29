@@ -395,9 +395,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 {
                     response = await ExecuteAddFramesReviewApi(reviewId, frameRequest[i], zipFiles[i].FullName);
                     isComplete = response.IsSuccessStatusCode;
+                    retry--;
                     if (retry == 0 && !isComplete)
                         isSuccess = false;
-                    retry--;
                 }
             }
             return isSuccess;
