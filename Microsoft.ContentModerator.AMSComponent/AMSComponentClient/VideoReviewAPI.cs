@@ -54,7 +54,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             bool isSuccess = false;
             bool isTranscript = false;
-            
+
             isSuccess = await SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
             if (!isSuccess)
             {
@@ -66,11 +66,16 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 if (ValidateVtt(path))
                 {
-                    isTranscript = SubmitTranscript(reviewId, path);
+                    isTranscript = await SubmitTranscript(reviewId, path);
                 }
                 if (isTranscript)
                 {
                     GenerateTextScreenProfanity(reviewId, path);
+                }
+                else
+                {
+                    Console.WriteLine("Upload vtt failed.");
+                    throw new Exception();
                 }
                 try
                 {
@@ -142,8 +147,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             string resultJson = string.Empty;
             try
             {
-
-
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
 
@@ -372,7 +375,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             int batchSize = _amsConfig.FrameBatchSize;
             var batchFrames = FetchFrameEvents(frameEvents, batchSize);
             List<string> frameRequest = new List<string>();
-            foreach(var batchFrame in batchFrames)
+            foreach (var batchFrame in batchFrames)
             {
                 frameRequest.Add(CreateAddFramesReviewRequestObject(batchFrame, uploadResult));
             }
@@ -381,7 +384,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             DirectoryInfo di = new DirectoryInfo(frameZipPath);
             FileInfo[] zipFiles = di.GetFiles();
-            if(frameRequest.Count != zipFiles.Length)
+            if (frameRequest.Count != zipFiles.Length)
             {
                 Console.WriteLine("Something went wrong.");
                 throw new Exception();
@@ -409,11 +412,18 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="reviewId"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool SubmitTranscript(string reviewId, string path)
+        public async Task<bool> SubmitTranscript(string reviewId, string path)
         {
-
-            var response = ExecuteAddTranscriptApi(reviewId, path).Result;
-            return response.IsSuccessStatusCode;
+            bool isComplete = false;
+            int retry = 3;
+            HttpResponseMessage response = new HttpResponseMessage();
+            while (!isComplete && retry > 0)
+            {
+                var res = await ExecuteAddTranscriptApi(reviewId, path);
+                isComplete = res.IsSuccessStatusCode;
+                retry--;
+            }
+            return isComplete;
         }
 
         /// <summary>
@@ -514,14 +524,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             string responseContent = string.Empty;
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
-
             var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
             HttpResponseMessage response;
-
             byte[] byteArray = File.ReadAllBytes(filepath);
             string vttData = Encoding.UTF8.GetString(byteArray);
-
-
             string[] vttList = splitVtt(vttData, 1023).ToArray();
             foreach (var vtt in vttList)
             {
@@ -532,11 +538,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     response = await client.PostAsync(uri, content);
                     responseContent = await response.Content.ReadAsStringAsync();
                 }
-
                 var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
                 if (jsonTextScreen != null)
                 {
-
                     TranscriptProfanity transcriptProfanity = new TranscriptProfanity();
                     transcriptProfanity.TimeStamp = "";
                     List<Terms> transcriptTerm = new List<Terms>();
@@ -544,24 +548,18 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     {
                         foreach (var term in jsonTextScreen.Terms)
                         {
-
                             var profanityobject = new Terms
                             {
                                 Term = term.Term,
                                 Index = term.Index
-
                             };
-
                             transcriptTerm.Add(profanityobject);
-
                         }
                         transcriptProfanity.Terms = transcriptTerm;
                         profanityList.Add(transcriptProfanity);
-
                     }
                 }
             }
-
             return JsonConvert.SerializeObject(profanityList);
         }
 
@@ -588,7 +586,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             HttpResponseMessage response = new HttpResponseMessage();
             while (!isComplete && retry > 0)
             {
-                isComplete= ExecutePublishReviewApi(reviewId).Result.IsSuccessStatusCode;
+                isComplete = ExecutePublishReviewApi(reviewId).Result.IsSuccessStatusCode;
                 retry--;
             }
             return isComplete;
