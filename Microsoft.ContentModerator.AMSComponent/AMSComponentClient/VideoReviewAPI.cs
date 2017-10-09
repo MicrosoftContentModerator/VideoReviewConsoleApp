@@ -338,12 +338,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 metadata.AddRange(new List<Metadata>()
                 {
-                    new Metadata() { Key = "at", Value = uploadResult.AdultTag.ToString() },
                     new Metadata() { Key = "adultTextScore", Value = uploadResult.AdultScore.ToString() },
-                    new Metadata() { Key = "rt", Value = uploadResult.RacyTag.ToString() },
+                    new Metadata() { Key = "at", Value = uploadResult.AdultTag.ToString() },
                     new Metadata() { Key = "racyTextScore", Value = uploadResult.RacyScore.ToString() },
-                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTag.ToString() },
-                    new Metadata() { Key = "offensiveTextScore", Value = uploadResult.OffensiveScore.ToString() }
+                    new Metadata() { Key = "rt", Value = uploadResult.RacyTag.ToString() },
+                    new Metadata() { Key = "offensiveTextScore", Value = uploadResult.OffensiveScore.ToString() },
+                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTag.ToString() }
                 });
             }
             return metadata;
