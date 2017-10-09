@@ -201,7 +201,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="uploadResult"></param>
         /// <returns></returns>
         /// 
-        public bool CreateAzureMediaServicesJobToModerateVideo(UploadVideoStreamRequest uploadVideoRequest, UploadAssetResult uploadResult, bool generateVtt)
+        public bool CreateAzureMediaServicesJobToModerateVideo(UploadVideoStreamRequest uploadVideoRequest, UploadAssetResult uploadResult)
         {
             asset = CreateAsset(uploadVideoRequest);
             uploadResult.VideoName = uploadVideoRequest.VideoName;
@@ -220,7 +220,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 ConfigureContentModerationTask(job);
             }
             //adding transcript task to job.
-            if (generateVtt)
+            if (uploadResult.GenerateVTT)
             {
                 ConfigureTranscriptTask(job);
             }
@@ -255,7 +255,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     return false;
                 }
             }
-            if (generateVtt)
+            if (uploadResult.GenerateVTT)
             {
                 GenerateTranscript(job.OutputMediaAssets.Last());
             }

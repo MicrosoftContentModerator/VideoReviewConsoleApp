@@ -30,5 +30,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 		public List<TranscriptTerms> Terms { get; set; }
 		public Status Status { get; set; }
 		public string TrackingId { get; set; }
+        public Classification Classification { get; set; }
 	}
+    public class Classification
+    {
+        public double AdultScore { get; set; }
+        public double RacyScore { get; set; }
+        public double OffensiveScore { get; set; }
+        public string ReviewRecommended { get; set; }
+    }
 }

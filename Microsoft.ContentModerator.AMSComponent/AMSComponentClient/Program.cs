@@ -83,9 +83,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 uploadResult.V2JSONPath = filepath;
             }
+            if (generateVtt)
+            {
+                uploadResult.GenerateVTT = generateVtt;
+            }
             Console.WriteLine("\nVideo moderation process started...");
 
-            if (!videoModerator.CreateAzureMediaServicesJobToModerateVideo(uploadVideoStreamRequest, uploadResult, generateVtt))
+            if (!videoModerator.CreateAzureMediaServicesJobToModerateVideo(uploadVideoStreamRequest, uploadResult))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Video Review process failed.");

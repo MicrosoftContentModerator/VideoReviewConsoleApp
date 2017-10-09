@@ -7,6 +7,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     /// </summary>
     public class UploadAssetResult
     {
+        public bool GenerateVTT { get; set; }
 		public string V2JSONPath { get; set; }
 
 		/// <summary>
@@ -34,13 +35,19 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         public string ModeratedJson { get; set; }
 
-
         public IAsset Asset { get; set; }
 
         public string VideoFilePath { get; set; }
 
-
         public string VideoPath { get; set; }
 
+        public bool OffensiveTag { get; set; }
+
+        public bool RacyTag { get; set; }
+
+        public bool AdultTag { get; set; }
+        public double OffensiveScore { get; set; }
+        public double RacyScore { get; set; }
+        public double AdultScore { get; set; }
     }
 }

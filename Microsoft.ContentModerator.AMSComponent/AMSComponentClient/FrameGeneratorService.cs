@@ -47,7 +47,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="eventsList">resultDownloaddetailsList</param>
         /// <param name="assetInfo"></param>
-        public List<FrameEventDetails> GenerateAndUploadFrameImages(List<FrameEventDetails> eventsList, UploadAssetResult assetInfo, string reviewId)
+        public List<FrameEventDetails> GenerateFrameImages(List<FrameEventDetails> eventsList, UploadAssetResult assetInfo, string reviewId)
         {
             string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + reviewId;
             Directory.CreateDirectory(frameStorageLocalPath);

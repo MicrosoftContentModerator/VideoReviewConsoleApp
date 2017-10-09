@@ -37,31 +37,40 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             string reviewId = string.Empty;
             List<FrameEventDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
+            string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt";
+            TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult();
+            if (File.Exists(path))
+            {
+                screenTextResult = await GenerateTextScreenProfanity(reviewId, path);
+                uploadAssetResult.RacyScore = screenTextResult.RacyScore;
+                uploadAssetResult.OffensiveScore = screenTextResult.OffensiveScore;
+                uploadAssetResult.AdultScore = screenTextResult.AdultScore;
+                uploadAssetResult.RacyTag = screenTextResult.RacyTag;
+                uploadAssetResult.OffensiveTag = screenTextResult.OffensiveTag;
+                uploadAssetResult.AdultTag = screenTextResult.AdultTag;
+            }
             var reviewVideoRequestJson = CreateReviewRequestObject(uploadAssetResult, frameEntityList);
             if (string.IsNullOrWhiteSpace(reviewVideoRequestJson))
             {
                 throw new Exception("Video review process failed in CreateVideoReviewInContentModerator");
             }
-            reviewId =
-               JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result)
-                   .FirstOrDefault();
-            frameEntityList = framegenerator.GenerateAndUploadFrameImages(frameEntityList, uploadAssetResult, reviewId);
-            await CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId);
+            reviewId = JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result).FirstOrDefault();
+            frameEntityList = framegenerator.GenerateFrameImages(frameEntityList, uploadAssetResult, reviewId);
+            await CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId, path, screenTextResult);
             return reviewId;
         }
 
-        public async Task<string> CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId)
+        public async Task<string> CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId, string path, TranscriptScreenTextResult screenTextResult)
         {
             bool isSuccess = false;
             bool isTranscript = false;
-
             isSuccess = await SubmitAddFramesReview(frameEntityList, reviewId, assetinfo);
             if (!isSuccess)
             {
                 Console.WriteLine("Add Frame API call failed.");
                 throw new Exception();
             }
-            string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(assetinfo.VideoName) + "_aud_SpReco.vtt";
+
             if (File.Exists(path))
             {
                 if (ValidateVtt(path))
@@ -70,7 +79,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 if (isTranscript)
                 {
-                    GenerateTextScreenProfanity(reviewId, path);
+                    isSuccess = await UploadScreenTextResult(reviewId, JsonConvert.SerializeObject(screenTextResult?.TranscriptProfanity));
+                    if (!isSuccess)
+                    {
+                        Console.WriteLine("ScreenTextResult API call failed.");
+                        throw new Exception();
+                    }
                 }
                 else
                 {
@@ -124,17 +138,24 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="reviewId"></param>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        private bool GenerateTextScreenProfanity(string reviewId, string filepath)
+        private async Task<TranscriptScreenTextResult> GenerateTextScreenProfanity(string reviewId, string filepath)
         {
-            var textScreenResult = TextScreen(filepath).Result;
-            if (textScreenResult != null)
-            {
-                var response = ExecuteAddTranscriptSupportFile(reviewId, textScreenResult).Result;
-                return response.IsSuccessStatusCode;
-            }
-            return true;
+            var textScreenResult = await TextScreen(filepath);
+            return textScreenResult;
         }
-
+        private async Task<bool> UploadScreenTextResult(string reviewId, string transcriptProfanity)
+        {
+            HttpResponseMessage response;
+            int retry = 3;
+            bool isComplete = false;
+            while (!isComplete && retry > 0)
+            {
+                response = await ExecuteAddTranscriptSupportFile(reviewId, transcriptProfanity);
+                isComplete = response.IsSuccessStatusCode;
+                retry--;
+            }
+            return isComplete;
+        }
 
         /// <summary>
         /// Post transcript support file to the review API
@@ -312,6 +333,18 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     new Metadata() { Key= "adultScore",Value=adultScore.AdultConfidence},
                     new Metadata() {Key="a",Value=frameEvents.Any(x=>x.IsAdultContent.Equals(true)).ToString() },
                 };
+            }
+            if (uploadResult.GenerateVTT)
+            {
+                metadata.AddRange(new List<Metadata>()
+                {
+                    new Metadata() { Key = "at", Value = uploadResult.AdultTag.ToString() },
+                    new Metadata() { Key = "adultTextScore", Value = uploadResult.AdultScore.ToString() },
+                    new Metadata() { Key = "rt", Value = uploadResult.RacyTag.ToString() },
+                    new Metadata() { Key = "racyTextScore", Value = uploadResult.RacyScore.ToString() },
+                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTag.ToString() },
+                    new Metadata() { Key = "offensiveTextScore", Value = uploadResult.OffensiveScore.ToString() }
+                });
             }
             return metadata;
         }
@@ -518,7 +551,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        private async Task<string> TextScreen(string filepath)
+        private async Task<TranscriptScreenTextResult> TextScreen(string filepath)
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
@@ -526,9 +559,28 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
             var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
             HttpResponseMessage response;
-            byte[] byteArray = File.ReadAllBytes(filepath);
-            string vttData = Encoding.UTF8.GetString(byteArray);
-            string[] vttList = splitVtt(vttData, 1023).ToArray();
+            bool racyTag = false;
+            bool adultTag = false;
+            bool offensiveTag = false;
+            double racyScore = 0;
+            double adultScore = 0;
+            double offensiveScore = 0;
+            List<string> vttLines = File.ReadAllLines(filepath).Where(line => !line.Contains("-->") && line.Any(char.IsLetter)).ToList();
+            List<string> vttList = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in vttLines)
+            {
+                if (sb.Length + line.Length > 1024)
+                {
+                    vttList.Add(sb.ToString());
+                    sb.Clear();
+                }
+                sb.Append(line);
+            }
+            if (sb.Length > 0)
+            {
+                vttList.Add(sb.ToString());
+            }
             foreach (var vtt in vttList)
             {
                 byte[] byteData = Encoding.UTF8.GetBytes(vtt);
@@ -558,9 +610,25 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         transcriptProfanity.Terms = transcriptTerm;
                         profanityList.Add(transcriptProfanity);
                     }
+                    if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) adultTag = true;
+                    if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) racyTag = true;
+                    if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
+                    offensiveScore = jsonTextScreen.Classification.OffensiveScore > offensiveScore ? jsonTextScreen.Classification.OffensiveScore : offensiveScore;
+                    adultScore = jsonTextScreen.Classification.AdultScore > adultScore ? jsonTextScreen.Classification.AdultScore : adultScore;
+                    racyScore = jsonTextScreen.Classification.RacyScore > racyScore ? jsonTextScreen.Classification.RacyScore : racyScore;
                 }
             }
-            return JsonConvert.SerializeObject(profanityList);
+            TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult()
+            {
+                AdultTag = adultTag,
+                OffensiveTag = offensiveTag,
+                TranscriptProfanity = profanityList,
+                RacyTag = racyTag,
+                RacyScore = racyScore,
+                OffensiveScore = offensiveScore,
+                AdultScore = adultScore
+            };
+            return screenTextResult;
         }
 
         public static IEnumerable<string> splitVtt(string input, int characterCount)

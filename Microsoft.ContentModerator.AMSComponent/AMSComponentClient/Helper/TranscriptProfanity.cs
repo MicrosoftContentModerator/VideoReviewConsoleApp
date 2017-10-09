@@ -6,6 +6,16 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
+    public class TranscriptScreenTextResult
+    {
+        public List<TranscriptProfanity> TranscriptProfanity { get; set; }
+        public double OffensiveScore { get; set; }
+        public double RacyScore { get; set; }
+        public double AdultScore { get; set; }
+        public bool OffensiveTag { get; set; }
+        public bool RacyTag { get; set; }
+        public bool AdultTag { get; set; }
+    }
 	public class TranscriptProfanity
 	{
 
