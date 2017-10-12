@@ -37,11 +37,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public string DefaulVideopName = "VideoByUrl";
 
-        public double OffensiveTextThreshold = 0.8;
+        public double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
 
-        public double RacyTextThreshold = 0.8;
+        public double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);
 
-        public double AdultTextThreshold = 0.8;
+        public double AdultTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultTextThreshold"]);
 
         #endregion
 
@@ -96,9 +96,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public bool CheckValidations()
         {
             if (!string.IsNullOrEmpty(MediaServiceAccountKey) && !string.IsNullOrEmpty(MediaServiceAccountName)
-                && !string.IsNullOrEmpty(TeamName) && !string.IsNullOrEmpty(ReviewApiSubscriptionKey) && !string.IsNullOrEmpty(ReviewCreationUrl)
-                && !string.IsNullOrEmpty(AddFramesUrl) && !string.IsNullOrEmpty(PublishReviewUrl) &&
-                !string.IsNullOrEmpty(AddTranscriptUrl))
+                && !string.IsNullOrEmpty(TeamName)
+                && !string.IsNullOrEmpty(ReviewApiSubscriptionKey)
+                && !string.IsNullOrEmpty(ReviewCreationUrl)
+                && !string.IsNullOrEmpty(AddFramesUrl)
+                && !string.IsNullOrEmpty(PublishReviewUrl)
+                && !string.IsNullOrEmpty(AddTranscriptUrl))
             {
                 return true;
             }

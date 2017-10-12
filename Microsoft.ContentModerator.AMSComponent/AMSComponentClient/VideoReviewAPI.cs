@@ -222,7 +222,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     response = await client.PostAsync(uri, content);
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        throw new Exception("ExecuteCreateReviewApi is failed to get a review");
+                        throw new Exception("ExecuteCreateReviewApi has failed to get a review");
                     }
                     resultJson = await response.Content.ReadAsStringAsync();
                 }
