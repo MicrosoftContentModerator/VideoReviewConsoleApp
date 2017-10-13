@@ -83,30 +83,20 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     /// </summary>
     public class FrameEventDetails
     {
-
+        public bool ReviewRecommended { get; set; }
         /// <summary>
         /// Gets or Sets the Interval of Event
         /// </summary>
-
         public string Interval { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the IsAdultContent of Event
-        /// </summary>
-        public bool IsAdultContent { get; set; }
-
         /// <summary>
         /// Gets or Sets the AdultConfidence of Event
         /// </summary>
-        public string AdultConfidence { get; set; }
+        public string AdultScore { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
-        public bool IsRacyContent { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string RacyConfidence { get; set; }
+        public string RacyScore { get; set; }
         /// <summary>
         ///  Gets or Sets the Index of Event
         /// </summary>
@@ -129,7 +119,35 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public int TimeScale { get; set; }
     }
 
-
+    public class ProcessedFrameDetails
+    {
+        public bool ReviewRecommended { get; set; }
+        /// <summary>
+        /// Gets or Sets the IsAdultContent of Event
+        /// </summary>
+        public bool IsAdultContent { get; set; }
+        /// <summary>
+        /// Gets or Sets the AdultConfidence of Event
+        /// </summary>
+        public string AdultScore { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRacyContent { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string RacyScore { get; set; }
+        /// <summary>
+        /// Gets or Sets the Timestamp of Event
+        /// </summary>
+        public long TimeStamp { get; set; }
+        /// <summary>
+        /// Gets or Sets the FrameName
+        /// </summary>       
+        public string FrameName { get; set; }
+        public int TimeScale { get; set; }
+    }
     public class Clip
     {
         public int Start { get; set; }

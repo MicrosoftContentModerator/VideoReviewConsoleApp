@@ -9,9 +9,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 {
     class Program
     {
-        static string confidence = "0";
         static bool generateVtt = false;
-        static bool v2Json = false;
         static AmsComponent amsComponent;
         static AmsConfigurations amsConfigurations;
         static VideoModerator videoModerator;
@@ -36,8 +34,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             else
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(args[0]);
-                if (args.Length == 2) bool.TryParse(args[1], out generateVtt);
-                v2Json = true;
+                if (args.Length == 2)
+                    bool.TryParse(args[1], out generateVtt);
                 Initialize();
 
                 var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
@@ -73,16 +71,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
             UploadAssetResult uploadResult = new UploadAssetResult();
-            if (v2Json)
-            {
-                string filepath = videoPath.Replace(".mp4", ".json");
-                if (!File.Exists(filepath))
-                {
-                    Console.WriteLine("V2 Json does not exist for video.");
-                    throw new Exception();
-                }
-                uploadResult.V2JSONPath = filepath;
-            }
+            
             if (generateVtt)
             {
                 uploadResult.GenerateVTT = generateVtt;
@@ -140,32 +129,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             do
             {
-                Console.Write("\nUse V2 JSON? [y/n] : ");
-                response = Console.ReadKey(false).Key;
-                if (response != ConsoleKey.Enter)
-                {
-                    Console.WriteLine();
-                }
-            } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-            v2Json = response == ConsoleKey.Y;
-            if (!v2Json)
-            {
-                Console.Write("\nEnter Confidence Value between 0 to 1 : ");
-                confidence = Console.ReadLine();
-                Console.WriteLine();
-                double outval;
-                while (!double.TryParse(confidence, out outval) || outval > 1 || outval < 0)
-                {
-                    Console.WriteLine("\nPlease Enter value between 0 to 1 : ");
-                    confidence = Console.ReadLine();
-                }
-            }
-            else
-            {
-                confidence = "0";
-            }
-            do
-            {
                 Console.Write("Generate Video Transcript? [y/n] : ");
                 response = Console.ReadKey(false).Key;
                 if (response != ConsoleKey.Enter)
@@ -181,7 +144,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             amsComponent = new AmsComponent();
             amsConfigurations = new AmsConfigurations();
             videoModerator = new VideoModerator(amsConfigurations);
-            videoReviewApi = new VideoReviewApi(amsConfigurations, confidence);
+            videoReviewApi = new VideoReviewApi(amsConfigurations);
         }
     }
 }

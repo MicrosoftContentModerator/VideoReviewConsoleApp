@@ -25,10 +25,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// Instantiates an instance of VideoReviewAPI
         /// </summary>
         /// <param name="config">AMSConfigurations</param>
-        public VideoReviewApi(AmsConfigurations config, string confidence)
+        public VideoReviewApi(AmsConfigurations config)
         {
             _amsConfig = config;
-            framegenerator = new FrameGenerator(_amsConfig, confidence);
+            framegenerator = new FrameGenerator(_amsConfig);
         }
 
         #region Create and Submit Frames
@@ -36,18 +36,18 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public async Task<string> CreateVideoReviewInContentModerator(UploadAssetResult uploadAssetResult)
         {
             string reviewId = string.Empty;
-            List<FrameEventDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
+            List<ProcessedFrameDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt";
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult();
             if (File.Exists(path))
             {
                 screenTextResult = await GenerateTextScreenProfanity(reviewId, path);
-                uploadAssetResult.RacyScore = screenTextResult.RacyScore;
-                uploadAssetResult.OffensiveScore = screenTextResult.OffensiveScore;
-                uploadAssetResult.AdultScore = screenTextResult.AdultScore;
-                uploadAssetResult.RacyTag = screenTextResult.RacyTag;
-                uploadAssetResult.OffensiveTag = screenTextResult.OffensiveTag;
-                uploadAssetResult.AdultTag = screenTextResult.AdultTag;
+                uploadAssetResult.RacyTextScore = screenTextResult.RacyScore;
+                uploadAssetResult.OffensiveTextScore = screenTextResult.OffensiveScore;
+                uploadAssetResult.AdultTextScore = screenTextResult.AdultScore;
+                uploadAssetResult.RacyTextTag = screenTextResult.RacyTag;
+                uploadAssetResult.OffensiveTextTag = screenTextResult.OffensiveTag;
+                uploadAssetResult.AdultTextTag = screenTextResult.AdultTag;
             }
             var reviewVideoRequestJson = CreateReviewRequestObject(uploadAssetResult, frameEntityList);
             if (string.IsNullOrWhiteSpace(reviewVideoRequestJson))
@@ -60,7 +60,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             return reviewId;
         }
 
-        public async Task<string> CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<FrameEventDetails> frameEntityList, string reviewId, string path, TranscriptScreenTextResult screenTextResult)
+        public async Task<string> CreateAndPublishReviewInContentModerator(UploadAssetResult assetinfo, List<ProcessedFrameDetails> frameEntityList, string reviewId, string path, TranscriptScreenTextResult screenTextResult)
         {
             bool isSuccess = false;
             bool isTranscript = false;
@@ -241,9 +241,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="tempFrameEventsList">List of FrameEventBlobEntity</param>
         /// <param name="batchSize">Batch Size</param>
-        private List<List<FrameEventDetails>> FetchFrameEvents(List<FrameEventDetails> frameEventList, int batchSize)
+        private List<List<ProcessedFrameDetails>> FetchFrameEvents(List<ProcessedFrameDetails> frameEventList, int batchSize)
         {
-            List<List<FrameEventDetails>> batchFrames = new List<List<FrameEventDetails>>();
+            List<List<ProcessedFrameDetails>> batchFrames = new List<List<ProcessedFrameDetails>>();
             while (frameEventList.Count > 0)
             {
                 if (batchSize < frameEventList.Count)
@@ -266,7 +266,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="assetInfo">UploadAssetResult</param>
         /// <param name="frameEvents">List of FrameEventBlobEntity</param>
         /// <returns>Reviewvideo</returns>
-        public string CreateReviewRequestObject(UploadAssetResult assetInfo, List<FrameEventDetails> frameEvents)
+        public string CreateReviewRequestObject(UploadAssetResult assetInfo, List<ProcessedFrameDetails> frameEvents)
         {
 
             List<ReviewVideo> reviewList = new List<ReviewVideo>();
@@ -283,9 +283,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 reviewList.Add(reviewVideoObj);
                 return JsonConvert.SerializeObject(reviewList);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Console.WriteLine("An exception had occured at {0} ", MethodBase.GetCurrentMethod().Name);
+                Console.WriteLine(e.Message);
                 throw;
             }
         }
@@ -295,10 +296,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="frameEvents">List of FrameEventBlobEntity</param>
         /// <returns>List of Video frames</returns>
-        private List<VideoFrame> GenerateVideoFrames(List<FrameEventDetails> frameEvents, UploadAssetResult uploadResult)
+        private List<VideoFrame> GenerateVideoFrames(List<ProcessedFrameDetails> frameEvents, UploadAssetResult uploadResult)
         {
             List<VideoFrame> videoFrames = new List<VideoFrame>();
-            foreach (FrameEventDetails frameEvent in frameEvents)
+            foreach (ProcessedFrameDetails frameEvent in frameEvents)
             {
                 VideoFrame videoFrameObj = PopulateVideoFrame(frameEvent, uploadResult);
                 videoFrames.Add(videoFrameObj);
@@ -311,39 +312,31 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="frameEvents"></param>
         /// <returns></returns>
-        private List<Metadata> GenerateMetadata(List<FrameEventDetails> frameEvents, UploadAssetResult uploadResult)
+        private List<Metadata> GenerateMetadata(List<ProcessedFrameDetails> frameEvents, UploadAssetResult uploadResult)
         {
             List<Metadata> metadata = new List<Metadata>();
-            FrameEventDetails adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultConfidence)).FirstOrDefault();
-            if (uploadResult.V2JSONPath != null)
+            ProcessedFrameDetails adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault();
+
+            ProcessedFrameDetails racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault();
+            metadata = new List<Metadata>()
             {
-                FrameEventDetails racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyConfidence)).FirstOrDefault();
-                metadata = new List<Metadata>()
-                {
-                    new Metadata() {Key = "adultScore", Value = adultScore.AdultConfidence},
-                    new Metadata() {Key = "a", Value = frameEvents.Any(x=>x.IsAdultContent.Equals(true)).ToString()},
-                    new Metadata() {Key = "racyScore", Value = racyScore.RacyConfidence},
-                    new Metadata() {Key = "r", Value = frameEvents.Any(x=>x.IsRacyContent.Equals(true)).ToString()}
-                };
-            }
-            else
-            {
-                metadata = new List<Metadata>()
-                {
-                    new Metadata() { Key= "adultScore",Value=adultScore.AdultConfidence},
-                    new Metadata() {Key="a",Value=frameEvents.Any(x=>x.IsAdultContent.Equals(true)).ToString() },
-                };
-            }
+                new Metadata() {Key = "ReviewRecommended", Value = frameEvents.Any(frame=>frame.ReviewRecommended).ToString()},
+                new Metadata() {Key = "AdultScore", Value = adultScore.AdultScore},
+                new Metadata() {Key = "a", Value = double.Parse(adultScore.AdultScore) > _amsConfig.AdultFrameThreshold ? "True" : "False" },
+                new Metadata() {Key = "RacyScore", Value = racyScore.RacyScore},
+                new Metadata() {Key = "r", Value = double.Parse(adultScore.RacyScore) > _amsConfig.RacyFrameThreshold ? "True" : "False"}
+            };
+
             if (uploadResult.GenerateVTT)
             {
                 metadata.AddRange(new List<Metadata>()
                 {
-                    new Metadata() { Key = "adultTextScore", Value = uploadResult.AdultScore.ToString() },
-                    new Metadata() { Key = "at", Value = uploadResult.AdultTag.ToString() },
-                    new Metadata() { Key = "racyTextScore", Value = uploadResult.RacyScore.ToString() },
-                    new Metadata() { Key = "rt", Value = uploadResult.RacyTag.ToString() },
-                    new Metadata() { Key = "offensiveTextScore", Value = uploadResult.OffensiveScore.ToString() },
-                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTag.ToString() }
+                    new Metadata() { Key = "AdultTextScore", Value = uploadResult.AdultTextScore.ToString() },
+                    new Metadata() { Key = "at", Value = uploadResult.AdultTextTag.ToString() },
+                    new Metadata() { Key = "RacyTextScore", Value = uploadResult.RacyTextScore.ToString() },
+                    new Metadata() { Key = "rt", Value = uploadResult.RacyTextTag.ToString() },
+                    new Metadata() { Key = "OffensiveTextScore", Value = uploadResult.OffensiveTextScore.ToString() },
+                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTextTag.ToString() }
                 });
             }
             return metadata;
@@ -354,42 +347,24 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="frameEvent">FrameEventBlobEntity</param>
         /// <returns>Video Frame Object</returns>
-        private VideoFrame PopulateVideoFrame(FrameEventDetails frameEvent, UploadAssetResult uploadResult)
+        private VideoFrame PopulateVideoFrame(ProcessedFrameDetails frameEvent, UploadAssetResult uploadResult)
         {
-            if (uploadResult.V2JSONPath != null)
+            VideoFrame frameobj = new VideoFrame()
             {
-                VideoFrame frameobj = new VideoFrame()
-                {
-                    FrameImage = frameEvent.FrameName,
-                    Timestamp = Convert.ToString(frameEvent.TimeStamp * 1000 / frameEvent.TimeScale),
-                    ReviewerResultTags = new List<ReviewResultTag>(),
-                    Metadata = new List<Metadata>()
+                FrameImage = frameEvent.FrameName,
+                Timestamp = Convert.ToString(frameEvent.TimeStamp * 1000 / frameEvent.TimeScale),
+                ReviewerResultTags = new List<ReviewResultTag>(),
+                Metadata = new List<Metadata>()
                     {
-                        new Metadata() {Key = "adultScore", Value = frameEvent.AdultConfidence},
+                        new Metadata() {Key = "Review Recommended", Value = frameEvent.ReviewRecommended.ToString()},
+                        new Metadata() {Key = "Adult Score", Value = frameEvent.AdultScore},
                         new Metadata() {Key = "a", Value = frameEvent.IsAdultContent.ToString()},
-                        new Metadata() {Key = "racyScore", Value = frameEvent.RacyConfidence},
+                        new Metadata() {Key = "Racy Score", Value = frameEvent.RacyScore},
                         new Metadata() {Key = "r", Value = frameEvent.IsRacyContent.ToString()},
                         new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName}
                     },
-                };
-                return frameobj;
-            }
-            else
-            {
-                VideoFrame frameobj = new VideoFrame()
-                {
-                    FrameImage = frameEvent.FrameName,
-                    Timestamp = Convert.ToString(frameEvent.TimeStamp),
-                    ReviewerResultTags = new List<ReviewResultTag>(),
-                    Metadata = new List<Metadata>()
-                    {
-                        new Metadata() {Key = "adultScore", Value = frameEvent.AdultConfidence},
-                        new Metadata() {Key = "A", Value = frameEvent.IsAdultContent.ToString()},
-                        new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName}
-                    },
-                };
-                return frameobj;
-            }
+            };
+            return frameobj;
         }
 
         #endregion
@@ -402,7 +377,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="frameEvents">List of Frame Events.</param>
         /// <param name="reviewId">Reviewid</param>
         /// <returns>Indicates Add frames operation success result.</returns>
-        public async Task<bool> SubmitAddFramesReview(List<FrameEventDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
+        public async Task<bool> SubmitAddFramesReview(List<ProcessedFrameDetails> frameEvents, string reviewId, UploadAssetResult uploadResult)
         {
             bool isSuccess = true;
             int batchSize = _amsConfig.FrameBatchSize;
@@ -496,7 +471,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="frameEvents">List of Frame events</param>
         /// <returns>Json representation of video frames collection.</returns>
-        private string CreateAddFramesReviewRequestObject(List<FrameEventDetails> frameEvents, UploadAssetResult uploadResult)
+        private string CreateAddFramesReviewRequestObject(List<ProcessedFrameDetails> frameEvents, UploadAssetResult uploadResult)
         {
             List<VideoFrame> videoFrames = GenerateVideoFrames(frameEvents, uploadResult);
             return JsonConvert.SerializeObject(videoFrames);
@@ -568,7 +543,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<string> vttLines = File.ReadAllLines(filepath).Where(line => !line.Contains("-->") && line.Any(char.IsLetter)).ToList();
             List<string> vttList = new List<string>();
             StringBuilder sb = new StringBuilder();
-            foreach (var line in vttLines)
+            foreach (var line in vttLines.Skip(1))
             {
                 if (sb.Length + line.Length > 1024)
                 {

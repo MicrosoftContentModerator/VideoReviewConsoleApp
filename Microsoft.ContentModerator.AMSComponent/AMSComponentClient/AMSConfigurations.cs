@@ -37,6 +37,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public string DefaulVideopName = "VideoByUrl";
 
+        public double AdultFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultFrameThreshold"]);
+        
+        public double RacyFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyFrameThreshold"]);
+
         public double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
 
         public double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);

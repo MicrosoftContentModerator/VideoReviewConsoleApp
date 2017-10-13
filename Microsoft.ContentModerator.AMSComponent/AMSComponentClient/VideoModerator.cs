@@ -214,11 +214,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             //Adding encoding task to job.
             ConfigureEncodeAssetTask(uploadVideoRequest.EncodingRequest, job);
-            if (uploadResult.V2JSONPath == null)
-            {
-                //adding CM task to job.
-                ConfigureContentModerationTask(job);
-            }
+
+            ConfigureContentModerationTask(job);
+
             //adding transcript task to job.
             if (uploadResult.GenerateVTT)
             {
@@ -243,17 +241,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             UploadAssetResult result = uploadResult;
             encodedAsset = job.OutputMediaAssets[0];
+            result.ModeratedJson = GetCmDetail(job.OutputMediaAssets[1]);
+            // Check for valid Moderated JSON
+            var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(result.ModeratedJson);
 
-            if (uploadResult.V2JSONPath == null)
+            if (jsonModerateObject == null)
             {
-                result.ModeratedJson = GetCmDetail(job.OutputMediaAssets[1]);
-                // Check for valid Moderated JSON
-                var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(result.ModeratedJson);
-
-                if (jsonModerateObject == null)
-                {
-                    return false;
-                }
+                return false;
             }
             if (uploadResult.GenerateVTT)
             {

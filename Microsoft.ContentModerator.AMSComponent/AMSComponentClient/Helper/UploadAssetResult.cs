@@ -8,8 +8,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     public class UploadAssetResult
     {
         public bool GenerateVTT { get; set; }
-		public string V2JSONPath { get; set; }
-
 		/// <summary>
 		/// For Streaming Urls
 		/// </summary>
@@ -41,13 +39,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public string VideoPath { get; set; }
 
-        public bool OffensiveTag { get; set; }
+        public bool OffensiveTextTag { get; set; }
 
-        public bool RacyTag { get; set; }
+        public bool RacyTextTag { get; set; }
 
-        public bool AdultTag { get; set; }
-        public double OffensiveScore { get; set; }
-        public double RacyScore { get; set; }
-        public double AdultScore { get; set; }
+        public bool AdultTextTag { get; set; }
+        public double OffensiveTextScore { get; set; }
+        public double RacyTextScore { get; set; }
+        public double AdultTextScore { get; set; }
     }
 }

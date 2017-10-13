@@ -17,17 +17,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     public class FrameGenerator
     {
         private AmsConfigurations _amsConfig;
-        private double _confidence;
 
         /// <summary>
         /// Instaiates an instance of Frame generator.
         /// </summary>
         /// <param name="config"></param>
         /// <param name="confidenceVal"></param>
-        public FrameGenerator(AmsConfigurations config, string confidenceVal)
+        public FrameGenerator(AmsConfigurations config)
         {
             _amsConfig = config;
-            _confidence = Convert.ToDouble(confidenceVal);
         }
 
         /// <summary>
@@ -35,9 +33,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="assetInfo">assetInfo</param>
         /// <returns>Retruns Review Id</returns>
-        public List<FrameEventDetails> CreateVideoFrames(UploadAssetResult uploadAssetResult)
+        public List<ProcessedFrameDetails> CreateVideoFrames(UploadAssetResult uploadAssetResult)
         {
-            List<FrameEventDetails> frameEventsList = new List<FrameEventDetails>();
+            List<ProcessedFrameDetails> frameEventsList = new List<ProcessedFrameDetails>();
             PopulateFrameEvents(uploadAssetResult.ModeratedJson, frameEventsList, uploadAssetResult);
             return frameEventsList;
         }
@@ -47,7 +45,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="eventsList">resultDownloaddetailsList</param>
         /// <param name="assetInfo"></param>
-        public List<FrameEventDetails> GenerateFrameImages(List<FrameEventDetails> eventsList, UploadAssetResult assetInfo, string reviewId)
+        public List<ProcessedFrameDetails> GenerateFrameImages(List<ProcessedFrameDetails> eventsList, UploadAssetResult assetInfo, string reviewId)
         {
             string frameStorageLocalPath = this._amsConfig.FfmpegFramesOutputPath + reviewId;
             Directory.CreateDirectory(frameStorageLocalPath);
@@ -70,7 +68,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             string dirPath = string.Empty;
             foreach (var frame in eventsList)
             {
-                if(frameProcessedCount % batchSize == 0)
+                if (frameProcessedCount % batchSize == 0)
                 {
                     segmentCount = frameProcessedCount / batchSize;
                     dirPath = $"{frameStorageLocalPath}\\{segmentCount}";
@@ -110,7 +108,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             DirectoryInfo di = new DirectoryInfo(frameStorageLocalPath);
             DirectoryInfo[] diArr = di.GetDirectories();
             Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
-            foreach(var dir in diArr)
+            foreach (var dir in diArr)
             {
                 ZipFile.CreateFromDirectory(dir.FullName, frameStorageLocalPath + $"_zip\\{dir.Name}.zip");
             }
@@ -122,99 +120,34 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="moderatedJsonstring">moderatedJsonstring</param>
         /// <param name="resultEventDetailsList">resultEventDetailsList</param>
 
-        private void PopulateFrameEvents(string moderatedJsonstring, List<FrameEventDetails> resultEventDetailsList, UploadAssetResult uploadResult)
+        private void PopulateFrameEvents(string moderatedJsonstring, List<ProcessedFrameDetails> resultEventDetailsList, UploadAssetResult uploadResult)
         {
-            if (uploadResult.V2JSONPath != null)
+            var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
+            if (jsonModerateObject != null)
             {
-                try
+                var timeScale = Convert.ToInt32(jsonModerateObject.TimeScale);
+                int frameCount = 0;
+                foreach (var item in jsonModerateObject.Fragments)
                 {
-                    using (var streamReader = new StreamReader(uploadResult.V2JSONPath))
+                    if (item.Events != null)
                     {
-                        string jsonv2 = streamReader.ReadToEnd();
-                        moderatedJsonstring = jsonv2;
-                    }
-
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Json file associated with video is not present. V2 Json needs to be in the same folder as video with same name with .json extension.");
-                    throw;
-                }
-                var moderatedJsonV2 = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
-
-                if (moderatedJsonV2.Shots != null)
-                {
-                    int timescale = Convert.ToInt32(moderatedJsonV2.TimeScale);
-                    int frameCount = 0;
-                    foreach (var shot in moderatedJsonV2.Shots)
-                    {
-                        if (shot.Clips != null)
+                        foreach (var frameEventDetailList in item.Events)
                         {
-                            foreach (var clip in shot.Clips)
+                            foreach (FrameEventDetails frameEventDetails in frameEventDetailList)
                             {
-                                if (clip.Frames != null)
+                                var eventDetailsObj = new ProcessedFrameDetails
                                 {
-
-                                    foreach (var frameObj in clip.Frames)
-                                    {
-                                        if (Convert.ToDouble(frameObj.AdultConfidence) > _confidence)
-                                        {
-                                            var eventDetailsObj = new FrameEventDetails
-                                            {
-                                                TimeStamp = frameObj.TimeStamp,
-                                                IsAdultContent = frameObj.IsAdultContent,
-                                                AdultConfidence = frameObj.AdultConfidence,
-                                                Index = frameObj.Index,
-                                                TimeScale = timescale,
-                                                IsRacyContent = frameObj.IsRacyContent,
-                                                RacyConfidence = frameObj.RacyConfidence,
-
-                                            };
-                                            frameCount++;
-                                            eventDetailsObj.FrameName = "_" + frameCount + ".png";
-                                            resultEventDetailsList.Add(eventDetailsObj);
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                var jsonModerateObject = JsonConvert.DeserializeObject<VideoModerationResult>(moderatedJsonstring);
-
-                if (jsonModerateObject != null)
-                {
-                    var timeScale = Convert.ToString(jsonModerateObject.TimeScale);
-                    var timescale = Convert.ToInt32(timeScale);
-
-                    int frameCount = 0;
-                    foreach (var item in jsonModerateObject.Fragments)
-                    {
-                        if (item.Events != null)
-                        {
-                            foreach (var events in item.Events)
-                            {
-                                foreach (FrameEventDetails eventObj in events)
-                                {
-                                    if (Convert.ToDouble(eventObj.AdultConfidence) > _confidence)
-                                    {
-                                        var eventDetailsObj = new FrameEventDetails
-                                        {
-                                            TimeStamp = eventObj.TimeStamp,
-                                            IsAdultContent = eventObj.IsAdultContent,
-                                            AdultConfidence = eventObj.AdultConfidence,
-                                            Index = eventObj.Index,
-                                            TimeScale = timescale
-                                        };
-                                        frameCount++;
-                                        eventDetailsObj.FrameName = "_" + frameCount + ".png";
-                                        resultEventDetailsList.Add(eventDetailsObj);
-                                    }
-                                }
+                                    ReviewRecommended = frameEventDetails.ReviewRecommended,
+                                    TimeStamp = frameEventDetails.TimeStamp,
+                                    IsAdultContent = double.Parse(frameEventDetails.AdultScore) > _amsConfig.AdultFrameThreshold ? true : false,
+                                    AdultScore = frameEventDetails.AdultScore,
+                                    IsRacyContent = double.Parse(frameEventDetails.RacyScore) > _amsConfig.RacyFrameThreshold ? true : false,
+                                    RacyScore = frameEventDetails.RacyScore,
+                                    TimeScale = timeScale,
+                                };
+                                frameCount++;
+                                eventDetailsObj.FrameName = "_" + frameCount + ".png";
+                                resultEventDetailsList.Add(eventDetailsObj);
                             }
                         }
                     }
