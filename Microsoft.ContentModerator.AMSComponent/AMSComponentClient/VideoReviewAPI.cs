@@ -315,16 +315,27 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private List<Metadata> GenerateMetadata(List<ProcessedFrameDetails> frameEvents, UploadAssetResult uploadResult)
         {
             List<Metadata> metadata = new List<Metadata>();
-            ProcessedFrameDetails adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault();
+            var adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault().AdultScore;
+            var racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault().AdultScore;
+            var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
+            var isRacy = double.Parse(adultScore) > _amsConfig.RacyFrameThreshold ? true : false;
+            var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
+            if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
+            {
+                using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
+                {
+                    sw.WriteLine($"Review Not Created base on video moderation outputs. Video Name: {0}",uploadResult.VideoName);
+                }
+                throw new Exception("The video submitted and the threshold set suggests review not to be created.");
+            }
 
-            ProcessedFrameDetails racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault();
             metadata = new List<Metadata>()
             {
-                new Metadata() {Key = "ReviewRecommended", Value = frameEvents.Any(frame=>frame.ReviewRecommended).ToString()},
-                new Metadata() {Key = "AdultScore", Value = adultScore.AdultScore},
-                new Metadata() {Key = "a", Value = double.Parse(adultScore.AdultScore) > _amsConfig.AdultFrameThreshold ? "True" : "False" },
-                new Metadata() {Key = "RacyScore", Value = racyScore.RacyScore},
-                new Metadata() {Key = "r", Value = double.Parse(adultScore.RacyScore) > _amsConfig.RacyFrameThreshold ? "True" : "False"}
+                new Metadata() {Key = "ReviewRecommended", Value = },
+                new Metadata() {Key = "AdultScore", Value = adultScore},
+                new Metadata() {Key = "a", Value = isAdult.ToString() },
+                new Metadata() {Key = "RacyScore", Value = racyScore},
+                new Metadata() {Key = "r", Value = isRacy.ToString() }
             };
 
             if (uploadResult.GenerateVTT)
