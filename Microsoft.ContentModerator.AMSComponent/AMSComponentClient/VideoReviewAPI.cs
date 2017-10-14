@@ -316,7 +316,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             List<Metadata> metadata = new List<Metadata>();
             var adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault().AdultScore;
-            var racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault().AdultScore;
+            var racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault().RacyScore;
             var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
             var isRacy = double.Parse(adultScore) > _amsConfig.RacyFrameThreshold ? true : false;
             var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
@@ -331,7 +331,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             metadata = new List<Metadata>()
             {
-                new Metadata() {Key = "ReviewRecommended", Value = },
+                new Metadata() {Key = "ReviewRecommended", Value = reviewRecommended.ToString()},
                 new Metadata() {Key = "AdultScore", Value = adultScore},
                 new Metadata() {Key = "a", Value = isAdult.ToString() },
                 new Metadata() {Key = "RacyScore", Value = racyScore},
