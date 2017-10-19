@@ -22,6 +22,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 string videoPath = string.Empty;
                 GetUserInputs(out videoPath);
                 Initialize();
+                AmsConfigurations.logFilePath = Path.Combine(Path.GetDirectoryName(videoPath), "log.txt");
                 try
                 {
                     ProcessVideo(videoPath).Wait();
@@ -37,7 +38,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 if (args.Length == 2)
                     bool.TryParse(args[1], out generateVtt);
                 Initialize();
-
+                AmsConfigurations.logFilePath = Path.Combine(args[0], "log.txt");
                 var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
                 foreach (var file in files)
                 {
