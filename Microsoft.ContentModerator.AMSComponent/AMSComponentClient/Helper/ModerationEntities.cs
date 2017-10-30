@@ -46,10 +46,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// Gets or Sets the Json of Moderated Video
         /// </summary>
         public string ModeratedJson { get; set; }
-
-
-        //v2
-        public List<Shot> Shots { get; set; }
     }
 
     /// <summary>
@@ -92,7 +88,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// Gets or Sets the AdultConfidence of Event
         /// </summary>
         public string AdultScore { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -147,21 +143,5 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>       
         public string FrameName { get; set; }
         public int TimeScale { get; set; }
-    }
-    public class Clip
-    {
-        public int Start { get; set; }
-        public int Duration { get; set; }
-        public int Interval { get; set; }
-        public List<FrameEventDetails> Frames { get; set; }
-    }
-
-    public class Shot
-    {
-        public int Start { get; set; }
-        public int Duration { get; set; }
-        public int Interval { get; set; }
-        public int Clipscount { get; set; }
-        public List<Clip> Clips { get; set; }
     }
 }

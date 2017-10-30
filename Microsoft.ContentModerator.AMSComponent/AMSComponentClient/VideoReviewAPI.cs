@@ -57,6 +57,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             reviewId = JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result).FirstOrDefault();
             frameEntityList = framegenerator.GenerateFrameImages(frameEntityList, uploadAssetResult, reviewId);
             await CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId, path, screenTextResult);
+
             return reviewId;
         }
 
@@ -115,9 +116,16 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         }
         private void CleanUp(string reviewId)
         {
-            string path = this._amsConfig.FfmpegFramesOutputPath + reviewId;
-            Directory.Delete(path, true);
-            Directory.Delete($"{path}_zip", true);
+            try
+            {
+                string path = this._amsConfig.FfmpegFramesOutputPath + reviewId;
+                Directory.Delete(path, true);
+                Directory.Delete($"{path}_zip", true);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Cleanup failed.");
+            }
         }
 
         /// <summary>
@@ -222,7 +230,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     response = await client.PostAsync(uri, content);
                     if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        throw new Exception("ExecuteCreateReviewApi has failed to get a review");
+                        throw new Exception($"ExecuteCreateReviewApi has failed to get a review. Code: {response.StatusCode}");
                     }
                     resultJson = await response.Content.ReadAsStringAsync();
                 }
@@ -320,14 +328,14 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
             var isRacy = double.Parse(adultScore) > _amsConfig.RacyFrameThreshold ? true : false;
             var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
-            if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
-            {
-                using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
-                {
-                    sw.WriteLine($"Review Not Created base on video moderation outputs. Video Name: {0}",uploadResult.VideoName);
-                }
-                throw new Exception("The video submitted and the threshold set suggests review not to be created.");
-            }
+            //if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
+            //{
+            //    using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
+            //    {
+            //        sw.WriteLine($"Review Not Created base on video moderation outputs. Video Name: {0}",uploadResult.VideoName);
+            //    }
+            //    throw new Exception("The video submitted and the threshold set suggests review not to be created.");
+            //}
 
             metadata = new List<Metadata>()
             {
