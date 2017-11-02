@@ -79,8 +79,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 frameProcessedCount++;
                 frame.FrameName = reviewId + frame.FrameName;
-                TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
-                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 -vf scale=320:-1 \"" + dirPath + "\\" + frame.FrameName.Replace(".png",".jpg") + "\" ";
+                TimeSpan ts = TimeSpan.FromMilliseconds(Convert.ToDouble(frame.TimeStamp));
+                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 -vf scale=320:-1 \"" + dirPath + "\\" + frame.FrameName + "\" ";
                 frameCounter++;
                 sb.Append(line);
                 if (sb.Length > 30000)
@@ -146,7 +146,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                                     TimeScale = timeScale,
                                 };
                                 frameCount++;
-                                eventDetailsObj.FrameName = "_" + frameCount + ".png";
+                                eventDetailsObj.FrameName = "_" + frameCount + ".jpg";
                                 resultEventDetailsList.Add(eventDetailsObj);
                             }
                         }

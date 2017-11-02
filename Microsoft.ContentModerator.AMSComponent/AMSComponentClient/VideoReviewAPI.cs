@@ -554,6 +554,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
             HttpClientHandler handler = new HttpClientHandler();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
 
             var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
             HttpResponseMessage response;
@@ -607,6 +609,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 csrList.Add(captionScreentextResult);
             }
+            int waitTime = 300;
             foreach (var csr in csrList)
             {
                 bool captionAdultTextTag = false;
@@ -620,24 +623,24 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     using (var content = new ByteArrayContent(byteData))
                     {
                         content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-                        using (var client = new HttpClient(handler, false))
+                        try
                         {
-                            client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
-                            try
+                            response = await client.PostAsync(uri, content);
+                            System.Threading.Thread.Sleep(waitTime);
+                            while (!response.IsSuccessStatusCode)
                             {
-                                response = await client.PostAsync(uri, content);
-                                System.Threading.Thread.Sleep(100);
-                                while (!response.IsSuccessStatusCode)
-                                {
-                                    response = await client.PostAsync(uri, new ByteArrayContent(byteData));
-                                    System.Threading.Thread.Sleep(100);
-                                }
-                                responseContent = await response.Content.ReadAsStringAsync();
+                                waitTime = waitTime * 2;
+                                System.Threading.Thread.Sleep(waitTime);
+                                Console.WriteLine($"{response.StatusCode}, wait time: {waitTime}");
+                                var retryContent = new ByteArrayContent(byteData);
+                                retryContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+                                response = await client.PostAsync(uri, retryContent);
                             }
-                            catch (Exception)
-                            {
-                                Console.WriteLine("Moderation API call failed.");
-                            }
+                            responseContent = await response.Content.ReadAsStringAsync();
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Moderation API call failed.");
                         }
                     }
                     var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
@@ -690,7 +693,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             };
             return screenTextResult;
         }
-        
+
         public static IEnumerable<string> splitVtt(string input, int characterCount)
         {
             int index = 0;
