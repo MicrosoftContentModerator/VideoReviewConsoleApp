@@ -609,7 +609,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 csrList.Add(captionScreentextResult);
             }
-            int waitTime = 300;
+            int waitTime = 200;
             foreach (var csr in csrList)
             {
                 bool captionAdultTextTag = false;
@@ -629,7 +629,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             System.Threading.Thread.Sleep(waitTime);
                             while (!response.IsSuccessStatusCode)
                             {
-                                waitTime = waitTime * 2;
+                                waitTime = (int)(waitTime * 1.5);
                                 System.Threading.Thread.Sleep(waitTime);
                                 Console.WriteLine($"{response.StatusCode}, wait time: {waitTime}");
                                 var retryContent = new ByteArrayContent(byteData);
@@ -692,16 +692,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 AdultScore = adultScore
             };
             return screenTextResult;
-        }
-
-        public static IEnumerable<string> splitVtt(string input, int characterCount)
-        {
-            int index = 0;
-            return from c in input
-                   let itemIndex = index++
-                   group c by itemIndex / characterCount
-                into g
-                   select new string(g.ToArray());
         }
 
         #region Publish  - Review
