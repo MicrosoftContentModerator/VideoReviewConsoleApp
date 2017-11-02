@@ -22,22 +22,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// VideoName used for AssetName after uploding video to AMS
         /// </summary>     
         public string VideoName { get; set; }
-
-        /// <summary>
-        /// AssetId used for Asset Id after uploding video to AMS
-        /// </summary>
-        public string AssetId { get; set; }
-
         /// <summary>
         /// ModeratedJson used for getting json result after video moderation
         /// </summary>
         public string ModeratedJson { get; set; }
 
-        public IAsset Asset { get; set; }
 
         public string VideoFilePath { get; set; }
-
-        public string VideoPath { get; set; }
 
         public bool OffensiveTextTag { get; set; }
 

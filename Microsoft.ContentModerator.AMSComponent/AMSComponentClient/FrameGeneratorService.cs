@@ -80,7 +80,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 frameProcessedCount++;
                 frame.FrameName = reviewId + frame.FrameName;
                 TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
-                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 \"" + dirPath + "\\" + frame.FrameName + "\" ";
+                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 -vf scale=320:-1 \"" + dirPath + "\\" + frame.FrameName.Replace(".png",".jpg") + "\" ";
                 frameCounter++;
                 sb.Append(line);
                 if (sb.Length > 30000)

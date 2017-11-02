@@ -40,7 +40,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<ProcessedFrameDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt";
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult();
-            if (File.Exists(path))
+            if (File.Exists(path) && uploadAssetResult.GenerateVTT)
             {
                 screenTextResult = await GenerateTextScreenProfanity(reviewId, path, frameEntityList);
                 uploadAssetResult.RacyTextScore = screenTextResult.RacyScore;
@@ -626,15 +626,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             try
                             {
                                 response = await client.PostAsync(uri, content);
-                                System.Threading.Thread.Sleep(1000);
+                                System.Threading.Thread.Sleep(100);
                                 while (!response.IsSuccessStatusCode)
                                 {
-                                    response = await client.PostAsync(uri, content);
-                                    System.Threading.Thread.Sleep(1000);
+                                    response = await client.PostAsync(uri, new ByteArrayContent(byteData));
+                                    System.Threading.Thread.Sleep(100);
                                 }
                                 responseContent = await response.Content.ReadAsStringAsync();
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Console.WriteLine("Moderation API call failed.");
                             }
@@ -690,7 +690,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             };
             return screenTextResult;
         }
-
+        
         public static IEnumerable<string> splitVtt(string input, int characterCount)
         {
             int index = 0;
