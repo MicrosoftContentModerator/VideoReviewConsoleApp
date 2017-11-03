@@ -14,6 +14,7 @@ The transcription is screened for Profanity using Content Moderator Text API. Th
 Video frames whose transcript are flagged by the Text Screen API can be automatically flagged in the video review.
 
 To enable this, add the following Tags to your Content Moderator Team:
+
 | Name           | Short Code  |
 |:--------------:|:-----------:|
 | Adult Text     | at          |
