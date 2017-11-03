@@ -123,7 +123,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Directory.Delete(path, true);
                 Directory.Delete($"{path}_zip", true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Cleanup failed.");
             }
@@ -553,10 +553,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
-            HttpClientHandler handler = new HttpClientHandler();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
-
             var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
             HttpResponseMessage response;
             bool racyTag = false;
