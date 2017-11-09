@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -39,9 +40,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<ProcessedFrameDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
             string path = this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt";
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult();
-            if (File.Exists(path))
+            if (File.Exists(path) && uploadAssetResult.GenerateVTT)
             {
-                screenTextResult = await GenerateTextScreenProfanity(reviewId, path);
+                screenTextResult = await GenerateTextScreenProfanity(reviewId, path, frameEntityList);
                 uploadAssetResult.RacyTextScore = screenTextResult.RacyScore;
                 uploadAssetResult.OffensiveTextScore = screenTextResult.OffensiveScore;
                 uploadAssetResult.AdultTextScore = screenTextResult.AdultScore;
@@ -122,7 +123,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 Directory.Delete(path, true);
                 Directory.Delete($"{path}_zip", true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Cleanup failed.");
             }
@@ -146,9 +147,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="reviewId"></param>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        private async Task<TranscriptScreenTextResult> GenerateTextScreenProfanity(string reviewId, string filepath)
+        private async Task<TranscriptScreenTextResult> GenerateTextScreenProfanity(string reviewId, string filepath, List<ProcessedFrameDetails> frameEntityList)
         {
-            var textScreenResult = await TextScreen(filepath);
+            var textScreenResult = await TextScreen(filepath, frameEntityList);
             return textScreenResult;
         }
         private async Task<bool> UploadScreenTextResult(string reviewId, string transcriptProfanity)
@@ -371,7 +372,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             VideoFrame frameobj = new VideoFrame()
             {
                 FrameImage = frameEvent.FrameName,
-                Timestamp = Convert.ToString(frameEvent.TimeStamp * 1000 / frameEvent.TimeScale),
+                Timestamp = Convert.ToString(frameEvent.TimeStamp),
                 ReviewerResultTags = new List<ReviewResultTag>(),
                 Metadata = new List<Metadata>()
                     {
@@ -380,7 +381,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         new Metadata() {Key = "a", Value = frameEvent.IsAdultContent.ToString()},
                         new Metadata() {Key = "Racy Score", Value = frameEvent.RacyScore},
                         new Metadata() {Key = "r", Value = frameEvent.IsRacyContent.ToString()},
-                        new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName}
+                        new Metadata() {Key = "ExternalId", Value = frameEvent.FrameName},
+                        new Metadata() {Key = "at",Value = frameEvent.IsAdultTextContent.ToString() },
+                        new Metadata() {Key = "rt",Value = frameEvent.IsRacyTextContent.ToString() },
+                        new Metadata() {Key = "ot",Value = frameEvent.IsOffensiveTextContent.ToString() }
                     },
             };
             return frameobj;
@@ -545,7 +549,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        private async Task<TranscriptScreenTextResult> TextScreen(string filepath)
+        private async Task<TranscriptScreenTextResult> TextScreen(string filepath, List<ProcessedFrameDetails> frameEntityList)
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
@@ -559,57 +563,120 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             double racyScore = 0;
             double adultScore = 0;
             double offensiveScore = 0;
-            List<string> vttLines = File.ReadAllLines(filepath).Where(line => !line.Contains("-->") && line.Any(char.IsLetter)).ToList();
-            List<string> vttList = new List<string>();
+            List<string> vttLines = File.ReadAllLines(filepath).Where(line => !line.Contains("NOTE Confidence:") && line.Length > 0).ToList();
             StringBuilder sb = new StringBuilder();
+            List<CaptionScreentextResult> csrList = new List<CaptionScreentextResult>();
+            CaptionScreentextResult captionScreentextResult = new CaptionScreentextResult() { Captions = new List<string>() };
             foreach (var line in vttLines.Skip(1))
             {
+                if (line.Contains("-->"))
+                {
+                    if (sb.Length > 0)
+                    {
+                        captionScreentextResult.Captions.Add(sb.ToString());
+                        sb.Clear();
+                    }
+                    if (captionScreentextResult.Captions.Count > 0)
+                    {
+                        csrList.Add(captionScreentextResult);
+                        captionScreentextResult = new CaptionScreentextResult() { Captions = new List<string>() };
+                    }
+                    string[] times = line.Split(new string[] { "-->" }, StringSplitOptions.RemoveEmptyEntries);
+                    string startTimeString = times[0].Trim();
+                    string endTimeString = times[1].Trim();
+                    int startTime = (int)TimeSpan.ParseExact(startTimeString, @"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture).TotalMilliseconds;
+                    int endTime = (int)TimeSpan.ParseExact(endTimeString, @"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture).TotalMilliseconds;
+                    captionScreentextResult.StartTime = startTime;
+                    captionScreentextResult.EndTime = endTime;
+                }
+                else
+                {
+                    sb.Append(line);
+                }
                 if (sb.Length + line.Length > 1024)
                 {
-                    vttList.Add(sb.ToString());
+                    captionScreentextResult.Captions.Add(sb.ToString());
                     sb.Clear();
                 }
-                sb.Append(line);
             }
             if (sb.Length > 0)
             {
-                vttList.Add(sb.ToString());
+                captionScreentextResult.Captions.Add(sb.ToString());
             }
-            foreach (var vtt in vttList)
+            if (captionScreentextResult.Captions.Count > 0)
             {
-                byte[] byteData = Encoding.UTF8.GetBytes(vtt);
-                using (var content = new ByteArrayContent(byteData))
+                csrList.Add(captionScreentextResult);
+            }
+            int waitTime = 200;
+            foreach (var csr in csrList)
+            {
+                bool captionAdultTextTag = false;
+                bool captionRacyTextTag = false;
+                bool captionOffensiveTextTag = false;
+
+
+                foreach (var caption in csr.Captions)
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-                    response = await client.PostAsync(uri, content);
-                    responseContent = await response.Content.ReadAsStringAsync();
-                }
-                var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
-                if (jsonTextScreen != null)
-                {
-                    TranscriptProfanity transcriptProfanity = new TranscriptProfanity();
-                    transcriptProfanity.TimeStamp = "";
-                    List<Terms> transcriptTerm = new List<Terms>();
-                    if (jsonTextScreen.Terms != null)
+                    byte[] byteData = Encoding.UTF8.GetBytes(caption);
+                    using (var content = new ByteArrayContent(byteData))
                     {
-                        foreach (var term in jsonTextScreen.Terms)
+                        content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+                        try
                         {
-                            var profanityobject = new Terms
+                            response = await client.PostAsync(uri, content);
+                            System.Threading.Thread.Sleep(waitTime);
+                            while (!response.IsSuccessStatusCode)
                             {
-                                Term = term.Term,
-                                Index = term.Index
-                            };
-                            transcriptTerm.Add(profanityobject);
+                                waitTime = (int)(waitTime * 1.5);
+                                System.Threading.Thread.Sleep(waitTime);
+                                Console.WriteLine($"{response.StatusCode}, wait time: {waitTime}");
+                                var retryContent = new ByteArrayContent(byteData);
+                                retryContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+                                response = await client.PostAsync(uri, retryContent);
+                            }
+                            responseContent = await response.Content.ReadAsStringAsync();
                         }
-                        transcriptProfanity.Terms = transcriptTerm;
-                        profanityList.Add(transcriptProfanity);
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Moderation API call failed.");
+                        }
                     }
-                    if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) adultTag = true;
-                    if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) racyTag = true;
-                    if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
-                    offensiveScore = jsonTextScreen.Classification.OffensiveScore > offensiveScore ? jsonTextScreen.Classification.OffensiveScore : offensiveScore;
-                    adultScore = jsonTextScreen.Classification.AdultScore > adultScore ? jsonTextScreen.Classification.AdultScore : adultScore;
-                    racyScore = jsonTextScreen.Classification.RacyScore > racyScore ? jsonTextScreen.Classification.RacyScore : racyScore;
+                    var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
+                    if (jsonTextScreen != null)
+                    {
+                        TranscriptProfanity transcriptProfanity = new TranscriptProfanity();
+                        transcriptProfanity.TimeStamp = "";
+                        List<Terms> transcriptTerm = new List<Terms>();
+                        if (jsonTextScreen.Terms != null)
+                        {
+                            foreach (var term in jsonTextScreen.Terms)
+                            {
+                                var profanityobject = new Terms
+                                {
+                                    Term = term.Term,
+                                    Index = term.Index
+                                };
+                                transcriptTerm.Add(profanityobject);
+                            }
+                            transcriptProfanity.Terms = transcriptTerm;
+                            profanityList.Add(transcriptProfanity);
+                        }
+                        if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) captionAdultTextTag = true;
+                        if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) captionRacyTextTag = true;
+                        if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) captionOffensiveTextTag = true;
+                        if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) adultTag = true;
+                        if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) racyTag = true;
+                        if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
+                        offensiveScore = jsonTextScreen.Classification.OffensiveScore > offensiveScore ? jsonTextScreen.Classification.OffensiveScore : offensiveScore;
+                        adultScore = jsonTextScreen.Classification.AdultScore > adultScore ? jsonTextScreen.Classification.AdultScore : adultScore;
+                        racyScore = jsonTextScreen.Classification.RacyScore > racyScore ? jsonTextScreen.Classification.RacyScore : racyScore;
+                    }
+                    foreach (var frame in frameEntityList.Where(x => x.TimeStamp >= csr.StartTime && x.TimeStamp <= csr.EndTime))
+                    {
+                        frame.IsAdultTextContent = captionAdultTextTag;
+                        frame.IsRacyTextContent = captionRacyTextTag;
+                        frame.IsOffensiveTextContent = captionOffensiveTextTag;
+                    }
                 }
             }
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult()
@@ -623,16 +690,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 AdultScore = adultScore
             };
             return screenTextResult;
-        }
-
-        public static IEnumerable<string> splitVtt(string input, int characterCount)
-        {
-            int index = 0;
-            return from c in input
-                   let itemIndex = index++
-                   group c by itemIndex / characterCount
-                into g
-                   select new string(g.ToArray());
         }
 
         #region Publish  - Review

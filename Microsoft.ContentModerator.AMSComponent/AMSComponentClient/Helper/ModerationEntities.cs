@@ -143,5 +143,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>       
         public string FrameName { get; set; }
         public int TimeScale { get; set; }
+        public bool IsAdultTextContent { get; set; }
+        public bool IsRacyTextContent { get; set; }
+        public bool IsOffensiveTextContent { get; set; }
+
     }
 }

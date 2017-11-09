@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Web;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -72,7 +73,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             UploadVideoStreamRequest uploadVideoStreamRequest = CreateVideoStreamingRequest(compressedVideoPath);
             UploadAssetResult uploadResult = new UploadAssetResult();
-            
+
             if (generateVtt)
             {
                 uploadResult.GenerateVTT = generateVtt;

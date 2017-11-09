@@ -28,5 +28,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 		public int Index { get; set; }
 		public string Term { get; set; }
 	}
-
+    public class CaptionScreentextResult
+    {
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+        public List<string> Captions { get; set; }
+    }
 }

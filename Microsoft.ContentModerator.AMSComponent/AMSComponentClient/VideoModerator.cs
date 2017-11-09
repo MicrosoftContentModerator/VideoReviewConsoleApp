@@ -205,8 +205,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             asset = CreateAsset(uploadVideoRequest);
             uploadResult.VideoName = uploadVideoRequest.VideoName;
-            uploadResult.Asset = asset;
-            uploadResult.AssetId = asset.Id;
             // Encoding the asset , Moderating the asset, Generating transcript in parallel
             IAsset encodedAsset = null;
             //Creates the job for the tasks.

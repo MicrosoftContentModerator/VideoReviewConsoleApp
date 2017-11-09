@@ -79,8 +79,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 }
                 frameProcessedCount++;
                 frame.FrameName = reviewId + frame.FrameName;
-                TimeSpan ts = TimeSpan.FromSeconds(Convert.ToDouble(frame.TimeStamp / frame.TimeScale));
-                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 \"" + dirPath + "\\" + frame.FrameName + "\" ";
+                TimeSpan ts = TimeSpan.FromMilliseconds(Convert.ToDouble(frame.TimeStamp));
+                var line = "-ss " + ts + " -i \"" + assetInfo.VideoFilePath + "\" -map " + frameCounter + ":v -frames:v 1 -vf scale=320:-1 \"" + dirPath + "\\" + frame.FrameName + "\" ";
                 frameCounter++;
                 sb.Append(line);
                 if (sb.Length > 30000)
@@ -138,7 +138,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                                 var eventDetailsObj = new ProcessedFrameDetails
                                 {
                                     ReviewRecommended = frameEventDetails.ReviewRecommended,
-                                    TimeStamp = frameEventDetails.TimeStamp,
+                                    TimeStamp = (frameEventDetails.TimeStamp * 1000 / timeScale) ,
                                     IsAdultContent = double.Parse(frameEventDetails.AdultScore) > _amsConfig.AdultFrameThreshold ? true : false,
                                     AdultScore = frameEventDetails.AdultScore,
                                     IsRacyContent = double.Parse(frameEventDetails.RacyScore) > _amsConfig.RacyFrameThreshold ? true : false,
@@ -146,7 +146,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                                     TimeScale = timeScale,
                                 };
                                 frameCount++;
-                                eventDetailsObj.FrameName = "_" + frameCount + ".png";
+                                eventDetailsObj.FrameName = "_" + frameCount + ".jpg";
                                 resultEventDetailsList.Add(eventDetailsObj);
                             }
                         }
