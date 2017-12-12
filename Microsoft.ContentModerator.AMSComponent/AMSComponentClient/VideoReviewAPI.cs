@@ -727,7 +727,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
                 var uri = string.Format(this._amsConfig.PublishReviewUrl, this._amsConfig.TeamName, reviewId);
 
-                var method = new HttpMethod("PATCH");
+                var method = new HttpMethod("POST");
                 var content = new StringContent("");
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var request = new HttpRequestMessage(method, uri)
