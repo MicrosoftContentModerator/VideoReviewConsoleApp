@@ -1,4 +1,6 @@
-﻿using Microsoft.ContentModerator.ReviewAPI;
+﻿using Microsoft.CognitiveServices.ContentModerator;
+using Microsoft.CognitiveServices.ContentModerator.Models;
+using Microsoft.ContentModerator.ReviewAPI;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ using System.Web;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
+
     /// <summary>
     /// Represents a Video Review object.
     /// </summary>
@@ -21,7 +24,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     {
         private AmsConfigurations _amsConfig;
         private FrameGenerator framegenerator;
-
         /// <summary>
         /// Instantiates an instance of VideoReviewAPI
         /// </summary>
@@ -31,6 +33,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             _amsConfig = config;
             framegenerator = new FrameGenerator(_amsConfig);
         }
+        private readonly ContentModeratorClient CMClient = new ContentModeratorClient() { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint, OcpApimSubscriptionKey = AmsConfigurations.ReviewApiSubscriptionKey };
 
         #region Create and Submit Frames
 
@@ -177,23 +180,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             string resultJson = string.Empty;
             try
             {
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
-
-                var uri = string.Format(this._amsConfig.TextModerationResultUrl, this._amsConfig.TeamName,
-                    reviewId); // + queryString;
-
                 HttpResponseMessage response;
-                byte[] byteData = Encoding.UTF8.GetBytes(profanity);
-
-                using (var content = new ByteArrayContent(byteData))
-                {
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    response = await client.PutAsync(uri, content);
-                    resultJson = await response.Content.ReadAsStringAsync();
-                }
+                List<TranscriptModerationBodyItem> modResult = JsonConvert.DeserializeObject<List<TranscriptModerationBodyItem>>(profanity);
+                var res = await CMClient.Reviews.AddVideoTranscriptModerationResultWithHttpMessagesAsync("application/json", this._amsConfig.TeamName, reviewId, modResult);
+                response = res.Response;
+                resultJson = await response.Content.ReadAsStringAsync();
                 return response;
-
             }
             catch (Exception e)
             {
@@ -213,28 +205,21 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Review Id</returns>
         public async Task<string> ExecuteCreateReviewApi(string reviewVideoObj)
         {
-            string resultJson = string.Empty;
-            var client = new HttpClient();
-
+        ContentModeratorClient CMClient = new ContentModeratorClient() { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint, OcpApimSubscriptionKey = AmsConfigurations.ReviewApiSubscriptionKey };
+        string resultJson = string.Empty;
             try
             {
-                client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
-
-                var uri = string.Format(this._amsConfig.ReviewCreationUrl, this._amsConfig.TeamName);// + queryString;
-
+                List<CreateVideoReviewsBodyItem> review = JsonConvert.DeserializeObject<List<CreateVideoReviewsBodyItem>>(reviewVideoObj);
                 HttpResponseMessage response;
-                byte[] byteData = Encoding.UTF8.GetBytes(reviewVideoObj);
 
-                using (var content = new ByteArrayContent(byteData))
+                var oResponse = await CMClient.Reviews.CreateVideoReviewsWithHttpMessagesAsync("application/json", _amsConfig.TeamName, review);
+                response = oResponse.Response;
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    response = await client.PostAsync(uri, content);
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    {
-                        throw new Exception($"ExecuteCreateReviewApi has failed to get a review. Code: {response.StatusCode}");
-                    }
-                    resultJson = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"ExecuteCreateReviewApi has failed to get a review. Code: {response.StatusCode}");
                 }
+                resultJson = await response.Content.ReadAsStringAsync();
+
                 return resultJson;
             }
             catch (Exception e)
@@ -465,22 +450,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Response of AddFrames Api call</returns>
         private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList, string frameZipPath)
         {
-            var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(10);
-            var uri = string.Format(this._amsConfig.AddFramesUrl, this._amsConfig.TeamName, reviewId);
-            // string resultJson = string.Empty;
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
-
-            MultipartFormDataContent form = new MultipartFormDataContent();
-            form.Add(new StringContent(reviewFrameList), "FrameMetadata");
-            byte[] frameZip = File.ReadAllBytes(frameZipPath);
-            var zipContent = new ByteArrayContent(frameZip, 0, frameZip.Length);
-            zipContent.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping("frameZip.zip"));
-            form.Add(zipContent, "FrameImageZip", "frameZip.zip");
+            Stream frameZip = new FileStream(frameZipPath, FileMode.Open,FileAccess.Read);
+            var ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping("frameZip.zip"));
             HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                response = await client.PostAsync(uri, form);
+                var res = await CMClient.Reviews.AddVideoFrameStreamWithHttpMessagesAsync(ContentType.ToString(), _amsConfig.TeamName, reviewId, frameZip, reviewFrameList);
+                response = res.Response;
             }
             catch (Exception e)
             {
@@ -511,26 +487,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<HttpResponseMessage> ExecuteAddTranscriptApi(string reviewId, string filepath)
         {
             string resultJson = string.Empty;
-
-            var client = new HttpClient();
-
             try
             {
-                client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, this._amsConfig.ReviewApiSubscriptionKey);
-
-                var uri = string.Format(this._amsConfig.AddTranscriptUrl, this._amsConfig.TeamName, reviewId);
-
                 HttpResponseMessage response;
                 byte[] byteData = File.ReadAllBytes(filepath);
-
-
-                using (var content = new ByteArrayContent(byteData))
-                {
-                    //  content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-                    response = await client.PutAsync(uri, content);
-                    resultJson = await response.Content.ReadAsStringAsync();
-                }
-
+                var oRes = await CMClient.Reviews.AddVideoTranscriptWithHttpMessagesAsync(_amsConfig.TeamName, reviewId, new MemoryStream(byteData));
+                response = oRes.Response;
+                resultJson = await response.Content.ReadAsStringAsync();
                 return response;
             }
             catch (Exception e)
@@ -553,9 +516,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(Constants.SubscriptionKey, _amsConfig.ReviewApiSubscriptionKey);
-            var uri = string.Format(this._amsConfig.TranscriptModerationUrl);
             HttpResponseMessage response;
             bool racyTag = false;
             bool adultTag = false;
@@ -617,29 +577,25 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
                 foreach (var caption in csr.Captions)
                 {
-                    byte[] byteData = Encoding.UTF8.GetBytes(caption);
-                    using (var content = new ByteArrayContent(byteData))
+                    try
                     {
-                        content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-                        try
+                        var lang = await CMClient.TextModeration.DetectLanguageAsync("text/plain", caption);
+                        var oRes = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, "text/plain", caption);
+                        response = oRes.Response;
+                        System.Threading.Thread.Sleep(waitTime);
+                        while (!response.IsSuccessStatusCode)
                         {
-                            response = await client.PostAsync(uri, content);
+                            waitTime = (int)(waitTime * 1.5);
                             System.Threading.Thread.Sleep(waitTime);
-                            while (!response.IsSuccessStatusCode)
-                            {
-                                waitTime = (int)(waitTime * 1.5);
-                                System.Threading.Thread.Sleep(waitTime);
-                                Console.WriteLine($"{response.StatusCode}, wait time: {waitTime}");
-                                var retryContent = new ByteArrayContent(byteData);
-                                retryContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-                                response = await client.PostAsync(uri, retryContent);
-                            }
-                            responseContent = await response.Content.ReadAsStringAsync();
+                            Console.WriteLine($"{response.StatusCode}, wait time: {waitTime}");
+                            oRes = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, "text/plain", caption);
+                            response = oRes.Response;
                         }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Moderation API call failed.");
-                        }
+                        responseContent = await response.Content.ReadAsStringAsync();
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Moderation API call failed.");
                     }
                     var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
                     if (jsonTextScreen != null)
@@ -718,23 +674,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Returns response of publish review.</returns>
         private async Task<HttpResponseMessage> ExecutePublishReviewApi(string reviewId)
         {
-
-            var client = new HttpClient();
             var resultJson = string.Empty;
             HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", this._amsConfig.ReviewApiSubscriptionKey);
-                var uri = string.Format(this._amsConfig.PublishReviewUrl, this._amsConfig.TeamName, reviewId);
-
-                var method = new HttpMethod("POST");
-                var content = new StringContent("");
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var request = new HttpRequestMessage(method, uri)
-                {
-                    Content = content
-                };
-                response = await client.SendAsync(request);
+                var oRes = await CMClient.Reviews.PublishVideoReviewWithHttpMessagesAsync(_amsConfig.TeamName, reviewId);
+                response = oRes.Response;
                 return response;
             }
             catch (Exception e)

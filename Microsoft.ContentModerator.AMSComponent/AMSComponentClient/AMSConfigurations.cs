@@ -56,26 +56,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         #endregion
 
         #region ReviewAPI Configurations
-        private static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
+        public static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
 
         public string TeamName = ConfigurationManager.AppSettings["ContentModeratorTeamId"];
 
-        public string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ContentModeratorReviewApiSubscriptionKey"];
-
-        /// <summary>
-        /// These endpoints can change. Check to see if the endpoint changed when app is not working.
-        /// </summary>
-        public string ReviewCreationUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews");
-
-        public string AddFramesUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/frames");
-
-        public string PublishReviewUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/publish");
-
-        public string AddTranscriptUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/transcript");
-
-        public string TranscriptModerationUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/moderate/v1.0/ProcessText/Screen/?language=eng&classify=true");
-
-        public string TextModerationResultUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/transcriptmoderationresult");
+        public static string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ContentModeratorReviewApiSubscriptionKey"];
 
         public string ReviewCallBackUrl = "";
         #endregion
@@ -102,10 +87,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             if (!string.IsNullOrEmpty(MediaServiceAccountKey) && !string.IsNullOrEmpty(MediaServiceAccountName)
                 && !string.IsNullOrEmpty(TeamName)
                 && !string.IsNullOrEmpty(ReviewApiSubscriptionKey)
-                && !string.IsNullOrEmpty(ReviewCreationUrl)
-                && !string.IsNullOrEmpty(AddFramesUrl)
-                && !string.IsNullOrEmpty(PublishReviewUrl)
-                && !string.IsNullOrEmpty(AddTranscriptUrl))
+                )
             {
                 return true;
             }
