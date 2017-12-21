@@ -17,8 +17,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     public class VideoModerator
     {
         private CloudMediaContext _mediaContext;
-        private MediaServicesCredentials _cachedCredentials;
-
         AmsConfigurations _amsConfigurations = null;
         private string _processedAssetName = null;
         IAsset asset;
@@ -41,8 +39,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <param name="configObj">AMSConfigurations</param>
         private void InitializeMediaContext(AmsConfigurations configObj)
         {
-            _cachedCredentials = new MediaServicesCredentials(configObj.MediaServiceAccountName, configObj.MediaServiceAccountKey);
-            _mediaContext = new CloudMediaContext(_cachedCredentials);
+            var tokenCredentials = new AzureAdTokenCredentials(configObj.AzureAdTenentName,
+                new AzureAdClientSymmetricKey(configObj.ClientId, configObj.ClientSecret),
+                AzureEnvironments.AzureCloudEnvironment);
+            var tokenProvider = new AzureAdTokenProvider(tokenCredentials);
+            _mediaContext = new CloudMediaContext(new Uri(configObj.MediaServiceRestApiEndpoint), tokenProvider);
         }
 
         /// <summary>
