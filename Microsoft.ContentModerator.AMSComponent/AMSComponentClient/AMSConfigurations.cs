@@ -17,35 +17,23 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         #region MediaService Configurations
 
-        public string MediaServiceAccountKey = ConfigurationManager.AppSettings["AzureMediaServiceAccountKey"];
-
-        public string MediaServiceAccountName = ConfigurationManager.AppSettings["AzureMediaServiceAccountName"];
-
-        public string MediaProcessor = "Media Encoder Standard";//"Azure Media Encoder";
-
-        public string ModerationProcessor = "Azure Media Content Moderator";
-
-        public string MediaIndexer2MediaProcessor = "Azure Media Indexer 2 Preview";
-
-        public string ModerationConfigurationJson = @"..\..\Lib\Config.json";
-
-        public string MediaIndexerConfigurationJson = @"..\..\Lib\MediaIndexerConfig.json";
-
-        public double StreamingUrlActiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["StreamingUrlActiveDays"]);
-
-        public string BlobContainerForUploadbyUrl = "UploadByUrl";
-
-        public string DefaulVideopName = "VideoByUrl";
-
-        public double AdultFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultFrameThreshold"]);
-        
-        public double RacyFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyFrameThreshold"]);
-
-        public double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
-
-        public double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);
-
-        public double AdultTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultTextThreshold"]);
+        public readonly string AzureAdTenentName = ConfigurationManager.AppSettings["AzureAdTenantName"];
+        public readonly string ClientId = ConfigurationManager.AppSettings["ClientId"];
+        public readonly string ClientSecret = ConfigurationManager.AppSettings["ClientSecret"];
+        public readonly string MediaServiceRestApiEndpoint = ConfigurationManager.AppSettings["AzureMediaServiceRestApiEndpoint"];
+        public readonly string MediaProcessor = "Media Encoder Standard";//"Azure Media Encoder";
+        public readonly string ModerationProcessor = "Azure Media Content Moderator";
+        public readonly string MediaIndexer2MediaProcessor = "Azure Media Indexer 2 Preview";
+        public readonly string ModerationConfigurationJson = @"..\..\Lib\Config.json";
+        public readonly string MediaIndexerConfigurationJson = @"..\..\Lib\MediaIndexerConfig.json";
+        public readonly double StreamingUrlActiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["StreamingUrlActiveDays"]);
+        public readonly string BlobContainerForUploadbyUrl = "UploadByUrl";
+        public readonly string DefaulVideopName = "VideoByUrl";
+        public readonly double AdultFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultFrameThreshold"]);
+        public readonly double RacyFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyFrameThreshold"]);
+        public readonly double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
+        public readonly double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);
+        public readonly double AdultTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultTextThreshold"]);
 
         #endregion
 
@@ -56,26 +44,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         #endregion
 
         #region ReviewAPI Configurations
-        private static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
+        public readonly static string ContentModeraotrApiEndpoint = ConfigurationManager.AppSettings["ContentModeratorApiEndpoint"];
 
-        public string TeamName = ConfigurationManager.AppSettings["ContentModeratorTeamId"];
+        public readonly static string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ContentModeratorReviewApiSubscriptionKey"];
 
-        public string ReviewApiSubscriptionKey = ConfigurationManager.AppSettings["ContentModeratorReviewApiSubscriptionKey"];
-
-        /// <summary>
-        /// These endpoints can change. Check to see if the endpoint changed when app is not working.
-        /// </summary>
-        public string ReviewCreationUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews");
-
-        public string AddFramesUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/frames");
-
-        public string PublishReviewUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/publish");
-
-        public string AddTranscriptUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/transcript");
-
-        public string TranscriptModerationUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/moderate/v1.0/ProcessText/Screen/?language=eng&classify=true");
-
-        public string TextModerationResultUrl = String.Concat(ContentModeraotrApiEndpoint, "/contentmoderator/review/v1.0/teams/{0}/reviews/{1}/transcriptmoderationresult");
+        public readonly string TeamName = ConfigurationManager.AppSettings["ContentModeratorTeamId"];
 
         public string ReviewCallBackUrl = "";
         #endregion
@@ -99,13 +72,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public bool CheckValidations()
         {
-            if (!string.IsNullOrEmpty(MediaServiceAccountKey) && !string.IsNullOrEmpty(MediaServiceAccountName)
+            if (!string.IsNullOrEmpty(ClientId) && !string.IsNullOrEmpty(ClientSecret)
                 && !string.IsNullOrEmpty(TeamName)
                 && !string.IsNullOrEmpty(ReviewApiSubscriptionKey)
-                && !string.IsNullOrEmpty(ReviewCreationUrl)
-                && !string.IsNullOrEmpty(AddFramesUrl)
-                && !string.IsNullOrEmpty(PublishReviewUrl)
-                && !string.IsNullOrEmpty(AddTranscriptUrl))
+                && !string.IsNullOrEmpty(MediaServiceRestApiEndpoint)
+                && !string.IsNullOrEmpty(AzureAdTenentName)
+
+                )
             {
                 return true;
             }
