@@ -1,4 +1,5 @@
-﻿using Microsoft.CognitiveServices.ContentModerator;
+﻿using Microsoft.Azure.CognitiveServices.ContentModerator;
+using Microsoft.CognitiveServices.ContentModerator;
 using Microsoft.CognitiveServices.ContentModerator.Models;
 using Microsoft.ContentModerator.ReviewAPI;
 using Newtonsoft.Json;
@@ -33,7 +34,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             _amsConfig = config;
             framegenerator = new FrameGenerator(_amsConfig);
         }
-        private readonly ContentModeratorClient CMClient = new ContentModeratorClient() { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint, OcpApimSubscriptionKey = AmsConfigurations.ReviewApiSubscriptionKey };
+        private readonly ContentModeratorClient CMClient = new ContentModeratorClient(new ApiKeyServiceClientCredentials(AmsConfigurations.ReviewApiSubscriptionKey)) { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint};
 
         #region Create and Submit Frames
 
@@ -205,7 +206,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <returns>Review Id</returns>
         public async Task<string> ExecuteCreateReviewApi(string reviewVideoObj)
         {
-        ContentModeratorClient CMClient = new ContentModeratorClient() { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint, OcpApimSubscriptionKey = AmsConfigurations.ReviewApiSubscriptionKey };
+        ContentModeratorClient CMClient = new ContentModeratorClient(new ApiKeyServiceClientCredentials(AmsConfigurations.ReviewApiSubscriptionKey)) { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint };
+
         string resultJson = string.Empty;
             try
             {
