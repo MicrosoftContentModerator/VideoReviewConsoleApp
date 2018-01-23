@@ -34,9 +34,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 	}
     public class Classification
     {
-        public double AdultScore { get; set; }
-        public double RacyScore { get; set; }
-        public double OffensiveScore { get; set; }
+        public double Category1 { get; set; }
+        public double Category2 { get; set; }
+        public double Category3 { get; set; }
         public string ReviewRecommended { get; set; }
     }
 }

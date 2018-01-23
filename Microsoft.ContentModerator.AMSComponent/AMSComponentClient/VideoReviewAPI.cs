@@ -625,15 +625,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             transcriptProfanity.Terms = transcriptTerm;
                             profanityList.Add(transcriptProfanity);
                         }
-                        if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) captionAdultTextTag = true;
-                        if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) captionRacyTextTag = true;
-                        if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) captionOffensiveTextTag = true;
-                        if (jsonTextScreen.Classification.AdultScore > _amsConfig.AdultTextThreshold) adultTag = true;
-                        if (jsonTextScreen.Classification.RacyScore > _amsConfig.RacyTextThreshold) racyTag = true;
-                        if (jsonTextScreen.Classification.OffensiveScore > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
-                        offensiveScore = jsonTextScreen.Classification.OffensiveScore > offensiveScore ? jsonTextScreen.Classification.OffensiveScore : offensiveScore;
-                        adultScore = jsonTextScreen.Classification.AdultScore > adultScore ? jsonTextScreen.Classification.AdultScore : adultScore;
-                        racyScore = jsonTextScreen.Classification.RacyScore > racyScore ? jsonTextScreen.Classification.RacyScore : racyScore;
+                        if (jsonTextScreen.Classification.Category1 > _amsConfig.AdultTextThreshold) captionAdultTextTag = true;
+                        if (jsonTextScreen.Classification.Category2 > _amsConfig.RacyTextThreshold) captionRacyTextTag = true;
+                        if (jsonTextScreen.Classification.Category3 > _amsConfig.OffensiveTextThreshold) captionOffensiveTextTag = true;
+                        if (jsonTextScreen.Classification.Category1 > _amsConfig.AdultTextThreshold) adultTag = true;
+                        if (jsonTextScreen.Classification.Category2 > _amsConfig.RacyTextThreshold) racyTag = true;
+                        if (jsonTextScreen.Classification.Category3 > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
+                        adultScore = jsonTextScreen.Classification.Category1 > adultScore ? jsonTextScreen.Classification.Category1 : adultScore;
+                        racyScore = jsonTextScreen.Classification.Category2 > racyScore ? jsonTextScreen.Classification.Category2 : racyScore;
+                        offensiveScore = jsonTextScreen.Classification.Category3 > offensiveScore ? jsonTextScreen.Classification.Category3 : offensiveScore;
                     }
                     foreach (var frame in frameEntityList.Where(x => x.TimeStamp >= csr.StartTime && x.TimeStamp <= csr.EndTime))
                     {
