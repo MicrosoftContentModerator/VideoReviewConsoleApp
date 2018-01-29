@@ -83,7 +83,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             if (!videoModerator.CreateAzureMediaServicesJobToModerateVideo(uploadVideoStreamRequest, uploadResult))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Video Review process failed.");
+                Console.WriteLine("\nVideo moderation process failed.");
             }
 
             Console.WriteLine("\nVideo moderation process completed...");

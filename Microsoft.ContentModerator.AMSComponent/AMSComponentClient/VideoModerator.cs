@@ -346,10 +346,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             string moderationConfiguration = System.IO.File.ReadAllText(this._amsConfigurations.ModerationConfigurationJson);
 
-            ITask contentModeratorTask = job.Tasks.AddNew(asset.Name + "_" + "Adult classifier task", mp, moderationConfiguration, TaskOptions.None);
+            ITask contentModeratorTask = job.Tasks.AddNew(asset.Name + "_" + "Adult and racy classifier task", mp, moderationConfiguration, TaskOptions.None);
 
             contentModeratorTask.InputAssets.Add(asset);
-            contentModeratorTask.OutputAssets.AddNew(asset.Name + "_" + "Adult classifier output", AssetCreationOptions.None);
+            contentModeratorTask.OutputAssets.AddNew(asset.Name + "_" + "Adult and racy classifier output", AssetCreationOptions.None);
 
         }
 

@@ -29,11 +29,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public readonly double StreamingUrlActiveDays = Convert.ToInt32(ConfigurationManager.AppSettings["StreamingUrlActiveDays"]);
         public readonly string BlobContainerForUploadbyUrl = "UploadByUrl";
         public readonly string DefaulVideopName = "VideoByUrl";
-        public readonly double AdultFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultFrameThreshold"]);
-        public readonly double RacyFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyFrameThreshold"]);
-        public readonly double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
-        public readonly double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);
-        public readonly double AdultTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultTextThreshold"]);
+        public readonly double Category1FrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category1FrameThreshold"]);
+        public readonly double Category2FrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category2FrameThreshold"]);
+        public readonly double Category1TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category1TextThreshold"]);
+        public readonly double Category2TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category2TextThreshold"]);
+        public readonly double Category3TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category3TextThreshold"]);
 
         #endregion
 

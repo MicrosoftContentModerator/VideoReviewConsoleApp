@@ -138,10 +138,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                                 var eventDetailsObj = new ProcessedFrameDetails
                                 {
                                     ReviewRecommended = frameEventDetails.ReviewRecommended,
-                                    TimeStamp = (frameEventDetails.TimeStamp * 1000 / timeScale) ,
-                                    IsAdultContent = double.Parse(frameEventDetails.AdultScore) > _amsConfig.AdultFrameThreshold ? true : false,
+                                    TimeStamp = (frameEventDetails.TimeStamp * 1000 / timeScale),
+                                    IsAdultContent = double.Parse(frameEventDetails.AdultScore) > _amsConfig.Category1FrameThreshold ? true : false,
                                     AdultScore = frameEventDetails.AdultScore,
-                                    IsRacyContent = double.Parse(frameEventDetails.RacyScore) > _amsConfig.RacyFrameThreshold ? true : false,
+                                    IsRacyContent = double.Parse(frameEventDetails.RacyScore) > _amsConfig.Category2FrameThreshold ? true : false,
                                     RacyScore = frameEventDetails.RacyScore,
                                     TimeScale = timeScale,
                                 };

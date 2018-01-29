@@ -42,17 +42,17 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             string reviewId = string.Empty;
             List<ProcessedFrameDetails> frameEntityList = framegenerator.CreateVideoFrames(uploadAssetResult);
-            string path = uploadAssetResult.GenerateVTT == true? this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt":"";
+            string path = uploadAssetResult.GenerateVTT == true ? this._amsConfig.FfmpegFramesOutputPath + Path.GetFileNameWithoutExtension(uploadAssetResult.VideoName) + "_aud_SpReco.vtt" : "";
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult();
             if (File.Exists(path))
             {
                 screenTextResult = await GenerateTextScreenProfanity(reviewId, path, frameEntityList);
-                uploadAssetResult.RacyTextScore = screenTextResult.RacyScore;
-                uploadAssetResult.OffensiveTextScore = screenTextResult.OffensiveScore;
-                uploadAssetResult.AdultTextScore = screenTextResult.AdultScore;
-                uploadAssetResult.RacyTextTag = screenTextResult.RacyTag;
-                uploadAssetResult.OffensiveTextTag = screenTextResult.OffensiveTag;
-                uploadAssetResult.AdultTextTag = screenTextResult.AdultTag;
+                uploadAssetResult.Category1TextScore = screenTextResult.Category1Score;
+                uploadAssetResult.Category2TextScore = screenTextResult.Category2Score;
+                uploadAssetResult.Category3TextScore = screenTextResult.Category3Score;
+                uploadAssetResult.Category1TextTag = screenTextResult.Category1Tag;
+                uploadAssetResult.Category2TextTag = screenTextResult.Category2Tag;
+                uploadAssetResult.Category3TextTag = screenTextResult.Category3Tag;
             }
             var reviewVideoRequestJson = CreateReviewRequestObject(uploadAssetResult, frameEntityList);
             if (string.IsNullOrWhiteSpace(reviewVideoRequestJson))
@@ -313,8 +313,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<Metadata> metadata = new List<Metadata>();
             var adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault().AdultScore;
             var racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault().RacyScore;
-            var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
-            var isRacy = double.Parse(racyScore) > _amsConfig.RacyFrameThreshold ? true : false;
+            var isAdult = double.Parse(adultScore) > _amsConfig.Category1FrameThreshold ? true : false;
+            var isRacy = double.Parse(racyScore) > _amsConfig.Category2FrameThreshold ? true : false;
             var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
             //if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
             //{
@@ -338,12 +338,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 metadata.AddRange(new List<Metadata>()
                 {
-                    new Metadata() { Key = "AdultTextScore", Value = uploadResult.AdultTextScore.ToString() },
-                    new Metadata() { Key = "at", Value = uploadResult.AdultTextTag.ToString() },
-                    new Metadata() { Key = "RacyTextScore", Value = uploadResult.RacyTextScore.ToString() },
-                    new Metadata() { Key = "rt", Value = uploadResult.RacyTextTag.ToString() },
-                    new Metadata() { Key = "OffensiveTextScore", Value = uploadResult.OffensiveTextScore.ToString() },
-                    new Metadata() { Key = "ot", Value = uploadResult.OffensiveTextTag.ToString() }
+                    new Metadata() { Key = "AdultTextScore", Value = uploadResult.Category1TextScore.ToString() },
+                    new Metadata() { Key = "at", Value = uploadResult.Category1TextTag.ToString() },
+                    new Metadata() { Key = "RacyTextScore", Value = uploadResult.Category2TextScore.ToString() },
+                    new Metadata() { Key = "rt", Value = uploadResult.Category2TextTag.ToString() },
+                    new Metadata() { Key = "OffensiveTextScore", Value = uploadResult.Category3TextScore.ToString() },
+                    new Metadata() { Key = "ot", Value = uploadResult.Category3TextTag.ToString() }
                 });
             }
             return metadata;
@@ -519,12 +519,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
             string responseContent = string.Empty;
             HttpResponseMessage response;
-            bool racyTag = false;
-            bool adultTag = false;
-            bool offensiveTag = false;
-            double racyScore = 0;
-            double adultScore = 0;
-            double offensiveScore = 0;
+            bool category1Tag = false;
+            bool category2Tag = false;
+            bool category3Tag = false;
+            double category1Score = 0;
+            double category2Score = 0;
+            double category3Score = 0;
             List<string> vttLines = File.ReadAllLines(filepath).Where(line => !line.Contains("NOTE Confidence:") && line.Length > 0).ToList();
             StringBuilder sb = new StringBuilder();
             List<CaptionScreentextResult> csrList = new List<CaptionScreentextResult>();
@@ -625,15 +625,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             transcriptProfanity.Terms = transcriptTerm;
                             profanityList.Add(transcriptProfanity);
                         }
-                        if (jsonTextScreen.Classification.Category1 > _amsConfig.AdultTextThreshold) captionAdultTextTag = true;
-                        if (jsonTextScreen.Classification.Category2 > _amsConfig.RacyTextThreshold) captionRacyTextTag = true;
-                        if (jsonTextScreen.Classification.Category3 > _amsConfig.OffensiveTextThreshold) captionOffensiveTextTag = true;
-                        if (jsonTextScreen.Classification.Category1 > _amsConfig.AdultTextThreshold) adultTag = true;
-                        if (jsonTextScreen.Classification.Category2 > _amsConfig.RacyTextThreshold) racyTag = true;
-                        if (jsonTextScreen.Classification.Category3 > _amsConfig.OffensiveTextThreshold) offensiveTag = true;
-                        adultScore = jsonTextScreen.Classification.Category1 > adultScore ? jsonTextScreen.Classification.Category1 : adultScore;
-                        racyScore = jsonTextScreen.Classification.Category2 > racyScore ? jsonTextScreen.Classification.Category2 : racyScore;
-                        offensiveScore = jsonTextScreen.Classification.Category3 > offensiveScore ? jsonTextScreen.Classification.Category3 : offensiveScore;
+                        if (jsonTextScreen.Classification.Category1 > _amsConfig.Category1TextThreshold) captionAdultTextTag = true;
+                        if (jsonTextScreen.Classification.Category2 > _amsConfig.Category2TextThreshold) captionRacyTextTag = true;
+                        if (jsonTextScreen.Classification.Category3 > _amsConfig.Category3TextThreshold) captionOffensiveTextTag = true;
+                        if (jsonTextScreen.Classification.Category1 > _amsConfig.Category1TextThreshold) category1Tag = true;
+                        if (jsonTextScreen.Classification.Category2 > _amsConfig.Category2TextThreshold) category2Tag = true;
+                        if (jsonTextScreen.Classification.Category3 > _amsConfig.Category3TextThreshold) category3Tag = true;
+                        category1Score = jsonTextScreen.Classification.Category1 > category1Score ? jsonTextScreen.Classification.Category1 : category1Score;
+                        category2Score = jsonTextScreen.Classification.Category2 > category2Score ? jsonTextScreen.Classification.Category2 : category2Score;
+                        category3Score = jsonTextScreen.Classification.Category3 > category3Score ? jsonTextScreen.Classification.Category3 : category3Score;
                     }
                     foreach (var frame in frameEntityList.Where(x => x.TimeStamp >= csr.StartTime && x.TimeStamp <= csr.EndTime))
                     {
@@ -645,13 +645,13 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
             TranscriptScreenTextResult screenTextResult = new TranscriptScreenTextResult()
             {
-                AdultTag = adultTag,
-                OffensiveTag = offensiveTag,
                 TranscriptProfanity = profanityList,
-                RacyTag = racyTag,
-                RacyScore = racyScore,
-                OffensiveScore = offensiveScore,
-                AdultScore = adultScore
+                Category1Tag = category1Tag,
+                Category2Tag = category2Tag,
+                Category3Tag = category3Tag,
+                Category1Score = category1Score,
+                Category2Score = category2Score,
+                Category3Score = category3Score
             };
             return screenTextResult;
         }

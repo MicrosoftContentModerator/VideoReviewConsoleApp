@@ -9,25 +9,25 @@ namespace Microsoft.ContentModerator.AMSComponentClient
     public class TranscriptScreenTextResult
     {
         public List<TranscriptProfanity> TranscriptProfanity { get; set; }
-        public double OffensiveScore { get; set; }
-        public double RacyScore { get; set; }
-        public double AdultScore { get; set; }
-        public bool OffensiveTag { get; set; }
-        public bool RacyTag { get; set; }
-        public bool AdultTag { get; set; }
+        public double Category1Score { get; set; }
+        public double Category2Score { get; set; }
+        public double Category3Score { get; set; }
+        public bool Category1Tag { get; set; }
+        public bool Category2Tag { get; set; }
+        public bool Category3Tag { get; set; }
     }
-	public class TranscriptProfanity
-	{
+    public class TranscriptProfanity
+    {
 
-		public string TimeStamp { get; set; }
-		public List<Terms> Terms { get; set; }
-	}
+        public string TimeStamp { get; set; }
+        public List<Terms> Terms { get; set; }
+    }
 
-	public class Terms
-	{
-		public int Index { get; set; }
-		public string Term { get; set; }
-	}
+    public class Terms
+    {
+        public int Index { get; set; }
+        public string Term { get; set; }
+    }
     public class CaptionScreentextResult
     {
         public int StartTime { get; set; }
