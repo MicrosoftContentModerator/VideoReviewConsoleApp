@@ -21,10 +21,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         public AmsComponent()
         {
-            _configObj = GetConfiguartions();
+            _configObj = GetConfigurations();
         }
 
-        private AmsConfigurations GetConfiguartions()
+        private AmsConfigurations GetConfigurations()
         {
             return new AmsConfigurations();
         }

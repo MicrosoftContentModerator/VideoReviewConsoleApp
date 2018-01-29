@@ -96,7 +96,33 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             task.InputAssets.Add(asset);
             task.OutputAssets.AddNew(asset.Name + " media streaming", AssetCreationOptions.None);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outputAsset"></param>
+        /// <param name="outputFolder"></param>
+        private void DownloadAssetToLocal(IAsset outputAsset, string outputFolder)
+        {
 
+            IAccessPolicy accessPolicy = _mediaContext.AccessPolicies.Create("File Download Policy", TimeSpan.FromDays(30), AccessPermissions.Read);
+            ILocator locator = _mediaContext.Locators.CreateSasLocator(outputAsset, accessPolicy);
+            BlobTransferClient blobTransfer = new BlobTransferClient
+            {
+                NumberOfConcurrentTransfers = 10,
+                ParallelTransferThreadCount = 10
+            };
+            var downloadTasks = new List<Task>();
+            foreach (IAssetFile outputFile in outputAsset.AssetFiles)
+            {
+                if (outputFile.MimeType == "text/vtt")
+                {
+                    string localDownloadPath = Path.Combine(outputFolder, outputFile.Name);
+                    downloadTasks.Add(outputFile.DownloadAsync(Path.GetFullPath(localDownloadPath), blobTransfer, locator, CancellationToken.None));
+
+                }
+            }
+            Task.WaitAll(downloadTasks.ToArray());
+        }
         /// <summary>
         /// GetLatestMediaProcessorByName Method used for Getting Media Processor
         /// </summary>
@@ -263,26 +289,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         #endregion
 
-        public bool GenerateTranscript(IAsset asset)
-        {
-            try
-            {
-                var outputFolder = this._amsConfigurations.FfmpegFramesOutputPath;
-                IAsset outputAsset = asset;
-                IAccessPolicy policy = null;
-                ILocator locator = null;
-                policy = _mediaContext.AccessPolicies.Create("My 30 days readonly policy", TimeSpan.FromDays(360), AccessPermissions.Read);
-                locator = _mediaContext.Locators.CreateLocator(LocatorType.Sas, outputAsset, policy, DateTime.UtcNow.AddMinutes(-5));
-                DownloadAssetToLocal(outputAsset, outputFolder);
-                locator.Delete();
-                return true;
-            }
-            catch
-            {   //TODO:  Logging
-                Console.WriteLine("Exception occured while generating index for video.");
-                throw;
-            }
-        }
+
         #region Media Indexeer
         /// <summary>
         /// Generating transcript for video
@@ -300,33 +307,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             task.InputAssets.Add(asset);
             task.OutputAssets.AddNew("AudioIndexing Output Asset", AssetCreationOptions.None);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="outputAsset"></param>
-        /// <param name="outputFolder"></param>
-        private void DownloadAssetToLocal(IAsset outputAsset, string outputFolder)
-        {
 
-            IAccessPolicy accessPolicy = _mediaContext.AccessPolicies.Create("File Download Policy", TimeSpan.FromDays(30), AccessPermissions.Read);
-            ILocator locator = _mediaContext.Locators.CreateSasLocator(outputAsset, accessPolicy);
-            BlobTransferClient blobTransfer = new BlobTransferClient
-            {
-                NumberOfConcurrentTransfers = 10,
-                ParallelTransferThreadCount = 10
-            };
-            var downloadTasks = new List<Task>();
-            foreach (IAssetFile outputFile in outputAsset.AssetFiles)
-            {
-                if (outputFile.MimeType == "text/vtt")
-                {
-                    string localDownloadPath = Path.Combine(outputFolder, outputFile.Name);
-                    downloadTasks.Add(outputFile.DownloadAsync(Path.GetFullPath(localDownloadPath), blobTransfer, locator, CancellationToken.None));
-
-                }
-            }
-            Task.WaitAll(downloadTasks.ToArray());
-        }
         #endregion
 
         #region Content Moderation
@@ -372,7 +353,26 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
             return fileName;
         }
-
+        public bool GenerateTranscript(IAsset asset)
+        {
+            try
+            {
+                var outputFolder = this._amsConfigurations.FfmpegFramesOutputPath;
+                IAsset outputAsset = asset;
+                IAccessPolicy policy = null;
+                ILocator locator = null;
+                policy = _mediaContext.AccessPolicies.Create("My 30 days readonly policy", TimeSpan.FromDays(360), AccessPermissions.Read);
+                locator = _mediaContext.Locators.CreateLocator(LocatorType.Sas, outputAsset, policy, DateTime.UtcNow.AddMinutes(-5));
+                DownloadAssetToLocal(outputAsset, outputFolder);
+                locator.Delete();
+                return true;
+            }
+            catch
+            {   //TODO:  Logging
+                Console.WriteLine("Exception occured while generating index for video.");
+                throw;
+            }
+        }
         #endregion
 
     }
