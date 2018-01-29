@@ -313,8 +313,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             List<Metadata> metadata = new List<Metadata>();
             var adultScore = frameEvents.OrderByDescending(a => Double.Parse(a.AdultScore)).FirstOrDefault().AdultScore;
             var racyScore = frameEvents.OrderByDescending(a => Double.Parse(a.RacyScore)).FirstOrDefault().RacyScore;
-            var isAdult = double.Parse(adultScore) > _amsConfig.Category1FrameThreshold ? true : false;
-            var isRacy = double.Parse(racyScore) > _amsConfig.Category2FrameThreshold ? true : false;
+            var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
+            var isRacy = double.Parse(racyScore) > _amsConfig.RacyFrameThreshold ? true : false;
             var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
             //if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
             //{
