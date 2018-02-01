@@ -59,7 +59,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 throw new Exception("Video review process failed in CreateVideoReviewInContentModerator");
             }
-            reviewId = JsonConvert.DeserializeObject<List<string>>(ExecuteCreateReviewApi(reviewVideoRequestJson).Result).FirstOrDefault();
+            var reviewIds = await ExecuteCreateReviewApi(reviewVideoRequestJson);
+            reviewId = reviewIds.FirstOrDefault();
             frameEntityList = framegenerator.GenerateFrameImages(frameEntityList, uploadAssetResult, reviewId);
             await CreateAndPublishReviewInContentModerator(uploadAssetResult, frameEntityList, reviewId, path, screenTextResult);
 
@@ -186,7 +187,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 var res = await CMClient.Reviews.AddVideoTranscriptModerationResultWithHttpMessagesAsync("application/json", this._amsConfig.TeamName, reviewId, modResult);
                 response = res.Response;
                 resultJson = await response.Content.ReadAsStringAsync();
-                return response;
+                return res.Response;
             }
             catch (Exception e)
             {
@@ -204,7 +205,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         /// <param name="reviewVideoObj">Reviewvideo requestJson</param>
         /// <returns>Review Id</returns>
-        public async Task<string> ExecuteCreateReviewApi(string reviewVideoObj)
+        public async Task<List<string>> ExecuteCreateReviewApi(string reviewVideoObj)
         {
             ContentModeratorClient CMClient = new ContentModeratorClient(new ApiKeyServiceClientCredentials(AmsConfigurations.ReviewApiSubscriptionKey)) { BaseUrl = AmsConfigurations.ContentModeraotrApiEndpoint };
 
@@ -212,17 +213,14 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             try
             {
                 List<CreateVideoReviewsBodyItem> review = JsonConvert.DeserializeObject<List<CreateVideoReviewsBodyItem>>(reviewVideoObj);
-                HttpResponseMessage response;
 
-                var oResponse = await CMClient.Reviews.CreateVideoReviewsWithHttpMessagesAsync("application/json", _amsConfig.TeamName, review);
-                response = oResponse.Response;
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                var res = await CMClient.Reviews.CreateVideoReviewsWithHttpMessagesAsync("application/json", _amsConfig.TeamName, review);
+                if (res.Response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    throw new Exception($"ExecuteCreateReviewApi has failed to get a review. Code: {response.StatusCode}");
+                    throw new Exception($"ExecuteCreateReviewApi has failed to get a review. Code: {res.Response.StatusCode}");
                 }
-                resultJson = await response.Content.ReadAsStringAsync();
 
-                return resultJson;
+                return res.Body.ToList();
             }
             catch (Exception e)
             {
@@ -517,7 +515,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<TranscriptScreenTextResult> TextScreen(string filepath, List<ProcessedFrameDetails> frameEntityList)
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
-            string responseContent = string.Empty;
             HttpResponseMessage response;
             bool category1Tag = false;
             bool category2Tag = false;
@@ -575,6 +572,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 bool captionAdultTextTag = false;
                 bool captionRacyTextTag = false;
                 bool captionOffensiveTextTag = false;
+                Screen screenRes = new Screen();
                 bool retry = true;
 
                 foreach (var caption in csr.Captions)
@@ -585,9 +583,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         {
                             System.Threading.Thread.Sleep(waitTime);
                             var lang = await CMClient.TextModeration.DetectLanguageAsync("text/plain", caption);
-                            var oRes = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, "text/plain", caption, null, null, null, true);
-                            response = oRes.Response;
-                            responseContent = await response.Content.ReadAsStringAsync();
+                            var res = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, "text/plain", caption, null, null, null, true);
+                            screenRes = res.Body;
                             retry = false;
                         }
                         catch (Exception e)
@@ -605,35 +602,35 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             }
                         }
                     }
-                    var jsonTextScreen = JsonConvert.DeserializeObject<TextScreen>(responseContent);
-                    if (jsonTextScreen != null)
+                     
+                    if (screenRes != null)
                     {
                         TranscriptProfanity transcriptProfanity = new TranscriptProfanity();
                         transcriptProfanity.TimeStamp = "";
                         List<Terms> transcriptTerm = new List<Terms>();
-                        if (jsonTextScreen.Terms != null)
+                        if (screenRes.Terms != null)
                         {
-                            foreach (var term in jsonTextScreen.Terms)
+                            foreach (var term in screenRes.Terms)
                             {
                                 var profanityobject = new Terms
                                 {
                                     Term = term.Term,
-                                    Index = term.Index
+                                    Index = term.Index.Value
                                 };
                                 transcriptTerm.Add(profanityobject);
                             }
                             transcriptProfanity.Terms = transcriptTerm;
                             profanityList.Add(transcriptProfanity);
                         }
-                        if (jsonTextScreen.Classification.Category1.Score > _amsConfig.Category1TextThreshold) captionAdultTextTag = true;
-                        if (jsonTextScreen.Classification.Category2.Score > _amsConfig.Category2TextThreshold) captionRacyTextTag = true;
-                        if (jsonTextScreen.Classification.Category3.Score > _amsConfig.Category3TextThreshold) captionOffensiveTextTag = true;
-                        if (jsonTextScreen.Classification.Category1.Score > _amsConfig.Category1TextThreshold) category1Tag = true;
-                        if (jsonTextScreen.Classification.Category2.Score > _amsConfig.Category2TextThreshold) category2Tag = true;
-                        if (jsonTextScreen.Classification.Category3.Score > _amsConfig.Category3TextThreshold) category3Tag = true;
-                        category1Score = jsonTextScreen.Classification.Category1.Score > category1Score ? jsonTextScreen.Classification.Category1.Score : category1Score;
-                        category2Score = jsonTextScreen.Classification.Category2.Score > category2Score ? jsonTextScreen.Classification.Category2.Score : category2Score;
-                        category3Score = jsonTextScreen.Classification.Category3.Score > category3Score ? jsonTextScreen.Classification.Category3.Score : category3Score;
+                        if (screenRes.Classification.Category1.ScoreProperty.Value > _amsConfig.Category1TextThreshold) captionAdultTextTag = true;
+                        if (screenRes.Classification.Category2.ScoreProperty.Value > _amsConfig.Category2TextThreshold) captionRacyTextTag = true;
+                        if (screenRes.Classification.Category3.ScoreProperty.Value > _amsConfig.Category3TextThreshold) captionOffensiveTextTag = true;
+                        if (screenRes.Classification.Category1.ScoreProperty.Value > _amsConfig.Category1TextThreshold) category1Tag = true;
+                        if (screenRes.Classification.Category2.ScoreProperty.Value > _amsConfig.Category2TextThreshold) category2Tag = true;
+                        if (screenRes.Classification.Category3.ScoreProperty.Value > _amsConfig.Category3TextThreshold) category3Tag = true;
+                        category1Score = screenRes.Classification.Category1.ScoreProperty.Value > category1Score ? screenRes.Classification.Category1.ScoreProperty.Value : category1Score;
+                        category2Score = screenRes.Classification.Category2.ScoreProperty.Value > category2Score ? screenRes.Classification.Category2.ScoreProperty.Value : category2Score;
+                        category3Score = screenRes.Classification.Category3.ScoreProperty.Value > category3Score ? screenRes.Classification.Category3.ScoreProperty.Value : category3Score;
                     }
                     foreach (var frame in frameEntityList.Where(x => x.TimeStamp >= csr.StartTime && x.TimeStamp <= csr.EndTime))
                     {
@@ -683,12 +680,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<HttpResponseMessage> ExecutePublishReviewApi(string reviewId)
         {
             var resultJson = string.Empty;
-            HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                var oRes = await CMClient.Reviews.PublishVideoReviewWithHttpMessagesAsync(_amsConfig.TeamName, reviewId);
-                response = oRes.Response;
-                return response;
+                var res = await CMClient.Reviews.PublishVideoReviewWithHttpMessagesAsync(_amsConfig.TeamName, reviewId);
+                return res.Response;
             }
             catch (Exception e)
             {
