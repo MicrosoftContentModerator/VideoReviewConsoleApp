@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -248,16 +247,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 ConfigureTranscriptTask(job);
             }
 
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             //submit and execute job.
             job.Submit();
             job.GetExecutionProgressTask(new CancellationTokenSource().Token).Wait();
-            timer.Stop();
-            using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
-            {
-                sw.WriteLine("AMS Job Elapsed Time: {0}", timer.Elapsed);
-            }
+            watch.Stop();
+            Logger.Log($"AMS Job Elapsed Time: {watch.Elapsed}");
 
             if (job.State == JobState.Error)
             {

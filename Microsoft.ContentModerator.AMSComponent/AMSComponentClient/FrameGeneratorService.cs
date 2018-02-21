@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,8 +51,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             int batchSize = _amsConfig.FrameBatchSize;
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nVideo Frames Creation inprogress...");
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             string ffmpegBlobUrl = string.Empty;
             if (File.Exists(_amsConfig.FfmpegExecutablePath))
             {
@@ -98,15 +96,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             Parallel.ForEach(args, new ParallelOptions { MaxDegreeOfParallelism = 4 },
                 arg => CreateTaskProcess(arg, ffmpegBlobUrl));
 
-            sw.Stop();
-            using (var stw = new StreamWriter(AmsConfigurations.logFilePath, true))
-            {
-                stw.WriteLine("Frame Creation Elapsed time: {0}", sw.Elapsed);
-            }
+            watch.Stop();
+            Logger.Log($"Frame Creation Elapsed time: {watch.Elapsed}");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Frames(" + eventsList.Count() + ") created successfully.");
-            DirectoryInfo di = new DirectoryInfo(frameStorageLocalPath);
-            DirectoryInfo[] diArr = di.GetDirectories();
+            DirectoryInfo[] diArr = new DirectoryInfo(frameStorageLocalPath).GetDirectories();
             Directory.CreateDirectory(frameStorageLocalPath + @"_zip");
             foreach (var dir in diArr)
             {

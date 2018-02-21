@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Web;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -40,16 +39,33 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     bool.TryParse(args[1], out generateVtt);
                 Initialize();
                 AmsConfigurations.logFilePath = Path.Combine(args[0], "log.txt");
-                var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
-                foreach (var file in files)
+                ConsoleKey response;
+                do
                 {
-                    try
+                    Console.Write("Create demo reviews? [y/n] : \n");
+                    response = Console.ReadKey(false).Key;
+                    if (response != ConsoleKey.Enter)
                     {
-                        ProcessVideo(file.FullName).Wait();
+                        Console.WriteLine();
                     }
-                    catch (Exception ex)
+                } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+                if (response == ConsoleKey.Y)
+                {
+                    CreateDemoVideoReviews();
+                }
+                else
+                {
+                    var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
+                    foreach (var file in files)
                     {
-                        Console.WriteLine(ex.Message);
+                        try
+                        {
+                            ProcessVideo(file.FullName).Wait();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                 }
             }
@@ -57,8 +73,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         private static async Task ProcessVideo(string videoPath)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nVideo compression process started...");
 
@@ -87,21 +102,17 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             }
 
             Console.WriteLine("\nVideo moderation process completed...");
-
             Console.WriteLine("\nVideo review process started...");
 
             string reviewId = await videoReviewApi.CreateVideoReviewInContentModerator(uploadResult);
 
-            Console.WriteLine("\nVideo review successfully completed...");
+            watch.Stop();
 
-            sw.Stop();
-            Console.WriteLine("\nTotal Elapsed Time: {0}", sw.Elapsed);
-            using (var stw = new StreamWriter(AmsConfigurations.logFilePath, true))
-            {
-                stw.WriteLine("Video File Name: " + Path.GetFileName(videoPath));
-                stw.WriteLine($"ReviewId: {reviewId}");
-                stw.WriteLine("Total Elapsed Time: {0}", sw.Elapsed);
-            }
+            Console.WriteLine("\nVideo review successfully completed...");
+            Console.WriteLine("\nTotal Elapsed Time: {0}", watch.Elapsed);
+            Logger.Log("Video File Name: " + Path.GetFileName(videoPath));
+            Logger.Log($"ReviewId: {reviewId}");
+            Logger.Log($"Total Elapsed Time: {watch.Elapsed}");
         }
 
         private static UploadVideoStreamRequest CreateVideoStreamingRequest(string compressedVideoFilePath)
@@ -118,7 +129,41 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     VideoFilePath = compressedVideoFilePath
                 };
         }
+        private static void CreateDemoVideoReviews()
+        {
+            List<string> demoVideoNames = new List<string>() { "hololens", "satya", "office365", "windows10", "surface" };
+            string containerUrl = AmsConfigurations.DemoVideoContainerUrl;
+            foreach (string video in demoVideoNames)
+            {
+                using (WebClient client = new WebClient())
+                {
+                    var urlPrefix = containerUrl + $"{video}/{video}";
+                    try
+                    {
+                        string reviewRequestBody = client.DownloadString($"{urlPrefix}.json");
+                        byte[] vttFile = client.DownloadData($"{urlPrefix}.vtt");
 
+                        var reviewIds = videoReviewApi.ExecuteCreateReviewApi(reviewRequestBody).Result;
+                        if (reviewIds != null)
+                        {
+                            string reviewId = reviewIds.FirstOrDefault();
+                            var oRes = videoReviewApi.AddVideoTranscript(reviewId, vttFile).Result;
+                            if (oRes.Response.IsSuccessStatusCode)
+                            {
+                                if (videoReviewApi.PublishReview(reviewId))
+                                {
+                                    Console.WriteLine($"Demo Video Review for {video}.mp4 has been created.");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        }
         private static void GetUserInputs(out string videoPath)
         {
             Console.WriteLine("\nEnter the fully qualified local path for Uploading the video : \n ");

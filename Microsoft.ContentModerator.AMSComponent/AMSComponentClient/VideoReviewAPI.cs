@@ -2,6 +2,7 @@
 using Microsoft.CognitiveServices.ContentModerator;
 using Microsoft.CognitiveServices.ContentModerator.Models;
 using Microsoft.ContentModerator.ReviewAPI;
+using Microsoft.Rest;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -314,15 +315,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             var isAdult = double.Parse(adultScore) > _amsConfig.AdultFrameThreshold ? true : false;
             var isRacy = double.Parse(racyScore) > _amsConfig.RacyFrameThreshold ? true : false;
             var reviewRecommended = frameEvents.Any(frame => frame.ReviewRecommended);
-            //if (!isAdult && !isRacy && !reviewRecommended && !uploadResult.AdultTextTag && !uploadResult.RacyTextTag && !uploadResult.OffensiveTextTag)
-            //{
-            //    using (var sw = new StreamWriter(AmsConfigurations.logFilePath, true))
-            //    {
-            //        sw.WriteLine($"Review Not Created base on video moderation outputs. Video Name: {0}",uploadResult.VideoName);
-            //    }
-            //    throw new Exception("The video submitted and the threshold set suggests review not to be created.");
-            //}
-
+            
             metadata = new List<Metadata>()
             {
                 new Metadata() {Key = "ReviewRecommended", Value = reviewRecommended.ToString()},
@@ -491,7 +484,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             {
                 HttpResponseMessage response;
                 byte[] byteData = File.ReadAllBytes(filepath);
-                var oRes = await CMClient.Reviews.AddVideoTranscriptWithHttpMessagesAsync(_amsConfig.TeamName, reviewId, new MemoryStream(byteData));
+                var oRes = await AddVideoTranscript(reviewId, byteData);
                 response = oRes.Response;
                 resultJson = await response.Content.ReadAsStringAsync();
                 return response;
@@ -507,6 +500,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         }
 
+        public async Task<HttpOperationResponse> AddVideoTranscript(string reviewId, byte[] vttFile)
+        {
+            var oRes = await CMClient.Reviews.AddVideoTranscriptWithHttpMessagesAsync(_amsConfig.TeamName, reviewId, new MemoryStream(vttFile));
+            return oRes;
+        }
+
         /// <summary>
         /// Identifying profanity words 
         /// </summary>
@@ -515,7 +514,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         private async Task<TranscriptScreenTextResult> TextScreen(string filepath, List<ProcessedFrameDetails> frameEntityList)
         {
             List<TranscriptProfanity> profanityList = new List<TranscriptProfanity>();
-            HttpResponseMessage response;
             bool category1Tag = false;
             bool category2Tag = false;
             bool category3Tag = false;

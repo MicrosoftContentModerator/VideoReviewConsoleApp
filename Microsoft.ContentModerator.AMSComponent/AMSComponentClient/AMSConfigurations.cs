@@ -50,6 +50,8 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public readonly string TeamName = ConfigurationManager.AppSettings["ContentModeratorTeamId"];
 
+        public readonly static string DemoVideoContainerUrl = ConfigurationManager.AppSettings["DemoVideoContainerUrl"];
+
         public string ReviewCallBackUrl = "";
         #endregion
 
