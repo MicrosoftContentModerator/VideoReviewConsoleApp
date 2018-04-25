@@ -438,9 +438,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// <summary>
         /// Posts frames to add it to the video.
         /// </summary>
-        /// <param name="reviewId">reviewID</param>
-        /// <param name="reviewFrameList">reviewFrameList</param>
-        /// <returns>Response of AddFrames Api call</returns>
+        /// <param name="reviewId"></param>
+        /// <param name="reviewFrameList"></param>
+        /// <param name="frameZipPath"></param>
+        /// <returns></returns>
         private async Task<HttpResponseMessage> ExecuteAddFramesReviewApi(string reviewId, string reviewFrameList, string frameZipPath)
         {
             Stream frameZip = new FileStream(frameZipPath, FileMode.Open, FileAccess.Read);
@@ -620,15 +621,15 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             transcriptProfanity.Terms = transcriptTerm;
                             profanityList.Add(transcriptProfanity);
                         }
-                        if (screenRes.Classification.Category1.ScoreProperty.Value > _amsConfig.Category1TextThreshold) captionAdultTextTag = true;
-                        if (screenRes.Classification.Category2.ScoreProperty.Value > _amsConfig.Category2TextThreshold) captionRacyTextTag = true;
-                        if (screenRes.Classification.Category3.ScoreProperty.Value > _amsConfig.Category3TextThreshold) captionOffensiveTextTag = true;
-                        if (screenRes.Classification.Category1.ScoreProperty.Value > _amsConfig.Category1TextThreshold) category1Tag = true;
-                        if (screenRes.Classification.Category2.ScoreProperty.Value > _amsConfig.Category2TextThreshold) category2Tag = true;
-                        if (screenRes.Classification.Category3.ScoreProperty.Value > _amsConfig.Category3TextThreshold) category3Tag = true;
-                        category1Score = screenRes.Classification.Category1.ScoreProperty.Value > category1Score ? screenRes.Classification.Category1.ScoreProperty.Value : category1Score;
-                        category2Score = screenRes.Classification.Category2.ScoreProperty.Value > category2Score ? screenRes.Classification.Category2.ScoreProperty.Value : category2Score;
-                        category3Score = screenRes.Classification.Category3.ScoreProperty.Value > category3Score ? screenRes.Classification.Category3.ScoreProperty.Value : category3Score;
+                        if (screenRes.Classification.Category1.Score.Value > _amsConfig.Category1TextThreshold) captionAdultTextTag = true;
+                        if (screenRes.Classification.Category2.Score.Value > _amsConfig.Category2TextThreshold) captionRacyTextTag = true;
+                        if (screenRes.Classification.Category3.Score.Value > _amsConfig.Category3TextThreshold) captionOffensiveTextTag = true;
+                        if (screenRes.Classification.Category1.Score.Value > _amsConfig.Category1TextThreshold) category1Tag = true;
+                        if (screenRes.Classification.Category2.Score.Value > _amsConfig.Category2TextThreshold) category2Tag = true;
+                        if (screenRes.Classification.Category3.Score.Value > _amsConfig.Category3TextThreshold) category3Tag = true;
+                        category1Score = screenRes.Classification.Category1.Score.Value > category1Score ? screenRes.Classification.Category1.Score.Value : category1Score;
+                        category2Score = screenRes.Classification.Category2.Score.Value > category2Score ? screenRes.Classification.Category2.Score.Value : category2Score;
+                        category3Score = screenRes.Classification.Category3.Score.Value > category3Score ? screenRes.Classification.Category3.Score.Value : category3Score;
                     }
                     foreach (var frame in frameEntityList.Where(x => x.TimeStamp >= csr.StartTime && x.TimeStamp <= csr.EndTime))
                     {

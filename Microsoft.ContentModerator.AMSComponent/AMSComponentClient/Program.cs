@@ -20,16 +20,34 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             if (args.Length == 0)
             {
                 string videoPath = string.Empty;
-                GetUserInputs(out videoPath);
                 Initialize();
-                AmsConfigurations.logFilePath = Path.Combine(Path.GetDirectoryName(videoPath), "log.txt");
-                try
+                ConsoleKey response;
+                do
                 {
-                    ProcessVideo(videoPath).Wait();
+                    Console.Write("Create demo reviews? [y/n] : \n");
+                    response = Console.ReadKey(false).Key;
+                    if (response != ConsoleKey.Enter)
+                    {
+                        Console.WriteLine();
+                    }
+                } while (response != ConsoleKey.Y && response != ConsoleKey.N);
+                if (response == ConsoleKey.Y)
+                {
+                    CreateDemoVideoReviews();
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex.Message);
+
+                    GetUserInputs(out videoPath);
+                    AmsConfigurations.logFilePath = Path.Combine(Path.GetDirectoryName(videoPath), "log.txt");
+                    try
+                    {
+                        ProcessVideo(videoPath).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
             else
