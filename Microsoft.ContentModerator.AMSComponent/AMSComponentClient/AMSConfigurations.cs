@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
@@ -53,6 +54,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public readonly static string DemoVideoContainerUrl = ConfigurationManager.AppSettings["DemoVideoContainerUrl"];
 
         public string ReviewCallBackUrl = "";
+
+        public readonly static List<string> demoVideoNames = new List<string>() { "hololens", "satya", "office365", "windows10", "surface" };
+
         #endregion
 
 

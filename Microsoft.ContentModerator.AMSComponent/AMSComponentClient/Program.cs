@@ -149,7 +149,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         }
         private static void CreateDemoVideoReviews()
         {
-            List<string> demoVideoNames = new List<string>() { "hololens", "satya", "office365", "windows10", "surface" };
+            var demoVideoNames = AmsConfigurations.demoVideoNames;
             string containerUrl = AmsConfigurations.DemoVideoContainerUrl;
             foreach (string video in demoVideoNames)
             {
