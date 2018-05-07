@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Rest;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
@@ -151,6 +153,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             var demoVideoNames = AmsConfigurations.demoVideoNames;
             string containerUrl = AmsConfigurations.DemoVideoContainerUrl;
+            int retry = 3;
             foreach (string video in demoVideoNames)
             {
                 using (WebClient client = new WebClient())
@@ -158,22 +161,80 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                     var urlPrefix = containerUrl + $"{video}/{video}";
                     try
                     {
+                        Console.WriteLine($"Starting to create sample video: {video}.mp4...");
                         string reviewRequestBody = client.DownloadString($"{urlPrefix}.json");
                         byte[] vttFile = client.DownloadData($"{urlPrefix}.vtt");
-
-                        var reviewIds = videoReviewApi.ExecuteCreateReviewApi(reviewRequestBody).Result;
-                        if (reviewIds != null)
+                        List<string> reviewIds;
+                        bool success = false;
+                        do
                         {
-                            string reviewId = reviewIds.FirstOrDefault();
-                            var oRes = videoReviewApi.AddVideoTranscript(reviewId, vttFile).Result;
+                            reviewIds = videoReviewApi.ExecuteCreateReviewApi(reviewRequestBody).Result;
+                            if (reviewIds.Count > 0)
+                            {
+                                success = true;
+                                Console.WriteLine($"Review Created.");
+                            }
+                            else
+                            {
+                                retry--;
+                                Thread.Sleep(1000);
+                            }
+                            if (retry == 0)
+                            {
+                                throw new Exception($"Failed to create video review for {video}");
+                            }
+                        } while (!success && retry > 0);
+
+                        string reviewId = reviewIds.FirstOrDefault();
+                        retry = 3;
+                        success = false;
+                        HttpOperationResponse oRes;
+                        do
+                        {
+                            Console.WriteLine("Uploading Transcript...");
+
+                            oRes = videoReviewApi.AddVideoTranscript(reviewId, vttFile).Result;
+
                             if (oRes.Response.IsSuccessStatusCode)
                             {
-                                if (videoReviewApi.PublishReview(reviewId))
-                                {
-                                    Console.WriteLine($"Demo Video Review for {video}.mp4 has been created.");
-                                }
+                                Console.WriteLine("Success");
+                                success = true;
                             }
-                        }
+                            else
+                            {
+                                retry--;
+                                Thread.Sleep(1000);
+                            }
+                            if (retry == 0)
+                            {
+                                throw new Exception($"Failed to create review for {video}");
+                            }
+                        } while (!success && retry > 0);
+                        success = false;
+                        retry = 3;
+                        Console.WriteLine("Publishing...");
+                        do
+                        {
+
+                            if (videoReviewApi.PublishReview(reviewId))
+                            {
+                                Console.WriteLine("Success");
+                                Console.WriteLine($"Sample Video Review for {video}.mp4 has been created.");
+                                Console.WriteLine($"ReviewId: {reviewId}");
+                                Console.WriteLine();
+                                success = true;
+                            }
+                            else
+                            {
+                                retry--;
+                                Thread.Sleep(1000);
+                            }
+                            if (retry == 0)
+                            {
+                                throw new Exception($"Failed to create review for {video}");
+                            }
+
+                        } while (!success && retry > 0);
                     }
                     catch (Exception e)
                     {
@@ -208,7 +269,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         {
             amsComponent = new AmsComponent();
             amsConfigurations = new AmsConfigurations();
-            videoModerator = new VideoModerator(amsConfigurations);
+            //videoModerator = new VideoModerator(amsConfigurations);
             videoReviewApi = new VideoReviewApi(amsConfigurations);
         }
     }
