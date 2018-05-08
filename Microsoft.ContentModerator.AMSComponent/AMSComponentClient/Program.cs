@@ -168,6 +168,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         bool success = false;
                         do
                         {
+                            Thread.Sleep(2000);
                             reviewIds = videoReviewApi.ExecuteCreateReviewApi(reviewRequestBody).Result;
                             if (reviewIds.Count > 0)
                             {
@@ -177,7 +178,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             else
                             {
                                 retry--;
-                                Thread.Sleep(1000);
                             }
                             if (retry == 0)
                             {
@@ -191,6 +191,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         HttpOperationResponse oRes;
                         do
                         {
+                            Thread.Sleep(2000);
                             Console.WriteLine("Uploading Transcript...");
 
                             oRes = videoReviewApi.AddVideoTranscript(reviewId, vttFile).Result;
@@ -203,7 +204,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             else
                             {
                                 retry--;
-                                Thread.Sleep(1000);
                             }
                             if (retry == 0)
                             {
@@ -215,7 +215,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         Console.WriteLine("Publishing...");
                         do
                         {
-
+                            Thread.Sleep(2000);
                             if (videoReviewApi.PublishReview(reviewId))
                             {
                                 Console.WriteLine("Success");
@@ -227,7 +227,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                             else
                             {
                                 retry--;
-                                Thread.Sleep(1000);
                             }
                             if (retry == 0)
                             {
