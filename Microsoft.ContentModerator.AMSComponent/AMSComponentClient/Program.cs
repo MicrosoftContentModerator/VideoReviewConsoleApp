@@ -22,7 +22,6 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             if (args.Length == 0)
             {
                 string videoPath = string.Empty;
-                Initialize();
                 ConsoleKey response;
                 do
                 {
@@ -35,11 +34,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                 } while (response != ConsoleKey.Y && response != ConsoleKey.N);
                 if (response == ConsoleKey.Y)
                 {
+                    Initialize(false);
                     CreateDemoVideoReviews();
                 }
                 else
                 {
-
+                    Initialize();
                     GetUserInputs(out videoPath);
                     AmsConfigurations.logFilePath = Path.Combine(Path.GetDirectoryName(videoPath), "log.txt");
                     try
@@ -55,37 +55,19 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             else
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(args[0]);
-                if (args.Length == 2)
-                    bool.TryParse(args[1], out generateVtt);
+                if (args.Length == 2) bool.TryParse(args[1], out generateVtt);
                 Initialize();
                 AmsConfigurations.logFilePath = Path.Combine(args[0], "log.txt");
-                ConsoleKey response;
-                do
+                var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
-                    Console.Write("Create demo reviews? [y/n] : \n");
-                    response = Console.ReadKey(false).Key;
-                    if (response != ConsoleKey.Enter)
+                    try
                     {
-                        Console.WriteLine();
+                        ProcessVideo(file.FullName).Wait();
                     }
-                } while (response != ConsoleKey.Y && response != ConsoleKey.N);
-                if (response == ConsoleKey.Y)
-                {
-                    CreateDemoVideoReviews();
-                }
-                else
-                {
-                    var files = directoryInfo.GetFiles("*.mp4", SearchOption.AllDirectories);
-                    foreach (var file in files)
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            ProcessVideo(file.FullName).Wait();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        Console.WriteLine(ex.Message);
                     }
                 }
             }
@@ -264,12 +246,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
             generateVtt = response == ConsoleKey.Y;
         }
 
-        private static void Initialize()
+        private static void Initialize(bool initModerator = true)
         {
             amsComponent = new AmsComponent();
             amsConfigurations = new AmsConfigurations();
-            //videoModerator = new VideoModerator(amsConfigurations);
             videoReviewApi = new VideoReviewApi(amsConfigurations);
+            if (initModerator) videoModerator = new VideoModerator(amsConfigurations);
         }
     }
 }
