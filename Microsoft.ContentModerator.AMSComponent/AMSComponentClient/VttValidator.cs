@@ -1,6 +1,6 @@
-﻿using System.IO;
-using Jint;
+﻿using Jint;
 using Jint.Native;
+using System.IO;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {

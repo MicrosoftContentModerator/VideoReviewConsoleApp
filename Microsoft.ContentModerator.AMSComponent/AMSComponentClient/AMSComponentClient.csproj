@@ -37,9 +37,8 @@
       <HintPath>..\packages\jint.2.10.4\lib\net45\jint.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Azure.CognitiveServices.ContentModerator, Version=0.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Azure.CognitiveServices.ContentModerator.0.9.0-preview\lib\net452\Microsoft.Azure.CognitiveServices.ContentModerator.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Azure.CognitiveServices.ContentModerator">
+      <HintPath>..\packages\Microsoft.Azure.CognitiveServices.ContentModerator.0.10.0-preview\lib\net452\Microsoft.Azure.CognitiveServices.ContentModerator.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -132,12 +131,12 @@
     <Compile Include="Helper\EncryptRequest.cs" />
     <Compile Include="Helper\ModerationEntities.cs" />
     <Compile Include="Helper\PublishedUrlDetails.cs" />
-    <Compile Include="Helper\TextScreen.cs" />
     <Compile Include="Helper\TranscriptProfanity.cs" />
     <Compile Include="Helper\UploadAssetResult.cs" />
     <Compile Include="Helper\UploadVideoRequest.cs" />
     <Compile Include="Helper\UploadVideoStreamRequest.cs" />
     <Compile Include="Helper\UploadVideoURLRequest.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VideoFramesReview.cs" />

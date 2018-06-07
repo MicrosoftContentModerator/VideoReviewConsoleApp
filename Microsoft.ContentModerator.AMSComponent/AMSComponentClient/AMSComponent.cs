@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
 {
@@ -21,10 +21,10 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         /// </summary>
         public AmsComponent()
         {
-            _configObj = GetConfiguartions();
+            _configObj = GetConfigurations();
         }
 
-        private AmsConfigurations GetConfiguartions()
+        private AmsConfigurations GetConfigurations()
         {
             return new AmsConfigurations();
         }

@@ -30,13 +30,11 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public string VideoFilePath { get; set; }
 
-        public bool OffensiveTextTag { get; set; }
-
-        public bool RacyTextTag { get; set; }
-
-        public bool AdultTextTag { get; set; }
-        public double OffensiveTextScore { get; set; }
-        public double RacyTextScore { get; set; }
-        public double AdultTextScore { get; set; }
+        public bool Category1TextTag { get; set; }
+        public bool Category2TextTag { get; set; }
+        public bool Category3TextTag { get; set; }
+        public double Category1TextScore { get; set; }
+        public double Category2TextScore { get; set; }
+        public double Category3TextScore { get; set; }
     }
 }

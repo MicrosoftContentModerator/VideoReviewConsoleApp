@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace Microsoft.ContentModerator.AMSComponentClient
@@ -31,9 +32,9 @@ namespace Microsoft.ContentModerator.AMSComponentClient
         public readonly string DefaulVideopName = "VideoByUrl";
         public readonly double AdultFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultFrameThreshold"]);
         public readonly double RacyFrameThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyFrameThreshold"]);
-        public readonly double OffensiveTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["OffensiveTextThreshold"]);
-        public readonly double RacyTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["RacyTextThreshold"]);
-        public readonly double AdultTextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["AdultTextThreshold"]);
+        public readonly double Category1TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category1TextThreshold"]);
+        public readonly double Category2TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category2TextThreshold"]);
+        public readonly double Category3TextThreshold = Convert.ToDouble(ConfigurationManager.AppSettings["Category3TextThreshold"]);
 
         #endregion
 
@@ -50,7 +51,12 @@ namespace Microsoft.ContentModerator.AMSComponentClient
 
         public readonly string TeamName = ConfigurationManager.AppSettings["ContentModeratorTeamId"];
 
+        public readonly static string DemoVideoContainerUrl = ConfigurationManager.AppSettings["DemoVideoContainerUrl"];
+
         public string ReviewCallBackUrl = "";
+
+        public readonly static List<string> demoVideoNames = new List<string>() { "hololens", "satya", "office365", "windows10", "surface" };
+
         #endregion
 
 
