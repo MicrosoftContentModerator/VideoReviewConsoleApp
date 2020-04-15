@@ -582,7 +582,7 @@ namespace Microsoft.ContentModerator.AMSComponentClient
                         {
                             System.Threading.Thread.Sleep(waitTime);
                             var lang = await CMClient.TextModeration.DetectLanguageAsync("text/plain", caption);
-                            var res = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, "text/plain", caption, null, null, null, true);
+                            var res = await CMClient.TextModeration.ScreenTextWithHttpMessagesAsync(lang.DetectedLanguageProperty, caption, string.Empty, null, null, null, true);
                             screenRes = res.Body;
                             retry = false;
                         }
